@@ -37,15 +37,16 @@ def read_chapter(key):
 
 
 def inline(text):
-    def link(match):
-        return f'<a href="{escape(match[2], quote=True)}">{escape(match[1])}</a>'
-
-    fragments = re.split(r"(\x60[^\x60]+\x60|\[[^\]]+\]\(https://[^)]+\))", text)
+    target = r"https://[^)]+|(?:0[0-9]|10|[A-C])\.md"
+    fragments = re.split(rf"(\x60[^\x60]+\x60|\[[^\]]+\]\((?:{target})\))", text)
     result = []
     for fragment in fragments:
-        match = re.fullmatch(r"\[([^\]]+)\]\((https://[^)]+)\)", fragment)
+        match = re.fullmatch(rf"\[([^\]]+)\]\(({target})\)", fragment)
         if match:
-            result.append(link(match))
+            label, href = match.groups()
+            if not href.startswith("https://"):
+                href = f"chapter-{href.removesuffix('.md')}.html"
+            result.append(f'<a href="{escape(href, quote=True)}">{escape(label)}</a>')
         elif fragment.startswith("\x60") and fragment.endswith("\x60"):
             result.append(f"<code>{escape(fragment[1:-1])}</code>")
         else:
@@ -136,6 +137,8 @@ def render_body(lines):
             continue
         if line.startswith("## "):
             section(line[3:])
+        elif line.startswith("### "):
+            parts.append(f"<h3>{inline(line[4:])}</h3>")
         elif line in {"```python", "```text"}:
             end = lines.index("```", cursor)
             code = "\n".join(lines[cursor:end])
