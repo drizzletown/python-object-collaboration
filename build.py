@@ -290,7 +290,7 @@ remaining = capacity - registered
 
 <strong>print</strong>(<em>f"剩余名额：{{remaining}}"</em>)</code></pre>
    <div class="terminal-output"><span>›</span> 剩余名额：1</div></div>
-   <a href="chapter-00.html#section-1">试着修改人数 <span>↗</span></a>
+   <a href="chapter-01.html#section-1">到第 1 章试一试 <span>↗</span></a>
   </div>
  </div>
 </section>
