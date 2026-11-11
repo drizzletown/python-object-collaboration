@@ -22,10 +22,20 @@
  </details></aside>
  <main id="main" class="lesson">
   <header class="lesson-head"><div class="crumb"><a href="index.html#catalog">教材目录</a> <span>›</span> 第 2 章</div>
-  <h1>容器对象与数据组织</h1><p>维护一批报名记录，按学号查找，并解释修改名单时其他引用会看到什么。</p></header>
-  <article><h2 id="section-1">2.1 从单条信息到记录集合</h2>
-<p>只有一个 registered 数字，无法查明某位同学是否报名。把学号设计成字符串，便于保留前导零。字典可用唯一学号作为键，记录姓名等资料。列表适合保留签到次序，元组适合将一组固定字段一起返回，集合适合快速判断某学号是否出现以及计算差集。</p>
-<p>容器的选择取决于后续操作。若记录需要按学号查询，用字典；若只需要知道参加者来自哪些班级，可以将班级名放进集合。集合元素和字典键必须可哈希；可变列表不能作为键。展示集合时可用 sorted 得到有确定顺序的列表。</p>
+  <h1>容器对象与数据组织</h1><p>从管理报名名单出发，比较列表、元组、字典和集合，再检验共享引用和复制怎样影响数据修改。</p></header>
+  <article><h2 id="section-1">2.1 报名任务从一个人数扩展到多条记录</h2>
+<p>第 1 章能算出活动还剩几个名额。到了签到现场，组织者还需要按学号查找报名记录，并判断哪些人还没到。</p>
+<p>先用三条报名记录明确任务。S01、S02 和 S03 都已报名，签到顺序是 S02、S01、S02。查询 S02 时要能取得姓名，原始签到记录要保留 S02 的两次签到，未签到名单则只应包含 S03。</p>
+<p>活动配置也需要组织起来。名称、容量、出发地和目的地要能一起查阅。调整容量或更新报名记录前，有时还要保存一份旧数据，以便事后核对。</p>
+<p>这项任务涉及三种数据关系。签到记录依赖先后顺序，报名名单需要按学号查找，签到状态取决于某个学号是否出现。要保留修改前的记录，还需要确定复制哪一层数据。</p>
+<h2 id="section-2">2.2 按数据关系选择容器</h2>
+<p>容器把多个对象组织起来。选择容器之前，先问以后要按位置取得元素、按键查找值，还是只判断某个元素是否存在。</p>
+<div class="lesson-table"><table><thead><tr><th scope="col">类型</th><th scope="col">组织和查找方式</th><th scope="col">能否原地修改</th><th scope="col">典型用途</th></tr></thead><tbody><tr><td>列表 <code>list</code></td><td>保留顺序，按位置取元素，允许重复</td><td>可以</td><td>会增删或调整顺序的一组数据</td></tr><tr><td>元组 <code>tuple</code></td><td>保留顺序，按位置取元素，允许重复</td><td>各位置的引用固定</td><td>固定的一组值，例如一对坐标</td></tr><tr><td>字典 <code>dict</code></td><td>把唯一的键关联到值，按键查找</td><td>可以</td><td>由编号或名称查找对应的数据</td></tr><tr><td>集合 <code>set</code></td><td>元素唯一，支持成员判断和集合运算</td><td>可以</td><td>去重、检查成员和比较两组数据</td></tr></tbody></table></div>
+<p>四种容器都可以用 <code>len()</code> 查看有多少项，也可以用 <code>in</code> 检查成员。对字典来说，<code>in</code> 检查的是键，<code>len()</code> 统计的是键值对。列表和元组用下标取元素，字典用方括号时填入的是键，即使这个键恰好是整数。</p>
+<h2 id="section-3">2.3 列表和元组 按位置组织数据</h2>
+<h3>列表可以增删和调整</h3>
+<p>用方括号写列表。下标从 0 开始，<code>numbers[0]</code> 取得第一项，<code>numbers[-1]</code> 取得最后一项。切片 <code>numbers[1:3]</code> 取得下标 1 和 2 的元素，右边界 3 不包含在内。单个下标超出范围会引发 <code>IndexError</code>，切片的边界会按序列实际长度截取。</p>
+<p>可以给某个位置重新赋值。<code>append()</code> 把传入的对象作为一项加到末尾，<code>extend()</code> 则把传入的一组元素逐项加入。用 <code>pop()</code> 可以取出并删除一项，省略位置时取最后一项。<code>remove()</code> 删除第一个等于指定值的元素。</p>
 
 <section class="playground" aria-label="Python 示例 1">
   <div class="editor-bar">
@@ -33,20 +43,17 @@
     <div><button class="quiet" data-reset hidden>重置</button>
     <button class="quiet" data-copy hidden>复制</button></div>
   </div>
-  <textarea aria-label="Python 示例 1 代码" rows="13"
-    spellcheck="false" autocapitalize="off" autocomplete="off">registrations = {
-    &quot;S01&quot;: {&quot;name&quot;: &quot;林同学&quot;, &quot;group&quot;: &quot;一班&quot;},
-    &quot;S02&quot;: {&quot;name&quot;: &quot;周同学&quot;, &quot;group&quot;: &quot;二班&quot;},
-}
-arrival_order = [&quot;S02&quot;, &quot;S01&quot;]
-checked_in = {&quot;S02&quot;}
-missing = registrations.keys() - checked_in
-first_two = arrival_order[:2]
-route = (&quot;教学楼&quot;, &quot;博物馆&quot;)
+  <textarea aria-label="Python 示例 1 代码" rows="10"
+    spellcheck="false" autocapitalize="off" autocomplete="off">numbers = [30, 10, 20, 10]
 
-print(registrations.get(&quot;S02&quot;)[&quot;name&quot;])
-print(sorted(missing))
-print(first_two, route[1])</textarea>
+print(&quot;首项和末项&quot;, numbers[0], numbers[-1])
+print(&quot;切片&quot;, numbers[1:3])
+
+numbers[0] = 25
+numbers.append(40)
+numbers.extend([50, 60])
+print(&quot;排序结果&quot;, sorted(numbers))
+print(&quot;当前列表&quot;, numbers)</textarea>
   <div class="runner-bar" hidden>
     <button class="primary small" data-run>▶ 运行代码</button>
     <button class="quiet" data-stop hidden>停止</button>
@@ -55,9 +62,9 @@ print(first_two, route[1])</textarea>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
 
-<p>下标从 0 开始，切片左闭右开。空列表取 [0] 会抛出 IndexError。用字典下标访问缺失键会抛出 KeyError，get 可以提供一个默认值。例中 S02 已知存在，若由用户输入学号，应先检查 get 的结果再读取 name。</p>
-<h2 id="section-2">2.2 共享引用与可变性</h2>
-<p>列表和字典可原地修改。alias = roster 之后，两条名字指向同一个列表。roster.copy() 只复制外层列表，内部字典仍共享。元组的元素位置固定，位置上的引用仍可能指向可变对象。接口返回名单时，需要根据职责决定返回共享对象、只读结构或快照。</p>
+<p>列表中的两个 10 都会保留。<code>sorted(numbers)</code> 返回一个排好序的新列表，<code>numbers</code> 仍保留原来的顺序。要直接改变列表的排列，可以调用 <code>numbers.sort()</code>。这类只修改容器的方法通常返回 <code>None</code>，用原来的名字继续读取结果。<a href="https://docs.python.org/3.12/tutorial/datastructures.html#more-on-lists">Python 列表方法</a></p>
+<h3>元组适合把几项值作为一组</h3>
+<p>例如，可以用 <code>(3, 4)</code> 表示一个平面坐标。元组支持读取、切片和解包。解包时，左边的名字分别绑定到对应位置的元素。对于下面这种逐项解包，名字的数量要与元素数量一致。</p>
 
 <section class="playground" aria-label="Python 示例 2">
   <div class="editor-bar">
@@ -65,17 +72,14 @@ print(first_two, route[1])</textarea>
     <div><button class="quiet" data-reset hidden>重置</button>
     <button class="quiet" data-copy hidden>复制</button></div>
   </div>
-  <textarea aria-label="Python 示例 2 代码" rows="10"
-    spellcheck="false" autocapitalize="off" autocomplete="off">roster = [{&quot;id&quot;: &quot;S01&quot;, &quot;checked&quot;: False}]
-alias = roster
-snapshot = roster.copy()
+  <textarea aria-label="Python 示例 2 代码" rows="7"
+    spellcheck="false" autocapitalize="off" autocomplete="off">point = (3, 4)
+x, y = point
 
-roster[0][&quot;checked&quot;] = True
-roster.append({&quot;id&quot;: &quot;S02&quot;, &quot;checked&quot;: False})
-
-print(len(alias), len(snapshot))
-print(snapshot[0][&quot;checked&quot;])
-print(alias is roster, snapshot is roster)</textarea>
+print(&quot;坐标&quot;, x, y)
+print(&quot;第二项&quot;, point[1])
+print(&quot;单元素元组&quot;, (3,))
+print(&quot;去掉逗号后的类型&quot;, type((3)))</textarea>
   <div class="runner-bar" hidden>
     <button class="primary small" data-run>▶ 运行代码</button>
     <button class="quiet" data-stop hidden>停止</button>
@@ -84,24 +88,218 @@ print(alias is roster, snapshot is roster)</textarea>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
 
-<p>输出依次说明别名长度随原列表变为 2、快照外层长度仍是 1、共享的内部字典已经变化。如果这里只需要快照中的学号，可用 tuple(record[&quot;id&quot;] for record in roster) 收集字符串。生成式会在第 3、4 章展开。</p>
-<p>记录新增时，字典的相同键会被新值覆盖。要实现“重复报名应保留旧记录”，先判断 student_id in registrations，再决定是否赋值。第 3 章把这个判断写进完整流程。</p>
-<h2 id="section-3">练习</h2>
-<p>将签到顺序改成 S01、S02、S01。求签到过的学号和未签到名单，并保留原签到顺序以便核对重复记录。</p>
-<details class='answer'><summary>参考解答</summary><p>保留列表 arrival_order，令 checked_in = set(arrival_order)。registrations.keys() - checked_in 得到空集合。len(arrival_order) 比 len(checked_in) 大 1，说明存在一次重复签到。</p></details>
-<h2 id="section-4">本章自测</h2>
+<p>一个元素的元组需要逗号，例如 <code>(3,)</code>。元组各位置的引用在创建后固定，适合表达结构已确定的一组信息。列表和元组之间可以用 <code>list()</code> 和 <code>tuple()</code> 转换。</p>
+<h2 id="section-4">2.4 字典 按键组织数据</h2>
+<p>字典保存键和值的对应关系。表达式 <code>labels[&quot;ok&quot;]</code> 按键取得值。同一个键只能关联一个当前值。再次给该键赋值，就会更新它的值。</p>
+<p>读取缺失的键会引发 <code>KeyError</code>。可以先用 <code>in</code> 检查键是否存在，或者用 <code>get()</code> 为缺失的键提供一个默认值。字典还提供 <code>keys()</code>、<code>values()</code> 和 <code>items()</code>，分别返回键、值和键值对的视图。视图会反映字典的当前内容。要保留某一时刻有哪些键，可以把键视图转成列表。</p>
 
-<form class="quiz" data-correct="1">
- <fieldset><legend>对列表调用 copy 后，修改原列表内部字典中的值，副本会看到什么？</legend><label><input type="radio" name="choice" value="1" required> 只要内部字典仍然共享，就会看到更新</label><label><input type="radio" name="choice" value="2" required> 永远看不到更新</label><label><input type="radio" name="choice" value="3" required> 副本外层会自动追加同样的元素</label></fieldset>
+<section class="playground" aria-label="Python 示例 3">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 3</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 3 代码" rows="14"
+    spellcheck="false" autocapitalize="off" autocomplete="off">labels = {&quot;ok&quot;: &quot;正常&quot;, &quot;warn&quot;: &quot;警告&quot;}
+
+print(labels[&quot;ok&quot;])
+print(labels.get(&quot;error&quot;, &quot;未知状态&quot;))
+
+key_view = labels.keys()
+saved_keys = list(key_view)
+labels[&quot;warn&quot;] = &quot;注意&quot;
+labels[&quot;error&quot;] = &quot;错误&quot;
+
+print(&quot;存在 error 键&quot;, &quot;error&quot; in labels)
+print(&quot;视图中的当前键&quot;, list(key_view))
+print(&quot;之前保存的键&quot;, saved_keys)
+print(&quot;键值对&quot;, list(labels.items()))</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<p>字典按键的插入顺序提供数据。更新 <code>warn</code> 的值后，这个键仍在原来的位置。新增 <code>error</code> 后，键视图里能看到它，之前保存的键列表仍只有 <code>ok</code> 和 <code>warn</code>。需要删除键时，可以用 <code>del labels[&quot;warn&quot;]</code>，或用 <code>pop()</code> 删除并取得原来的值。</p>
+<p>键需要可哈希，也就是散列值在对象存续期间保持稳定，彼此相等的对象具有相同的散列值。整数、字符串和只包含可哈希成员的元组都可以作为键。列表、字典和集合属于不可哈希的内置类型。值可以引用任意对象，包括另一个字典。<a href="https://docs.python.org/3.12/library/stdtypes.html#mapping-types-dict">Python 字典类型</a></p>
+<h2 id="section-5">2.5 集合 按成员和集合关系组织数据</h2>
+<p>集合保存互不重复的元素，元素也需要可哈希。用 <code>set()</code> 创建空集合，<code>{}</code> 创建的是空字典。把列表交给 <code>set()</code> 可以合并重复值。可以用 <code>add()</code> 加入成员，用 <code>discard()</code> 移除成员，成员已经缺失时也能继续执行。</p>
+<p>集合可以直接求两组数据的关系。<code>&amp;</code> 求交集，<code>|</code> 求并集，<code>-</code> 求左边有而右边没有的元素，<code>^</code> 求只出现在其中一边的元素。</p>
+
+<section class="playground" aria-label="Python 示例 4">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 4</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 4 代码" rows="8"
+    spellcheck="false" autocapitalize="off" autocomplete="off">left = {&quot;A&quot;, &quot;B&quot;, &quot;C&quot;}
+right = {&quot;B&quot;, &quot;C&quot;, &quot;D&quot;}
+
+print(&quot;交集&quot;, sorted(left &amp; right))
+print(&quot;并集&quot;, sorted(left | right))
+print(&quot;左边独有&quot;, sorted(left - right))
+print(&quot;只出现在一边&quot;, sorted(left ^ right))
+print(&quot;去重结果&quot;, sorted(set([&quot;A&quot;, &quot;A&quot;, &quot;B&quot;])))</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<p>集合按成员查找。元素可以比较大小时，可以用 <code>sorted()</code> 得到按顺序排列的列表。用 <code>left &lt;= right</code> 可以判断左边的每个成员是否都在右边。</p>
+<h2 id="section-6">2.6 共享引用、可变性与复制</h2>
+<p>第 1 章的名字绑定规则也适用于容器。执行 <code>alias = original</code>，两个名字便指向同一个对象。列表、字典和集合可以原地修改，因此通过其中一个名字改动容器，另一个名字也会看到变化。</p>
+<p>需要保留原来的数据时，可以选择复制的范围。浅复制新建外层容器，里面的引用仍指向原来的元素。深复制会进一步复制嵌套的可变成员，例如这里的内层字典。Python 标准库提供 <code>deepcopy()</code>，下面先用 <code>from</code> 和 <code>import</code> 取用它。</p>
+
+<section class="playground" aria-label="Python 示例 5">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 5</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 5 代码" rows="13"
+    spellcheck="false" autocapitalize="off" autocomplete="off">from copy import deepcopy
+
+original = [{&quot;value&quot;: 1}]
+alias = original
+shallow = original.copy()
+deep = deepcopy(original)
+
+original.append({&quot;value&quot;: 2})
+original[0][&quot;value&quot;] = 9
+
+print(&quot;外层长度&quot;, len(alias), len(shallow), len(deep))
+print(&quot;第一项的值&quot;, alias[0][&quot;value&quot;], shallow[0][&quot;value&quot;], deep[0][&quot;value&quot;])
+print(&quot;共享第一项&quot;, shallow[0] is original[0], deep[0] is original[0])</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<p>第一行得到 2、1、1。追加动作改的是原列表，浅复制与深复制都有自己的外层列表。第二行得到 9、9、1。改第一项的值是在修改内层字典，原列表和浅复制共享这个字典，深复制有单独的一份。第三行用 <code>is</code> 验证内层引用的关系。<a href="https://docs.python.org/3.12/library/copy.html">Python 浅复制与深复制</a></p>
+<p>元组固定的是各位置的引用。如果元组中的某一项是列表，仍可以找到这个列表并修改它的内容。</p>
+
+<section class="playground" aria-label="Python 示例 6">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 6</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 6 代码" rows="5"
+    spellcheck="false" autocapitalize="off" autocomplete="off">record = (&quot;数值&quot;, [1, 2])
+record[1].append(3)
+print(record)</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<p>选择复制方法时，可以先指出准备改哪一层。只需要增删外层的项时，可以浅复制。如果旧记录还要保留内层的修改前状态，就要把相关的可变成员也复制下来。</p>
+<h2 id="section-7">2.7 组织活动配置和报名名单</h2>
+<h3>让每种容器承担相应的工作</h3>
+<p>回到签到任务。用字典保存活动配置和报名名单，分别按配置名称和学号查找。出发地与目的地是固定顺序的一对值，用元组保存。签到先后顺序用列表保留，签到过的学号用集合去重。用已报名的学号集合减去已签到的学号集合，就能查出还没签到的人。</p>
+
+<section class="playground" aria-label="Python 示例 7">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 7</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 7 代码" rows="14"
+    spellcheck="false" autocapitalize="off" autocomplete="off">activity = {
+    &quot;name&quot;: &quot;博物馆参观&quot;,
+    &quot;capacity&quot;: 30,
+    &quot;route&quot;: (&quot;教学楼&quot;, &quot;博物馆&quot;),
+}
+registrations = {
+    &quot;S01&quot;: {&quot;name&quot;: &quot;林同学&quot;, &quot;group&quot;: &quot;一班&quot;},
+    &quot;S02&quot;: {&quot;name&quot;: &quot;周同学&quot;, &quot;group&quot;: &quot;二班&quot;},
+    &quot;S03&quot;: {&quot;name&quot;: &quot;吴同学&quot;, &quot;group&quot;: &quot;一班&quot;},
+}
+arrival_order = [&quot;S02&quot;, &quot;S01&quot;, &quot;S02&quot;]
+checked_in = set(arrival_order)
+missing = set(registrations) - checked_in
+
+print(&quot;活动&quot;, activity[&quot;name&quot;])
+print(&quot;目的地&quot;, activity[&quot;route&quot;][1])
+print(&quot;剩余名额&quot;, activity[&quot;capacity&quot;] - len(registrations))
+print(&quot;S02 姓名&quot;, registrations[&quot;S02&quot;][&quot;name&quot;])
+print(&quot;原始签到记录&quot;, arrival_order)
+print(&quot;未签到学号&quot;, sorted(missing))</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<p>目前有 3 人报名，剩余 27 个名额。签到列表保留了 S02 的两次记录。计算未签到名单时，只用去重后的学号，得到 S03。向字典写入已存在的学号会替换记录。第 3 章会先检查学号是否重复，再决定是否写入。</p>
+<h3>验证修改会影响哪些数据</h3>
+<p>下面先保存旧配置，再增加一条报名记录并修改已有记录的班级。运行前可以预测，哪种副本会看到新增的学号，哪种副本会看到班级变化。</p>
+
+<section class="playground" aria-label="Python 示例 8">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 8</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 8 代码" rows="14"
+    spellcheck="false" autocapitalize="off" autocomplete="off">from copy import deepcopy
+
+activity = {&quot;capacity&quot;: 30, &quot;route&quot;: (&quot;教学楼&quot;, &quot;博物馆&quot;)}
+old_config = activity.copy()
+activity[&quot;capacity&quot;] = 32
+print(&quot;当前容量和原容量&quot;, activity[&quot;capacity&quot;], old_config[&quot;capacity&quot;])
+
+registrations = {&quot;S01&quot;: {&quot;name&quot;: &quot;林同学&quot;, &quot;group&quot;: &quot;一班&quot;}}
+shared = registrations
+shallow = registrations.copy()
+saved = deepcopy(registrations)
+
+registrations[&quot;S02&quot;] = {&quot;name&quot;: &quot;周同学&quot;, &quot;group&quot;: &quot;二班&quot;}
+registrations[&quot;S01&quot;][&quot;group&quot;] = &quot;二班&quot;
+
+print(&quot;共享、浅复制、深复制的人数&quot;, len(shared), len(shallow), len(saved))
+print(&quot;S01 的班级&quot;, shared[&quot;S01&quot;][&quot;group&quot;], shallow[&quot;S01&quot;][&quot;group&quot;], saved[&quot;S01&quot;][&quot;group&quot;])</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<p>容量从 30 改为 32，旧配置仍显示 30，因为修改的是活动字典外层的键值关系。名单的两次修改则分别作用于外层和内层。</p>
+<div class="lesson-table"><table><thead><tr><th scope="col">核对结果</th><th scope="col">共享引用 <code>shared</code></th><th scope="col">浅复制 <code>shallow</code></th><th scope="col">深复制 <code>saved</code></th></tr></thead><tbody><tr><td>新增 S02 后的人数</td><td>2</td><td>1</td><td>1</td></tr><tr><td>修改 S01 后看到的班级</td><td>二班</td><td>二班</td><td>一班</td></tr></tbody></table></div>
+<p>新增学号改的是外层字典，修改班级改的是该学号对应的内层字典。先找出哪一层被修改，再检查各处是否引用同一个对象，就能解释表里的结果。</p>
+<h2 id="section-8">练习</h2>
+<ul><li>在 2.7 节把签到顺序改为 S02、S03、S02、S04。保留原始签到顺序，求未签到学号，并用集合差找出签到记录中没有报名的学号。</li><li>在复制示例中，把修改 S01 班级的一行改成给 <code>registrations[&quot;S01&quot;]</code> 赋一份新字典。预测浅复制中的 S01 会显示哪个班级，再运行核对。</li></ul>
+<details class='answer'><summary>参考解答</summary><p>新签到记录里的不同学号是 S02、S03 和 S04。未签到的是 S01。用 checked_in - set(registrations) 可找到未报名的 S04。原始列表仍保留两次 S02。</p><p>给 registrations[&quot;S01&quot;] 赋新字典，改变的是外层字典中的引用。浅复制有自己的外层字典，其中的 S01 仍引用原来的记录，所以显示一班。</p></details>
+<h2 id="section-9">本章自测</h2>
+
+<form class="quiz" data-correct="2">
+ <fieldset><legend>对列表做浅复制后，在什么情况下副本也会看到变化？</legend><label><input type="radio" name="choice" value="1" required> 原列表在末尾增加一个新元素。</label><label><input type="radio" name="choice" value="2" required> 原列表与副本共享一个字典，后来原地修改了这个字典。</label><label><input type="radio" name="choice" value="3" required> 把原列表某个位置的引用替换成另一个对象。</label></fieldset>
  <button class="primary small" type="submit" disabled>检查答案</button>
  <p class="feedback" aria-live="polite"></p>
- <details><summary>查看解析</summary><p>浅复制只创建新的外层容器，原容器和副本的元素仍可引用同一对象。</p></details>
+ <details><summary>查看解析</summary><p>浅复制新建了外层列表，里面的元素引用仍可与原列表共享。共享字典的内容改变后，两处引用都会看到更新。</p></details>
 </form>
 </article>
   <button type="button" class="complete" data-mark="02" aria-pressed="false" hidden>标记本章完成</button>
   <nav class="adjacent" aria-label="前后章节"><a href="chapter-01.html"><small>← 上一节</small>基础数据对象与信息处理</a><a href="chapter-03.html"><small>下一节 →</small>对象协作的流程控制</a></nav>
  </main>
- <aside class="outline"><p>本节内容</p><nav aria-label="本节内容"><ol><li><a href="#section-1">2.1 从单条信息到记录集合</a></li><li><a href="#section-2">2.2 共享引用与可变性</a></li><li><a href="#section-3">练习</a></li><li><a href="#section-4">本章自测</a></li></ol></nav></aside>
+ <aside class="outline"><p>本节内容</p><nav aria-label="本节内容"><ol><li><a href="#section-1">2.1 报名任务从一个人数扩展到多条记录</a></li><li><a href="#section-2">2.2 按数据关系选择容器</a></li><li><a href="#section-3">2.3 列表和元组 按位置组织数据</a></li><li><a href="#section-4">2.4 字典 按键组织数据</a></li><li><a href="#section-5">2.5 集合 按成员和集合关系组织数据</a></li><li><a href="#section-6">2.6 共享引用、可变性与复制</a></li><li><a href="#section-7">2.7 组织活动配置和报名名单</a></li><li><a href="#section-8">练习</a></li><li><a href="#section-9">本章自测</a></li></ol></nav></aside>
 </div>
 <footer class="site-footer"><a href="index.html">Python 编程教材</a><a href="chapter-A.html">运行环境</a><a href="chapter-C.html">语言速查</a></footer>
 </body></html>
