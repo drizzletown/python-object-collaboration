@@ -22,11 +22,11 @@
  </details></aside>
  <main id="main" class="lesson">
   <header class="lesson-head"><div class="crumb"><a href="index.html#catalog">教材目录</a> <span>›</span> 第 1 章</div>
-  <h1>基础数据对象与信息处理</h1><p>用活动名称、人数和票价表示一次活动，计算费用与剩余名额，生成一条报名提示。</p></header>
-  <article><h2 id="section-1">1.1 把活动信息写成数据</h2>
-<p>博物馆参观开放报名，组织者想知道还能接受多少人，以及已报名同学的门票一共要花多少钱。先从一组已知信息开始。</p>
-<ul><li>活动名称是文字，用字符串表示。示例中的引号标出了字符串的起止位置。</li><li>活动容量和已报名人数用整数表示。约定两者都以人为单位，报名人数在零到容量之间。</li><li>票价也用整数表示，单位是分。每人 12.50 元，记为 1250 分。</li></ul>
-<p>先只解决名额问题。用容量减去已报名人数，再用 <code>print</code> 把活动名称和计算结果显示出来。</p>
+  <h1>基础数据对象与信息处理</h1><p>从一条报名提示出发，学习基础对象的类型、标识和名字绑定，再用运算与格式化输出完成任务。</p></header>
+  <article><h2 id="section-1">1.1 报名提示需要哪些信息</h2>
+<p>博物馆参观开放报名。活动最多容纳 30 人，目前有 28 人报名，每人门票 12.50 元。组织者想发一条提示，让同学知道还剩几个名额，以及已报名同学的门票合计多少钱。</p>
+<p>先把任务分成输入、处理和输出。输入是活动名称、容量、已报名人数和每人票价。处理时，用容量减去报名人数得到剩余名额，用人数乘以票价得到总费用。最后，把名称和两个结果写进同一条提示。</p>
+<p>先试着完成名额计算。把 <code>registered</code> 改成 30，再运行一次。</p>
 
 <section class="playground" aria-label="Python 示例 1">
   <div class="editor-bar">
@@ -49,10 +49,14 @@ print(activity, &quot;剩余名额&quot;, remaining)</textarea>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
 
-<p>运行后会看到“博物馆参观 剩余名额 2”。把 <code>registered</code> 改成 30，再运行一次，看看结果怎样变化。</p>
-<h2 id="section-2">1.2 给对象绑定名字</h2>
-<p>在 <code>registered = 28</code> 中，28 是一个整数对象，<code>registered</code> 是引用它的名字。执行赋值语句时，Python 先算出等号右边的结果，再把左边的名字绑定到这个结果。后面的代码可以用 <code>registered</code> 取得当前的报名人数。</p>
-<p>如果又有一位同学报名，可以用 <code>registered = registered + 1</code> 更新人数。右边使用更新前的 28 得到 29，左边的名字随后绑定到 29。</p>
+<p>从这几行可以看出程序需要解决四件事。用对象表示文字和数字，给对象取名字，对对象进行运算，再把结果显示给读者。接下来逐一看 Python 怎样做这些工作。</p>
+<h2 id="section-2">1.2 基础对象与类型</h2>
+<p>Python 用对象表示程序中的数据。人数 28、活动名称「博物馆参观」、预约成功的判断结果，都可以作为对象使用。每个对象都有值、类型和标识。值是它表示的内容，类型决定它能参与哪些操作，标识用来区分不同对象。</p>
+<h3>常见的基础对象</h3>
+<div class="lesson-table"><table><thead><tr><th scope="col">类型</th><th scope="col">写法举例</th><th scope="col">适合表示什么</th></tr></thead><tbody><tr><td>整数 <code>int</code></td><td><code>28</code>、<code>1250</code></td><td>人数、数量、以分为单位的金额</td></tr><tr><td>浮点数 <code>float</code></td><td><code>1.5</code>、<code>12.50</code></td><td>用时、距离等允许近似的数值</td></tr><tr><td>复数 <code>complex</code></td><td><code>2 + 3j</code></td><td>有实部和虚部的数，例如某些科学计算中的量</td></tr><tr><td>布尔值 <code>bool</code></td><td><code>True</code>、<code>False</code></td><td>条件成立或不成立</td></tr><tr><td>字符串 <code>str</code></td><td><code>&quot;博物馆参观&quot;</code>、<code>&quot;28&quot;</code></td><td>名称、表单文字、带前导零的学号</td></tr><tr><td>字节序列 <code>bytes</code></td><td><code>b&quot;OK&quot;</code></td><td>以字节表示的数据，例如文件传输的内容</td></tr><tr><td>空值类型 <code>NoneType</code></td><td><code>None</code></td><td>信息缺失或结果尚未取得</td></tr></tbody></table></div>
+<p>同一信息可以用不同类型表示。用 28 表示人数，便于计算。用 <code>&quot;0028&quot;</code> 表示学号，便于保留前导零。选择类型时，先问后续需要对这项信息做什么。</p>
+<p>整数可以精确表示整数值。许多十进制小数在浮点数中只能近似表示。因此，本章把每人 12.50 元记为整数 1250 分，先按分计算，到输出时再显示为元。预约状态则有三种情况。已确认用 <code>True</code>，未获通过用 <code>False</code>，尚无结果用 <code>None</code>。</p>
+<h3>用 type 查看对象的类型</h3>
 
 <section class="playground" aria-label="Python 示例 2">
   <div class="editor-bar">
@@ -60,13 +64,9 @@ print(activity, &quot;剩余名额&quot;, remaining)</textarea>
     <div><button class="quiet" data-reset hidden>重置</button>
     <button class="quiet" data-copy hidden>复制</button></div>
   </div>
-  <textarea aria-label="Python 示例 2 代码" rows="6"
-    spellcheck="false" autocapitalize="off" autocomplete="off">registered = 28
-previous_count = registered
-registered = registered + 1
-
-print(&quot;更新前&quot;, previous_count)
-print(&quot;更新后&quot;, registered)</textarea>
+  <textarea aria-label="Python 示例 2 代码" rows="5"
+    spellcheck="false" autocapitalize="off" autocomplete="off">print(type(28), type(&quot;28&quot;))
+print(type(12.50), type(True), type(None))</textarea>
   <div class="runner-bar" hidden>
     <button class="primary small" data-run>▶ 运行代码</button>
     <button class="quiet" data-stop hidden>停止</button>
@@ -75,9 +75,10 @@ print(&quot;更新后&quot;, registered)</textarea>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
 
-<p><code>previous_count</code> 仍引用原来的整数 28，所以两行依次显示 28 和 29。可以在示例末尾加上 <code>print(type(registered))</code> 查看对象的类型。比较两个值是否相等时，用两个等号 <code>==</code>，例如 <code>registered == 29</code> 会得到 <code>True</code>。</p>
-<h2 id="section-3">1.3 计算费用并生成报名提示</h2>
-<p>现在把费用加入同一条提示。用已报名人数乘以每人票价，得到总费用。计算时一直以分为单位，最后再用 <code>//</code> 求整元数、用 <code>%</code> 求剩余的分。这样可以精确保留每一分。</p>
+<p>第一行依次显示 <code>int</code> 和 <code>str</code>。数字 28 可以用于算术，带引号的 <code>&quot;28&quot;</code> 则可以与另一段文字拼接。<code>type()</code> 返回对象的实际类型。<code>isinstance(对象, 类型)</code> 还可以判断对象是否属于某个类型或它的子类。例如，<code>bool</code> 是 <code>int</code> 的子类，<code>type(True)</code> 返回的具体类型仍是 <code>bool</code>。第 5 章会继续讨论类型与实例的关系。</p>
+<h2 id="section-3">1.3 对象标识和值</h2>
+<p><code>id(对象)</code> 返回表示对象标识的整数。一个对象在存续期间的标识保持不变。同时存在的两个不同对象具有不同标识。对象结束后，标识可能被其他对象复用，因此不适合拿来当长期保存的学号或记录编号。</p>
+<p>判断两个对象时，有时关心它们的值是否相等，有时关心两处引用是否指向同一个对象。分别用 <code>==</code> 和 <code>is</code> 回答这两个问题。</p>
 
 <section class="playground" aria-label="Python 示例 3">
   <div class="editor-bar">
@@ -85,7 +86,177 @@ print(&quot;更新后&quot;, registered)</textarea>
     <div><button class="quiet" data-reset hidden>重置</button>
     <button class="quiet" data-copy hidden>复制</button></div>
   </div>
-  <textarea aria-label="Python 示例 3 代码" rows="13"
+  <textarea aria-label="Python 示例 3 代码" rows="7"
+    spellcheck="false" autocapitalize="off" autocomplete="off">registered = 28
+estimate = 28.0
+
+print(&quot;整数对象的标识&quot;, id(registered))
+print(&quot;浮点数对象的标识&quot;, id(estimate))
+print(&quot;值相等&quot;, registered == estimate)
+print(&quot;同一个对象&quot;, registered is estimate)</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<p>前两行的具体数字由运行环境决定。后两行分别是 <code>True</code> 和 <code>False</code>。整数 28 和浮点数 28.0 在数值上相等，却是两个不同类型的对象。比较人数、票价或文字内容时通常用 <code>==</code>。检查预约结果是否缺失时，可以用 <code>booking is None</code>，因为 <code>None</code> 是唯一的那个空值对象。<a href="https://docs.python.org/3.12/reference/datamodel.html#objects-values-and-types">Python 数据模型</a></p>
+<h2 id="section-4">1.4 名字绑定与重新绑定</h2>
+<p>执行 <code>registered = 28</code> 时，Python 先求出等号右边的对象，再让左边的名字指向它。之后读取 <code>registered</code>，得到的是它当前引用的对象。等号 <code>=</code> 建立绑定，双等号 <code>==</code> 比较值。</p>
+<p>执行 <code>previous_count = registered</code> 时，两个名字指向同一个整数对象。再执行 <code>registered = registered + 1</code>，右边先用原人数算出 29，左边随后改为指向 29。</p>
+
+<section class="playground" aria-label="Python 示例 4">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 4</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 4 代码" rows="8"
+    spellcheck="false" autocapitalize="off" autocomplete="off">registered = 28
+previous_count = registered
+print(&quot;最初指向同一个对象&quot;, registered is previous_count)
+
+registered = registered + 1
+print(&quot;原报名人数&quot;, previous_count)
+print(&quot;现报名人数&quot;, registered)
+print(&quot;现在指向同一个对象&quot;, registered is previous_count)</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<p><code>previous_count</code> 仍然指向 28。整数和字符串都是不可变对象，原对象的值在创建后保持不变。像 <code>registered += 1</code> 这样的写法，对这里的整数名字而言，同样会算出新值并重新绑定。第 2 章会用可变容器说明直接修改对象时，共享引用会发生什么。</p>
+<p>名字可以先后绑定到不同类型的对象。为了让含义容易读懂，可以用 <code>raw_count</code> 表示表单送来的文字，用 <code>registered</code> 表示转换后的整数人数。常用英文小写字母和下划线组织名字，例如 <code>ticket_cents</code> 同时交代了数据含义和单位。</p>
+<h2 id="section-5">1.5 对象的运算</h2>
+<p>表达式求值后会得到一个对象。它可以是单独的名字，也可以由运算符、索引、属性访问或调用组合而成。例如，<code>capacity - registered</code> 得到整数，<code>registered &lt; capacity</code> 得到布尔值，<code>int(raw_count)</code> 尝试从文字得到整数。选择运算符时，需要同时看对象的类型和想得到的结果。</p>
+<div class="lesson-table"><table><thead><tr><th scope="col">操作</th><th scope="col">常用写法</th><th scope="col">可以解决的问题</th></tr></thead><tbody><tr><td>算术</td><td><code>+ - * / // % **</code></td><td>计算费用、剩余名额、商和余数</td></tr><tr><td>比较值</td><td><code>== != &lt; &lt;= &gt; &gt;=</code></td><td>检查人数是否相等、是否达到上限</td></tr><tr><td>比较标识</td><td><code>is</code>、<code>is not</code></td><td>判断两个引用是否指向同一个对象</td></tr><tr><td>逻辑</td><td><code>not</code>、<code>and</code>、<code>or</code></td><td>取反、要求多个条件同时成立、满足任一条件即可</td></tr><tr><td>成员判断</td><td><code>in</code>、<code>not in</code></td><td>检查文字中是否包含某个词，或在容器中查找成员</td></tr><tr><td>访问与调用</td><td><code>text[0]</code>、<code>text[1:3]</code>、<code>text.strip()</code>、<code>len(text)</code></td><td>取得一项或一段内容，调用方法和函数</td></tr><tr><td>按位运算</td><td><code>&amp;</code>、<code>|</code>、<code>^</code>、<code>~</code>、<code>&lt;&lt;</code>、<code>&gt;&gt;</code></td><td>处理整数的二进制位，例如组合或检查标志</td></tr></tbody></table></div>
+<h3>算术、结果类型与优先级</h3>
+<p>加、减、乘分别用 <code>+</code>、<code>-</code> 和 <code>*</code>。写在一个数前面的 <code>-</code> 表示取相反数。两个整数用 <code>/</code> 相除得到浮点数。<code>//</code> 表示商向下取整，<code>%</code> 得到与该商对应的余数，<code>**</code> 表示乘方。整数和浮点数混合做加法时，结果为浮点数。</p>
+
+<section class="playground" aria-label="Python 示例 5">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 5</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 5 代码" rows="5"
+    spellcheck="false" autocapitalize="off" autocomplete="off">print(&quot;除法、向下取整和余数&quot;, 7 / 2, 7 // 2, 7 % 2)
+print(&quot;负数的商和余数&quot;, -7 // 2, -7 % 2)
+print(&quot;乘方、混合加法&quot;, 2 ** 3, 2 + 1.5)
+print(&quot;两种分组&quot;, 2 + 3 * 4, (2 + 3) * 4)</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<p><code>-7 // 2</code> 的结果是 -4，因为 -3.5 向下取整是 -4。最后一行得到 14 和 20。常用算术中，乘方优先于乘除，乘除和取余优先于加减。可以用括号改变分组，或把业务规则写得更清楚。连续乘方从右结合，<code>2 ** 3 ** 2</code> 相当于 <code>2 ** (3 ** 2)</code>。</p>
+<h3>值的比较与逻辑判断</h3>
+<p>比较人数是否超过容量，可以写 <code>registered &lt;= capacity</code>。还可以写链式比较 <code>0 &lt;= registered &lt;= capacity</code>，同时检查人数的下限和上限。整型和浮点型可以按数值比较，文字 <code>&quot;28&quot;</code> 与整数 <code>28</code> 用 <code>==</code> 比较则得到 <code>False</code>。要判断文字中的数字是否超过容量，应先把它转换成人数。</p>
+<p>可以用 <code>bool()</code> 查看一个对象在条件中的真假。数值零、空字符串和 <code>None</code> 都视为假。字符串 <code>&quot;0&quot;</code> 含有一个字符，所以视为真。<code>not</code> 将真假取反。<code>and</code> 先看左边，左边为假时直接返回左边的对象。<code>or</code> 也先看左边，左边为真时直接返回左边的对象。需要继续求值时，两者返回右边的对象。这样的求值方式叫短路。</p>
+
+<section class="playground" aria-label="Python 示例 6">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 6</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 6 代码" rows="12"
+    spellcheck="false" autocapitalize="off" autocomplete="off">registered = 28
+capacity = 30
+booking = True
+
+count_ok = 0 &lt;= registered &lt;= capacity
+can_register = booking is True and 0 &lt;= registered &lt; capacity
+print(&quot;人数有效&quot;, count_ok)
+print(&quot;可以报名&quot;, can_register)
+
+confirmed_price = None
+price_ready = confirmed_price is not None and confirmed_price &gt; 0
+print(&quot;已有有效票价&quot;, price_ready)</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<p>把人数改成 30，人数仍然有效，但已经没有空位。最后一条判断中，票价是 <code>None</code>，左侧条件为假，Python 便跳过右侧的大小比较。在混合表达式中，比较、标识和成员判断先于逻辑运算，逻辑运算按 <code>not</code>、<code>and</code>、<code>or</code> 的优先级分组。<a href="https://docs.python.org/3.12/reference/expressions.html#operator-precedence">Python 表达式与运算优先级</a></p>
+<h3>字符串操作与类型转换</h3>
+<p>同一个符号会随对象类型表达不同的操作。例如，两个整数用 <code>+</code> 相加，两个字符串用 <code>+</code> 拼接。字符串乘以整数会重复文字。可以用 <code>in</code> 判断一段文字是否出现，用方括号取字符或切片。位置从 0 数起，切片右端的位置不包含在结果中。</p>
+<p>表单送来的 <code>&quot; 28 &quot;</code> 是文字。用 <code>strip()</code> 清理首尾空白后，可以用 <code>int()</code> 把它转换为整数。也可以用 <code>float()</code> 将小数文字转换为浮点数，用 <code>str()</code> 把数字转换为供显示的文字。</p>
+
+<section class="playground" aria-label="Python 示例 7">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 7</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 7 代码" rows="9"
+    spellcheck="false" autocapitalize="off" autocomplete="off">raw_count = &quot; 28 &quot;
+cleaned = raw_count.strip()
+registered = int(cleaned)
+activity = &quot;博物馆参观&quot;
+
+print(&quot;拼接文字&quot;, cleaned + &quot;1&quot;)
+print(&quot;计算人数&quot;, registered + 1)
+print(&quot;取前三个字符&quot;, activity[:3])
+print(&quot;包含参观&quot;, &quot;参观&quot; in activity)</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<p>前两行分别得到 281 和 29。把 <code>&quot;二十八&quot;</code> 交给 <code>int()</code> 会得到 <code>ValueError</code>，表示这段文字无法按所需格式转换。把整数和字符串直接用 <code>+</code> 混在一起会得到 <code>TypeError</code>。遇到表单数据时，先确定目标类型，再转换并检查值的范围。第 7 章会介绍怎样应对这些错误。</p>
+<h2 id="section-6">1.6 将结果输出给读者</h2>
+<p><code>print()</code> 会把传给它的对象转换成文本，默认写入标准输出。在本网站，结果显示在代码框下方。多个对象默认用空格分隔，每次输出默认以换行结束。用 <code>sep</code> 可以选择对象之间的分隔文字，用 <code>end</code> 可以指定末尾写入什么。</p>
+
+<section class="playground" aria-label="Python 示例 8">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 8</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 8 代码" rows="9"
+    spellcheck="false" autocapitalize="off" autocomplete="off">activity = &quot;博物馆参观&quot;
+remaining = 2
+
+print(activity, remaining, sep=&quot;：&quot;)
+print(&quot;剩余名额&quot;, end=&quot;：&quot;)
+print(remaining)
+
+message = f&quot;{activity}还剩 {remaining} 个名额。&quot;
+print(message)</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<p>当输出要按一句话组织时，可以先用格式化字符串生成文字，再交给 <code>print()</code>。引号前的 <code>f</code> 表示花括号里的表达式需要求值。还可以在花括号中指定显示格式。比如 <code>f&quot;{2.5:.2f}&quot;</code> 会显示成 <code>&quot;2.50&quot;</code>，<code>f&quot;{5:02d}&quot;</code> 会把整数 5 显示成 <code>&quot;05&quot;</code>。格式化得到的是一个字符串，计算仍然可以使用原来的数值对象。<a href="https://docs.python.org/3.12/library/functions.html#print">Python 内置函数</a></p>
+<h2 id="section-7">1.7 完成一条报名提示</h2>
+<p>现在把前面的知识用在同一项任务上。给活动名称、容量、已报名人数和每人票价绑定名字，分别计算剩余名额与已报名者的总费用，最后生成一句可以直接发布的提示。这里使用已核对的数据，约定人数在零到容量之间，票价以非负整数分给出。</p>
+
+<section class="playground" aria-label="Python 示例 9">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 9</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 9 代码" rows="13"
     spellcheck="false" autocapitalize="off" autocomplete="off">activity = &quot;博物馆参观&quot;
 capacity = 30
 registered = 28
@@ -107,51 +278,24 @@ print(message)</textarea>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
 
-<p>输出为「博物馆参观：剩余 2 个名额，门票合计 350.00 元。」字符串前的 <code>f</code> 让 Python 把花括号中的结果填入文字。<code>{cents:02d}</code> 把分显示成两位数字，例如 5 分显示为 05。</p>
-<p>票价尚未确认时，可以先约定「票价按人计费，以分为单位」，用暂定票价写好并检验计算。收到正式报价后，再核对计价方式和单位，填入实际票价并重新运行。</p>
-<h2 id="section-4">1.4 从表单文字得到人数和判断结果</h2>
-<p>表单送来的人数可能是字符串，例如 <code>&quot; 28 &quot;</code>。用 <code>strip()</code> 去掉首尾空白，再用 <code>int()</code> 转成整数，才能参与人数计算。若收到的是无法转换的文字，Python 会报告转换错误。第 7 章会学习怎样处理这种情况。</p>
-<p>有些信息要表达真假。用布尔值 <code>True</code> 表示预约成功，用 <code>False</code> 表示预约未获通过，用 <code>None</code> 表示结果尚未取得。可以用 <code>booking is None</code> 检查结果是否缺失。下面还用 <code>and</code> 连接两个要求，只有预约成功且人数低于容量时，才可以继续报名。</p>
-
-<section class="playground" aria-label="Python 示例 4">
-  <div class="editor-bar">
-    <span><i></i> Python 示例 4</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
-  </div>
-  <textarea aria-label="Python 示例 4 代码" rows="7"
-    spellcheck="false" autocapitalize="off" autocomplete="off">raw_count = &quot; 28 &quot;
-registered = int(raw_count.strip())
-capacity = 30
-booking = True
-
-print(&quot;人数在允许范围内&quot;, 0 &lt;= registered &lt;= capacity)
-print(&quot;可继续报名&quot;, booking is True and 0 &lt;= registered &lt; capacity)</textarea>
-  <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
-  </div>
-  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
-</section>
-
-<p>两行最初都显示 <code>True</code>。把 <code>raw_count</code> 改为 <code>&quot;30&quot;</code>，再比较两行结果。人数正好达到容量时，这个人数仍然有效，继续报名的条件已经不成立。</p>
-<h2 id="section-5">练习</h2>
-<p>修改 1.3 节的报名提示。将容量设为 32，已报名人数设为 31，每人票价设为 980 分。先预测提示，再运行核对。然后把报名人数改为 32，比较两次输出。</p>
-<details class='answer'><summary>参考解答</summary><p>31 人时应显示「博物馆参观：剩余 1 个名额，门票合计 303.80 元。」32 人时应显示「博物馆参观：剩余 0 个名额，门票合计 313.60 元。」</p></details>
-<h2 id="section-6">本章自测</h2>
+<p>28 人的费用是 35000 分。用 <code>// 100</code> 得到 350 元，用 <code>% 100</code> 得到剩余 0 分，再把分补成两位。最后输出「博物馆参观：剩余 2 个名额，门票合计 350.00 元。」</p>
+<p>如果门票尚未报价，可以先约定「按每人多少分计费」，用暂定价格验证计算和提示。正式报价到来后，再核对计价方式和单位，填入实际票价并重新运行。</p>
+<h2 id="section-8">练习</h2>
+<ul><li>修改 1.7 节的提示。容量为 32，已报名 31 人，每人票价为 980 分。先预测输出，再运行核对。然后把已报名人数改成 32，再比较结果。</li><li>写下 <code>registered = 28</code>、<code>old_count = registered</code> 和 <code>registered += 1</code> 三条语句。预测执行后两个名字各指向什么值，以及 <code>old_count is registered</code> 会得到什么。</li></ul>
+<details class='answer'><summary>参考解答</summary><p>31 人时应显示「博物馆参观：剩余 1 个名额，门票合计 303.80 元。」32 人时应显示「博物馆参观：剩余 0 个名额，门票合计 313.60 元。」</p><p>执行三条语句后，old_count 仍指向 28，registered 指向 29。两者指向不同的对象，所以 is 判断得到 False。</p></details>
+<h2 id="section-9">本章自测</h2>
 
 <form class="quiz" data-correct="2">
- <fieldset><legend>哪一项适合判断预约结果尚未获得？</legend><label><input type="radio" name="choice" value="1" required> booking == False</label><label><input type="radio" name="choice" value="2" required> booking is None</label><label><input type="radio" name="choice" value="3" required> booking == &quot;None&quot;</label></fieldset>
+ <fieldset><legend>设 registered 为整数 28，estimate 为浮点数 28.0。哪一项正确？</legend><label><input type="radio" name="choice" value="1" required> 两者的值相等，并且指向同一个对象。</label><label><input type="radio" name="choice" value="2" required> 两者的值相等，分别指向不同的对象。</label><label><input type="radio" name="choice" value="3" required> 两者的值不相等。</label></fieldset>
  <button class="primary small" type="submit" disabled>检查答案</button>
  <p class="feedback" aria-live="polite"></p>
- <details><summary>查看解析</summary><p>None 表示缺少结果，使用 is None 检查这个单例。</p></details>
+ <details><summary>查看解析</summary><p>整数 28 和浮点数 28.0 可以在数值上相等，type 显示它们的类型不同，is 判断也会得到 False。</p></details>
 </form>
 </article>
   <button type="button" class="complete" data-mark="01" aria-pressed="false" hidden>标记本章完成</button>
   <nav class="adjacent" aria-label="前后章节"><a href="chapter-00.html"><small>← 上一节</small>导论 从解决问题到程序设计</a><a href="chapter-02.html"><small>下一节 →</small>容器对象与数据组织</a></nav>
  </main>
- <aside class="outline"><p>本节内容</p><nav aria-label="本节内容"><ol><li><a href="#section-1">1.1 把活动信息写成数据</a></li><li><a href="#section-2">1.2 给对象绑定名字</a></li><li><a href="#section-3">1.3 计算费用并生成报名提示</a></li><li><a href="#section-4">1.4 从表单文字得到人数和判断结果</a></li><li><a href="#section-5">练习</a></li><li><a href="#section-6">本章自测</a></li></ol></nav></aside>
+ <aside class="outline"><p>本节内容</p><nav aria-label="本节内容"><ol><li><a href="#section-1">1.1 报名提示需要哪些信息</a></li><li><a href="#section-2">1.2 基础对象与类型</a></li><li><a href="#section-3">1.3 对象标识和值</a></li><li><a href="#section-4">1.4 名字绑定与重新绑定</a></li><li><a href="#section-5">1.5 对象的运算</a></li><li><a href="#section-6">1.6 将结果输出给读者</a></li><li><a href="#section-7">1.7 完成一条报名提示</a></li><li><a href="#section-8">练习</a></li><li><a href="#section-9">本章自测</a></li></ol></nav></aside>
 </div>
 <footer class="site-footer"><a href="index.html">Python 编程教材</a><a href="chapter-A.html">运行环境</a><a href="chapter-C.html">语言速查</a></footer>
 </body></html>

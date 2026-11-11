@@ -95,6 +95,29 @@ def quiz_html(lines):
 """
 
 
+def table_html(lines):
+    cells = [
+        [cell.strip().replace(r"\|", "|") for cell in re.split(r"(?<!\\)\|", line[1:-1])]
+        for line in lines
+    ]
+    if len(cells) < 3 or any(len(row) != len(cells[0]) for row in cells):
+        raise ValueError("A table needs a header, separator, and equally sized rows")
+    headers, separator, *rows = cells
+    if not all(re.fullmatch(r"-{3,}", cell) for cell in separator):
+        raise ValueError("Invalid table separator")
+
+    head = "".join(f'<th scope="col">{inline(cell)}</th>' for cell in headers)
+    body = "".join(
+        "<tr>" + "".join(f"<td>{inline(cell)}</td>" for cell in row) + "</tr>"
+        for row in rows
+    )
+    return (
+        '<div class="lesson-table"><table>'
+        f"<thead><tr>{head}</tr></thead><tbody>{body}</tbody>"
+        "</table></div>"
+    )
+
+
 SIMULATOR = """
 <section class="simulator" aria-labelledby="sim-title" hidden>
  <h3 id="sim-title">报名规则模拟器</h3>
@@ -139,6 +162,15 @@ def render_body(lines):
             section(line[3:])
         elif line.startswith("### "):
             parts.append(f"<h3>{inline(line[4:])}</h3>")
+        elif line.startswith("|") and line.endswith("|"):
+            rows = [line]
+            while cursor < len(lines):
+                row = lines[cursor].strip()
+                if not (row.startswith("|") and row.endswith("|")):
+                    break
+                rows.append(row)
+                cursor += 1
+            parts.append(table_html(rows))
         elif line in {"```python", "```text"}:
             end = lines.index("```", cursor)
             code = "\n".join(lines[cursor:end])

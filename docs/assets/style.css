@@ -115,6 +115,10 @@ article h2 { line-height: 1.45; font-size: clamp(1.35rem, 2.7vw, 1.7rem); margin
 article p { margin: 0 0 14px; }
 article ul { padding-left: 1.3em; }
 article code { background: var(--purple-soft); color: #48376e; border-radius: 4px; padding: 1px 4px; font: .92em var(--mono); }
+.lesson-table { margin: 16px 0 24px; overflow-x: auto; }
+.lesson-table table { width: 100%; border-collapse: collapse; background: var(--white); font-size: .93rem; line-height: 1.6; }
+.lesson-table th, .lesson-table td { border: 1px solid var(--rule); padding: 8px 10px; text-align: left; vertical-align: top; }
+.lesson-table th { background: var(--purple-soft); }
 .listing { padding: 12px 14px; border: 1px solid var(--rule); border-radius: 8px; background: var(--white); overflow: auto; font: .9rem/1.65 var(--mono); }
 .playground { color: #f0ecfa; background: var(--dark); border: 1px solid #33415c; border-radius: 11px; overflow: hidden; margin: 19px 0 25px; }
 .editor-bar, .runner-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 7px; padding: 9px 12px; background: #28324a; font-size: .82rem; }
