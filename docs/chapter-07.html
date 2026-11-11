@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<meta name="description" content="以对象协作和假设三部曲为主线的 Python 编程教材。">
+<title>对象协作的可靠性 · Python 编程</title>
+<link rel="stylesheet" href="assets/style.css">
+<script src="assets/site.js" defer></script>
+</head>
+<body class="">
+<a class="skip" href="#main">跳到正文</a>
+<header class="topbar"><div class="top-inner">
+<a class="brand" href="index.html"><span aria-hidden="true">Py</span> Python 编程</a>
+<nav aria-label="主导航"><a href="index.html#catalog">章节目录</a><a href="chapter-09.html">综合项目</a></nav>
+</div></header>
+
+<div class="lesson-layout">
+ <aside class="side"><details class="mobile-nav" open><summary>章节目录</summary>
+  <nav aria-label="章节目录"><a href="chapter-00.html"><span class="nav-num">序</span><span>导论 从解决问题到程序设计</span><span class="nav-done" data-done="00"></span></a><a href="chapter-01.html"><span class="nav-num">01</span><span>基础数据对象与信息处理</span><span class="nav-done" data-done="01"></span></a><a href="chapter-02.html"><span class="nav-num">02</span><span>容器对象与数据组织</span><span class="nav-done" data-done="02"></span></a><a href="chapter-03.html"><span class="nav-num">03</span><span>对象协作的流程控制</span><span class="nav-done" data-done="03"></span></a><a href="chapter-04.html"><span class="nav-num">04</span><span>第三视角 函数与协作封装</span><span class="nav-done" data-done="04"></span></a><a href="chapter-05.html"><span class="nav-num">05</span><span>第一视角 自定义对象与类</span><span class="nav-done" data-done="05"></span></a><a href="chapter-06.html"><span class="nav-num">06</span><span>多对象协作与程序组织</span><span class="nav-done" data-done="06"></span></a><a href="chapter-07.html" aria-current="page"><span class="nav-num">07</span><span>对象协作的可靠性</span><span class="nav-done" data-done="07"></span></a><a href="chapter-08.html"><span class="nav-num">08</span><span>对象与外部环境的协作</span><span class="nav-done" data-done="08"></span></a><a href="chapter-09.html"><span class="nav-num">09</span><span>综合项目 递归假设驱动的程序构造</span><span class="nav-done" data-done="09"></span></a><a href="chapter-10.html"><span class="nav-num">10</span><span>对象协作系统的复用与演化</span><span class="nav-done" data-done="10"></span></a><a href="chapter-A.html"><span class="nav-num">A</span><span>Python 运行环境与学习工具</span><span class="nav-done" data-done="A"></span></a><a href="chapter-B.html"><span class="nav-num">B</span><span>项目工具链与开发实践</span><span class="nav-done" data-done="B"></span></a><a href="chapter-C.html"><span class="nav-num">C</span><span>语言速查与标准库索引</span><span class="nav-done" data-done="C"></span></a></nav>
+ </details></aside>
+ <main id="main" class="lesson">
+  <header class="lesson-head"><div class="crumb"><a href="index.html#catalog">教材目录</a> <span>›</span> 第 7 章</div>
+  <h1>对象协作的可靠性</h1><p>在输入和协作边界处理预期失败，用测试、调试和日志定位规则偏差。</p></header>
+  <article><h2 id="section-1">7.1 把预期失败留在合适的边界</h2>
+<p>满员是一次正常报名请求可能得到的业务回执。无法把容量输入转换成整数，是调用者可以修正的输入错误。用返回值表达前一类结果，用异常表示函数无法按契约产生结果。捕获异常时，尽量把 try 的范围缩到预期失败的语句，避免把同类的编程错误也一起吞掉。</p>
+
+<section class="playground" aria-label="Python 示例 1">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 1</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 1 代码" rows="14"
+    spellcheck="false" autocapitalize="off" autocomplete="off">def parse_capacity(raw: str) -&gt; int:
+    try:
+        capacity = int(raw)
+    except ValueError as error:
+        raise ValueError(&quot;容量应填写整数&quot;) from error
+    if capacity &lt; 0:
+        raise ValueError(&quot;容量不能为负数&quot;)
+    return capacity
+
+for sample in [&quot; 2 &quot;, &quot;-1&quot;, &quot;两个&quot;]:
+    try:
+        value = parse_capacity(sample)
+    except ValueError as error:
+        print(f&quot;填写失败：{error}&quot;)
+    else:
+        print(f&quot;有效容量：{value}&quot;)</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<p>异常会沿调用链传播，直到找到能处理它的 except。raise ... from ... 保留错误原因，便于调试。else 只在 try 正常完成时运行；finally 负责无论成功或失败都要执行的清理。对于文件等资源，第 8 章会用 with 表达清理约定。</p>
+<h2 id="section-2">7.2 用边界用例检验规则</h2>
+<p>名额只剩一个时，通过后应恰好满员。满员之后的重复请求仍应优先返回重复。空学号和容量为 0 也要单独检查。除了验证返回值，还应验证请求失败后名单仍符合契约。测试用独立名单，确保结果不依赖执行顺序。</p>
+
+<section class="playground" aria-label="Python 示例 2">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 2</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 2 代码" rows="14"
+    spellcheck="false" autocapitalize="off" autocomplete="off">import unittest
+
+def register(student_id, roster, capacity):
+    if student_id in roster:
+        return &quot;重复&quot;
+    if len(roster) &gt;= capacity:
+        return &quot;满员&quot;
+    roster.add(student_id)
+    return &quot;通过&quot;
+
+class RegistrationTests(unittest.TestCase):
+    def test_duplicate_at_capacity(self):
+        roster = set()
+        self.assertEqual(register(&quot;S01&quot;, roster, 1), &quot;通过&quot;)
+        self.assertEqual(register(&quot;S01&quot;, roster, 1), &quot;重复&quot;)
+        self.assertEqual(register(&quot;S02&quot;, roster, 1), &quot;满员&quot;)
+        self.assertEqual(roster, {&quot;S01&quot;})
+
+    def test_zero_capacity(self):
+        roster = set()
+        self.assertEqual(register(&quot;S01&quot;, roster, 0), &quot;满员&quot;)
+        self.assertEqual(roster, set())
+
+suite = unittest.defaultTestLoader.loadTestsFromTestCase(RegistrationTests)
+unittest.TextTestRunner().run(suite)</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<p>assert 可表达开发期间应当成立的内部断言，解释器开启优化时可能跳过它。表单输入与文件内容的检查应使用显式条件和异常。unittest 的断言方法会报告期望值与实际值。上例聚焦容量与重复的优先级，外部调用已清理空白学号。</p>
+<h2 id="section-3">7.3 从失败定位原因</h2>
+<p>先重现错误并记录最小输入。读取回溯末尾的异常类型和消息，再向上定位自己写的代码。使用断点停在发生变化的地方，检查名单长度、当前学号以及即将执行的分支。日志可记录时间、操作和结果，用 logging.getLogger(__name__) 获取模块日志器，把日志格式和级别交给入口设置。活动编号和回执足以定位许多问题，无需记录参加者的姓名或整份名单。</p>
+<h2 id="section-4">练习</h2>
+<p>将例中 register 的前两个判断对调。运行测试并根据失败消息找出哪项需求发生了变化。</p>
+<details class='answer'><summary>参考解答</summary><p>test_duplicate_at_capacity 中第二次调用的实际回执变为满员，期望回执仍为重复。将重复判断移回容量判断之前，再次运行两个测试。</p></details>
+<h2 id="section-5">本章自测</h2>
+
+<form class="quiz" data-correct="1">
+ <fieldset><legend>为什么用 if 检查外部输入，并在非法时抛出 ValueError？</legend><label><input type="radio" name="choice" value="1" required> 解释器优化时也会执行显式检查</label><label><input type="radio" name="choice" value="2" required> assert 可以替代所有运行时检查</label><label><input type="radio" name="choice" value="3" required> 捕获全部异常可以自动修复输入</label></fieldset>
+ <button class="primary small" type="submit" disabled>检查答案</button>
+ <p class="feedback" aria-live="polite"></p>
+ <details><summary>查看解析</summary><p>显式条件确保输入校验属于程序行为。assert 适合表达调试期间的内部假定。</p></details>
+</form>
+</article>
+  <button type="button" class="complete" data-mark="07" aria-pressed="false" hidden>标记本章完成</button>
+  <nav class="adjacent" aria-label="前后章节"><a href="chapter-06.html"><small>← 上一节</small>多对象协作与程序组织</a><a href="chapter-08.html"><small>下一节 →</small>对象与外部环境的协作</a></nav>
+ </main>
+ <aside class="outline"><p>本节内容</p><nav aria-label="本节内容"><ol><li><a href="#section-1">7.1 把预期失败留在合适的边界</a></li><li><a href="#section-2">7.2 用边界用例检验规则</a></li><li><a href="#section-3">7.3 从失败定位原因</a></li><li><a href="#section-4">练习</a></li><li><a href="#section-5">本章自测</a></li></ol></nav></aside>
+</div>
+<footer class="site-footer"><a href="index.html">Python 编程教材</a><a href="chapter-A.html">运行环境</a><a href="chapter-C.html">语言速查</a></footer>
+</body></html>

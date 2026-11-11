@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<meta name="description" content="以对象协作和假设三部曲为主线的 Python 编程教材。">
+<title>附录 C 语言速查与标准库索引 · Python 编程</title>
+<link rel="stylesheet" href="assets/style.css">
+<script src="assets/site.js" defer></script>
+</head>
+<body class="">
+<a class="skip" href="#main">跳到正文</a>
+<header class="topbar"><div class="top-inner">
+<a class="brand" href="index.html"><span aria-hidden="true">Py</span> Python 编程</a>
+<nav aria-label="主导航"><a href="index.html#catalog">章节目录</a><a href="chapter-09.html">综合项目</a></nav>
+</div></header>
+
+<div class="lesson-layout">
+ <aside class="side"><details class="mobile-nav" open><summary>章节目录</summary>
+  <nav aria-label="章节目录"><a href="chapter-00.html"><span class="nav-num">序</span><span>导论 从解决问题到程序设计</span><span class="nav-done" data-done="00"></span></a><a href="chapter-01.html"><span class="nav-num">01</span><span>基础数据对象与信息处理</span><span class="nav-done" data-done="01"></span></a><a href="chapter-02.html"><span class="nav-num">02</span><span>容器对象与数据组织</span><span class="nav-done" data-done="02"></span></a><a href="chapter-03.html"><span class="nav-num">03</span><span>对象协作的流程控制</span><span class="nav-done" data-done="03"></span></a><a href="chapter-04.html"><span class="nav-num">04</span><span>第三视角 函数与协作封装</span><span class="nav-done" data-done="04"></span></a><a href="chapter-05.html"><span class="nav-num">05</span><span>第一视角 自定义对象与类</span><span class="nav-done" data-done="05"></span></a><a href="chapter-06.html"><span class="nav-num">06</span><span>多对象协作与程序组织</span><span class="nav-done" data-done="06"></span></a><a href="chapter-07.html"><span class="nav-num">07</span><span>对象协作的可靠性</span><span class="nav-done" data-done="07"></span></a><a href="chapter-08.html"><span class="nav-num">08</span><span>对象与外部环境的协作</span><span class="nav-done" data-done="08"></span></a><a href="chapter-09.html"><span class="nav-num">09</span><span>综合项目 递归假设驱动的程序构造</span><span class="nav-done" data-done="09"></span></a><a href="chapter-10.html"><span class="nav-num">10</span><span>对象协作系统的复用与演化</span><span class="nav-done" data-done="10"></span></a><a href="chapter-A.html"><span class="nav-num">A</span><span>Python 运行环境与学习工具</span><span class="nav-done" data-done="A"></span></a><a href="chapter-B.html"><span class="nav-num">B</span><span>项目工具链与开发实践</span><span class="nav-done" data-done="B"></span></a><a href="chapter-C.html" aria-current="page"><span class="nav-num">C</span><span>语言速查与标准库索引</span><span class="nav-done" data-done="C"></span></a></nav>
+ </details></aside>
+ <main id="main" class="lesson">
+  <header class="lesson-head"><div class="crumb"><a href="index.html#catalog">教材目录</a> <span>›</span> 附录 C</div>
+  <h1>附录 C 语言速查与标准库索引</h1><p>根据手边任务定位章节、语法和标准库入口。</p></header>
+  <article><h2 id="section-1">C.1 语言速查</h2>
+<ul><li>计算和格式化：整数运算、divmod、f-string。参见第 1 章。</li><li>按键查找：mapping[key]、mapping.get(key)、key in mapping。参见第 2 章。</li><li>遍历、判断与匹配：for item in items、if condition、match value。参见第 3 章。</li><li>复用与按需产生结果：def、return、yield。参见第 4 章。</li><li>定义活动职责：class、self、__init__、__len__。参见第 5 章。</li><li>组织模块：import、from ... import ...、python -m package。参见第 6 章。</li><li>应对失败：try、except、raise、finally。参见第 7 章。</li><li>管理资源：with resource as value。参见第 8 章。</li><li>替换协作能力：Protocol、装饰器、async def、await。参见第 10 章。</li></ul>
+<h2 id="section-2">C.2 常见异常</h2>
+<p>ValueError 常见于值不满足约定。TypeError 常见于类型或调用方式不合适。KeyError 表示映射中缺少指定键。IndexError 表示序列下标越界。FileNotFoundError 表示路径指向的文件或目录缺失。阅读回溯、定位最小复现，再决定修正输入还是调整程序。</p>
+<h2 id="section-3">C.3 标准库索引</h2>
+<ul><li><a href="https://docs.python.org/zh-cn/3.12/library/pathlib.html">pathlib</a> 以对象处理路径。</li><li><a href="https://docs.python.org/zh-cn/3.12/library/json.html">json</a> 编码、解码 JSON 数据。</li><li><a href="https://docs.python.org/zh-cn/3.12/library/csv.html">csv</a> 读写分隔字段。</li><li><a href="https://docs.python.org/zh-cn/3.12/library/unittest.html">unittest</a> 组织和运行测试。</li><li><a href="https://docs.python.org/zh-cn/3.12/library/logging.html">logging</a> 记录运行事件。</li><li><a href="https://docs.python.org/zh-cn/3.12/library/typing.html">typing</a> 描述类型和协议。</li><li><a href="https://docs.python.org/zh-cn/3.12/library/asyncio.html">asyncio</a> 运行协程及安排异步任务。</li><li><a href="https://docs.python.org/zh-cn/3.12/tutorial/">Python 教程</a> 提供语言实例与进一步阅读。</li></ul></article>
+  
+  <nav class="adjacent" aria-label="前后章节"><a href="chapter-B.html"><small>← 上一节</small>附录 B 项目工具链与开发实践</a><span></span></nav>
+ </main>
+ <aside class="outline"><p>本节内容</p><nav aria-label="本节内容"><ol><li><a href="#section-1">C.1 语言速查</a></li><li><a href="#section-2">C.2 常见异常</a></li><li><a href="#section-3">C.3 标准库索引</a></li></ol></nav></aside>
+</div>
+<footer class="site-footer"><a href="index.html">Python 编程教材</a><a href="chapter-A.html">运行环境</a><a href="chapter-C.html">语言速查</a></footer>
+</body></html>

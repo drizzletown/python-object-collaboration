@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<meta name="description" content="以对象协作和假设三部曲为主线的 Python 编程教材。">
+<title>多对象协作与程序组织 · Python 编程</title>
+<link rel="stylesheet" href="assets/style.css">
+<script src="assets/site.js" defer></script>
+</head>
+<body class="">
+<a class="skip" href="#main">跳到正文</a>
+<header class="topbar"><div class="top-inner">
+<a class="brand" href="index.html"><span aria-hidden="true">Py</span> Python 编程</a>
+<nav aria-label="主导航"><a href="index.html#catalog">章节目录</a><a href="chapter-09.html">综合项目</a></nav>
+</div></header>
+
+<div class="lesson-layout">
+ <aside class="side"><details class="mobile-nav" open><summary>章节目录</summary>
+  <nav aria-label="章节目录"><a href="chapter-00.html"><span class="nav-num">序</span><span>导论 从解决问题到程序设计</span><span class="nav-done" data-done="00"></span></a><a href="chapter-01.html"><span class="nav-num">01</span><span>基础数据对象与信息处理</span><span class="nav-done" data-done="01"></span></a><a href="chapter-02.html"><span class="nav-num">02</span><span>容器对象与数据组织</span><span class="nav-done" data-done="02"></span></a><a href="chapter-03.html"><span class="nav-num">03</span><span>对象协作的流程控制</span><span class="nav-done" data-done="03"></span></a><a href="chapter-04.html"><span class="nav-num">04</span><span>第三视角 函数与协作封装</span><span class="nav-done" data-done="04"></span></a><a href="chapter-05.html"><span class="nav-num">05</span><span>第一视角 自定义对象与类</span><span class="nav-done" data-done="05"></span></a><a href="chapter-06.html" aria-current="page"><span class="nav-num">06</span><span>多对象协作与程序组织</span><span class="nav-done" data-done="06"></span></a><a href="chapter-07.html"><span class="nav-num">07</span><span>对象协作的可靠性</span><span class="nav-done" data-done="07"></span></a><a href="chapter-08.html"><span class="nav-num">08</span><span>对象与外部环境的协作</span><span class="nav-done" data-done="08"></span></a><a href="chapter-09.html"><span class="nav-num">09</span><span>综合项目 递归假设驱动的程序构造</span><span class="nav-done" data-done="09"></span></a><a href="chapter-10.html"><span class="nav-num">10</span><span>对象协作系统的复用与演化</span><span class="nav-done" data-done="10"></span></a><a href="chapter-A.html"><span class="nav-num">A</span><span>Python 运行环境与学习工具</span><span class="nav-done" data-done="A"></span></a><a href="chapter-B.html"><span class="nav-num">B</span><span>项目工具链与开发实践</span><span class="nav-done" data-done="B"></span></a><a href="chapter-C.html"><span class="nav-num">C</span><span>语言速查与标准库索引</span><span class="nav-done" data-done="C"></span></a></nav>
+ </details></aside>
+ <main id="main" class="lesson">
+  <header class="lesson-head"><div class="crumb"><a href="index.html#catalog">教材目录</a> <span>›</span> 第 6 章</div>
+  <h1>多对象协作与程序组织</h1><p>将活动规则、活动查询和报名请求分给不同角色，用小型接口把它们接起来。</p></header>
+  <article><h2 id="section-1">6.1 按变化原因分配职责</h2>
+<p>现在系统有多个活动，收到的请求同时含活动编号和学号。活动对象检查它自己的规则。目录按活动编号查找活动。报名服务组织“查询活动、尝试登记、返回回执”。显示端负责把回执转换为用户看得懂的文字。新增一种显示方式时，只需依赖回执的契约。</p>
+<p>一个对象持有另一个对象并调用它的能力，是对象组合。EnrollmentService 接收外部构造的字典，便于用只有一个活动的字典测试。调用方负责建立活动编号的唯一性。这里用 list 演示名单，第 5 章中更完整的 Activity 可以承担同样的角色。</p>
+
+<section class="playground" aria-label="Python 示例 1">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 1</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 1 代码" rows="14"
+    spellcheck="false" autocapitalize="off" autocomplete="off">from dataclasses import dataclass
+
+@dataclass(frozen=True)
+class Request:
+    activity_id: str
+    student_id: str
+
+class Activity:
+    def __init__(self, capacity: int):
+        self.capacity = capacity
+        self._students: list[str] = []
+
+    def register(self, student_id: str) -&gt; str:
+        student_id = student_id.strip()
+        if not student_id:
+            return &quot;空学号&quot;
+        if student_id in self._students:
+            return &quot;重复&quot;
+        if len(self._students) &gt;= self.capacity:
+            return &quot;满员&quot;
+        self._students.append(student_id)
+        return &quot;通过&quot;
+
+class EnrollmentService:
+    def __init__(self, activities: dict[str, Activity]):
+        self._activities = activities
+
+    def submit(self, request: Request) -&gt; str:
+        activity = self._activities.get(request.activity_id)
+        if activity is None:
+            return &quot;活动不存在&quot;
+        return activity.register(request.student_id)
+
+service = EnrollmentService({&quot;museum&quot;: Activity(1)})
+print(service.submit(Request(&quot;museum&quot;, &quot;S01&quot;)))
+print(service.submit(Request(&quot;lab&quot;, &quot;S02&quot;)))</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<p>dataclass 根据字段定义生成初始化等方法。frozen=True 限制常规字段赋值。例中字段是字符串，适合构成请求值。类型标注表达预期接口，可由编辑器和静态检查器检查；运行时仍需在数据进入系统时验证取值。str 描述数据类型，允许哪些回执还需要写在文档或更精确的类型中。</p>
+<h2 id="section-2">6.2 划定模块边界</h2>
+<p>一个 .py 文件通常就是一个模块。一组按主题组织的模块可放进包中。初学时可用带 __init__.py 的普通包。将本例拆为 campus/activity.py（Activity）、campus/service.py（Request 和 EnrollmentService）及 campus/__main__.py（构造活动并显示结果）。在 service.py 使用 from .activity import Activity。在项目父目录运行 python -m campus，解释器执行包中的 __main__.py。</p>
+<p>拆分后的目录示例见下方。先把示例中的类按职责分别移入两个模块，再让入口构造对象并调用 submit。把同一个 Request 送给正式目录和只含一项活动的测试目录，可以在真实目录尚未准备好时兑现查询接口。</p>
+<pre class="listing">campus/
+  __init__.py
+  __main__.py
+  activity.py
+  service.py</pre>
+<p>导入模块时会执行顶层语句。把演示代码放在 main() 中，再用 if __name__ == &quot;__main__&quot;: 调用它，能够让别人导入类或函数进行测试。保持依赖方向清楚：服务可以导入领域对象，领域对象无需导入服务。若两个模块相互导入，先检查共享数据类型或职责是否放错了位置。</p>
+<h2 id="section-3">练习</h2>
+<p>给服务添加实验室活动并设容量为 1。提交同一学号到两个活动，随后再次向实验室提交这个学号。预测三次回执。</p>
+<details class='answer'><summary>参考解答</summary><p>创建两个不同的 Activity 实例。三次回执依次为通过、通过、重复。学号的唯一性约束作用于单个活动，两个活动分别管理自己的名单。</p></details>
+<h2 id="section-4">本章自测</h2>
+
+<form class="quiz" data-correct="3">
+ <fieldset><legend>接到活动编号后，由哪个角色查找活动最合适？</legend><label><input type="radio" name="choice" value="1" required> 负责显示结果的页面</label><label><input type="radio" name="choice" value="2" required> 保存单个活动名额的 Activity</label><label><input type="radio" name="choice" value="3" required> 组织报名流程的 EnrollmentService</label></fieldset>
+ <button class="primary small" type="submit" disabled>检查答案</button>
+ <p class="feedback" aria-live="polite"></p>
+ <details><summary>查看解析</summary><p>查询目录属于提交请求的协作步骤。活动实例专注维护自身状态。</p></details>
+</form>
+</article>
+  <button type="button" class="complete" data-mark="06" aria-pressed="false" hidden>标记本章完成</button>
+  <nav class="adjacent" aria-label="前后章节"><a href="chapter-05.html"><small>← 上一节</small>第一视角 自定义对象与类</a><a href="chapter-07.html"><small>下一节 →</small>对象协作的可靠性</a></nav>
+ </main>
+ <aside class="outline"><p>本节内容</p><nav aria-label="本节内容"><ol><li><a href="#section-1">6.1 按变化原因分配职责</a></li><li><a href="#section-2">6.2 划定模块边界</a></li><li><a href="#section-3">练习</a></li><li><a href="#section-4">本章自测</a></li></ol></nav></aside>
+</div>
+<footer class="site-footer"><a href="index.html">Python 编程教材</a><a href="chapter-A.html">运行环境</a><a href="chapter-C.html">语言速查</a></footer>
+</body></html>

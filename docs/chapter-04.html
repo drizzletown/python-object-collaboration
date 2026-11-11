@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<meta name="description" content="以对象协作和假设三部曲为主线的 Python 编程教材。">
+<title>第三视角 函数与协作封装 · Python 编程</title>
+<link rel="stylesheet" href="assets/style.css">
+<script src="assets/site.js" defer></script>
+</head>
+<body class="">
+<a class="skip" href="#main">跳到正文</a>
+<header class="topbar"><div class="top-inner">
+<a class="brand" href="index.html"><span aria-hidden="true">Py</span> Python 编程</a>
+<nav aria-label="主导航"><a href="index.html#catalog">章节目录</a><a href="chapter-09.html">综合项目</a></nav>
+</div></header>
+
+<div class="lesson-layout">
+ <aside class="side"><details class="mobile-nav" open><summary>章节目录</summary>
+  <nav aria-label="章节目录"><a href="chapter-00.html"><span class="nav-num">序</span><span>导论 从解决问题到程序设计</span><span class="nav-done" data-done="00"></span></a><a href="chapter-01.html"><span class="nav-num">01</span><span>基础数据对象与信息处理</span><span class="nav-done" data-done="01"></span></a><a href="chapter-02.html"><span class="nav-num">02</span><span>容器对象与数据组织</span><span class="nav-done" data-done="02"></span></a><a href="chapter-03.html"><span class="nav-num">03</span><span>对象协作的流程控制</span><span class="nav-done" data-done="03"></span></a><a href="chapter-04.html" aria-current="page"><span class="nav-num">04</span><span>第三视角 函数与协作封装</span><span class="nav-done" data-done="04"></span></a><a href="chapter-05.html"><span class="nav-num">05</span><span>第一视角 自定义对象与类</span><span class="nav-done" data-done="05"></span></a><a href="chapter-06.html"><span class="nav-num">06</span><span>多对象协作与程序组织</span><span class="nav-done" data-done="06"></span></a><a href="chapter-07.html"><span class="nav-num">07</span><span>对象协作的可靠性</span><span class="nav-done" data-done="07"></span></a><a href="chapter-08.html"><span class="nav-num">08</span><span>对象与外部环境的协作</span><span class="nav-done" data-done="08"></span></a><a href="chapter-09.html"><span class="nav-num">09</span><span>综合项目 递归假设驱动的程序构造</span><span class="nav-done" data-done="09"></span></a><a href="chapter-10.html"><span class="nav-num">10</span><span>对象协作系统的复用与演化</span><span class="nav-done" data-done="10"></span></a><a href="chapter-A.html"><span class="nav-num">A</span><span>Python 运行环境与学习工具</span><span class="nav-done" data-done="A"></span></a><a href="chapter-B.html"><span class="nav-num">B</span><span>项目工具链与开发实践</span><span class="nav-done" data-done="B"></span></a><a href="chapter-C.html"><span class="nav-num">C</span><span>语言速查与标准库索引</span><span class="nav-done" data-done="C"></span></a></nav>
+ </details></aside>
+ <main id="main" class="lesson">
+  <header class="lesson-head"><div class="crumb"><a href="index.html#catalog">教材目录</a> <span>›</span> 第 4 章</div>
+  <h1>第三视角 函数与协作封装</h1><p>用函数接口描述一项能力，分别验证单次登记、批量处理和回执生成。</p></header>
+  <article><h2 id="section-1">4.1 为登记函数写契约</h2>
+<p>第 3 章的一段循环负责清理输入、判断资格、登记和输出。如果以后还要在另一份名单上执行同样的登记，就需要把核心处理定义为函数。先约定 register 的输入为学号文本、现有名单和非负容量。返回回执字符串。仅在通过时修改传入名单。调用方决定怎样显示回执。这份约定说明函数接收什么、返回什么、改变什么，是可以测试的契约。</p>
+<p>def 定义函数，形参在调用时绑定到实参对象。传入可变字典时，修改字典的内容可以被调用方观察到。把形参重新赋值为另一个字典只会改变函数内部的绑定。return 结束调用并交出结果，省略 return 时结果为 None。</p>
+
+<section class="playground" aria-label="Python 示例 1">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 1</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 1 代码" rows="14"
+    spellcheck="false" autocapitalize="off" autocomplete="off">def register(raw_id, roster, *, capacity):
+    student_id = raw_id.strip()
+    if not student_id:
+        return &quot;空学号&quot;
+    if student_id in roster:
+        return &quot;重复&quot;
+    if len(roster) &gt;= capacity:
+        return &quot;满员&quot;
+    roster[student_id] = &quot;已报名&quot;
+    return &quot;通过&quot;
+
+def process(requests, roster, *, capacity=2):
+    for raw_id in requests:
+        status = register(raw_id, roster, capacity=capacity)
+        print(raw_id.strip() or &quot;（空白）&quot;, status)
+
+museum = {}
+process([&quot;S01&quot;, &quot;S02&quot;, &quot;S01&quot;, &quot;S03&quot;], museum)
+print(list(museum))</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<p>这里先把 register 当作具备约定行为的能力，写出 process，再独立检验 register 的四种结果。这个做法把假设落实到函数边界。参数列表中的 * 使 capacity 只能通过关键字传递，调用时单位和含义更容易辨认。默认值在定义函数时求值，应避免用空列表或空字典作为每次调用需要重新创建的默认值。需要时使用 None，在函数内部创建容器。</p>
+<h2 id="section-2">4.2 作用域与函数对象</h2>
+<p>函数内部定义的名字通常只在该次调用的局部作用域有效。内部函数可以引用外层函数的局部名字，并在外层函数返回后继续使用这个绑定，这就是闭包。下面让不同的活动各自得到一个格式化函数。format_all 只需要调用传进来的能力，活动前缀由创建它的地方决定。</p>
+
+<section class="playground" aria-label="Python 示例 2">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 2</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 2 代码" rows="10"
+    spellcheck="false" autocapitalize="off" autocomplete="off">def make_formatter(event_name):
+    def format_notice(student_id):
+        return f&quot;{event_name}：{student_id} 已登记&quot;
+    return format_notice
+
+def format_all(ids, formatter):
+    return [formatter(student_id) for student_id in ids]
+
+museum_notice = make_formatter(&quot;博物馆&quot;)
+print(format_all([&quot;S01&quot;, &quot;S02&quot;], museum_notice))</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<p>函数可以像其他对象一样被赋值、传入和返回。注意区分 format_notice（传递函数）和 format_notice(&quot;S01&quot;)（调用并取得字符串）。函数读取自由变量时，使用的是调用时该名字关联的对象。此处每次 make_formatter 调用都有自己的 event_name 绑定。</p>
+<h2 id="section-3">4.3 按需产生结果</h2>
+<p>批量读取很多记录时，可以边处理边产生结果。含 yield 的函数在被调用时返回生成器。每次迭代推进到下一个 yield，暂停时保留局部状态。迭代耗尽后，要重读需创建新的生成器。</p>
+
+<section class="playground" aria-label="Python 示例 3">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 3</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 3 代码" rows="10"
+    spellcheck="false" autocapitalize="off" autocomplete="off">def cleaned_ids(raw_ids):
+    for raw_id in raw_ids:
+        student_id = raw_id.strip()
+        if student_id:
+            yield student_id
+
+ids = cleaned_ids([&quot; S01 &quot;, &quot;&quot;, &quot;S02&quot;])
+print(next(ids))
+print(list(ids))
+print(list(ids))</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<h2 id="section-4">练习</h2>
+<p>把第一段的打印移到调用处，让 process 返回 (学号, 回执) 的列表。测试空列表以及重复学号的输入。</p>
+<details class='answer'><summary>参考解答</summary><p>在 process 中新建 results，每轮调用 register 后 append((raw_id.strip(), status))，循环结束 return results。空输入返回空列表。传入 [&quot;S01&quot;, &quot;S01&quot;] 得到 [(&quot;S01&quot;, &quot;通过&quot;), (&quot;S01&quot;, &quot;重复&quot;)]，名单只含 S01。</p></details>
+<h2 id="section-5">本章自测</h2>
+
+<form class="quiz" data-correct="1">
+ <fieldset><legend>调用方把 roster 字典传给 register，函数里执行 roster[&quot;S01&quot;] = &quot;已报名&quot;，调用方能看到什么？</legend><label><input type="radio" name="choice" value="1" required> 原名单中新增 S01</label><label><input type="radio" name="choice" value="2" required> 只在函数内部新增 S01</label><label><input type="radio" name="choice" value="3" required> 名单会在函数返回时恢复</label></fieldset>
+ <button class="primary small" type="submit" disabled>检查答案</button>
+ <p class="feedback" aria-live="polite"></p>
+ <details><summary>查看解析</summary><p>两处名字绑定到同一个字典，对该字典的原地更新可通过两个引用观察。</p></details>
+</form>
+</article>
+  <button type="button" class="complete" data-mark="04" aria-pressed="false" hidden>标记本章完成</button>
+  <nav class="adjacent" aria-label="前后章节"><a href="chapter-03.html"><small>← 上一节</small>对象协作的流程控制</a><a href="chapter-05.html"><small>下一节 →</small>第一视角 自定义对象与类</a></nav>
+ </main>
+ <aside class="outline"><p>本节内容</p><nav aria-label="本节内容"><ol><li><a href="#section-1">4.1 为登记函数写契约</a></li><li><a href="#section-2">4.2 作用域与函数对象</a></li><li><a href="#section-3">4.3 按需产生结果</a></li><li><a href="#section-4">练习</a></li><li><a href="#section-5">本章自测</a></li></ol></nav></aside>
+</div>
+<footer class="site-footer"><a href="index.html">Python 编程教材</a><a href="chapter-A.html">运行环境</a><a href="chapter-C.html">语言速查</a></footer>
+</body></html>

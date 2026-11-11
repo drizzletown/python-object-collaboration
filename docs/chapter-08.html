@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<meta name="description" content="以对象协作和假设三部曲为主线的 Python 编程教材。">
+<title>对象与外部环境的协作 · Python 编程</title>
+<link rel="stylesheet" href="assets/style.css">
+<script src="assets/site.js" defer></script>
+</head>
+<body class="">
+<a class="skip" href="#main">跳到正文</a>
+<header class="topbar"><div class="top-inner">
+<a class="brand" href="index.html"><span aria-hidden="true">Py</span> Python 编程</a>
+<nav aria-label="主导航"><a href="index.html#catalog">章节目录</a><a href="chapter-09.html">综合项目</a></nav>
+</div></header>
+
+<div class="lesson-layout">
+ <aside class="side"><details class="mobile-nav" open><summary>章节目录</summary>
+  <nav aria-label="章节目录"><a href="chapter-00.html"><span class="nav-num">序</span><span>导论 从解决问题到程序设计</span><span class="nav-done" data-done="00"></span></a><a href="chapter-01.html"><span class="nav-num">01</span><span>基础数据对象与信息处理</span><span class="nav-done" data-done="01"></span></a><a href="chapter-02.html"><span class="nav-num">02</span><span>容器对象与数据组织</span><span class="nav-done" data-done="02"></span></a><a href="chapter-03.html"><span class="nav-num">03</span><span>对象协作的流程控制</span><span class="nav-done" data-done="03"></span></a><a href="chapter-04.html"><span class="nav-num">04</span><span>第三视角 函数与协作封装</span><span class="nav-done" data-done="04"></span></a><a href="chapter-05.html"><span class="nav-num">05</span><span>第一视角 自定义对象与类</span><span class="nav-done" data-done="05"></span></a><a href="chapter-06.html"><span class="nav-num">06</span><span>多对象协作与程序组织</span><span class="nav-done" data-done="06"></span></a><a href="chapter-07.html"><span class="nav-num">07</span><span>对象协作的可靠性</span><span class="nav-done" data-done="07"></span></a><a href="chapter-08.html" aria-current="page"><span class="nav-num">08</span><span>对象与外部环境的协作</span><span class="nav-done" data-done="08"></span></a><a href="chapter-09.html"><span class="nav-num">09</span><span>综合项目 递归假设驱动的程序构造</span><span class="nav-done" data-done="09"></span></a><a href="chapter-10.html"><span class="nav-num">10</span><span>对象协作系统的复用与演化</span><span class="nav-done" data-done="10"></span></a><a href="chapter-A.html"><span class="nav-num">A</span><span>Python 运行环境与学习工具</span><span class="nav-done" data-done="A"></span></a><a href="chapter-B.html"><span class="nav-num">B</span><span>项目工具链与开发实践</span><span class="nav-done" data-done="B"></span></a><a href="chapter-C.html"><span class="nav-num">C</span><span>语言速查与标准库索引</span><span class="nav-done" data-done="C"></span></a></nav>
+ </details></aside>
+ <main id="main" class="lesson">
+  <header class="lesson-head"><div class="crumb"><a href="index.html#catalog">教材目录</a> <span>›</span> 第 8 章</div>
+  <h1>对象与外部环境的协作</h1><p>将名单保存为 JSON，并为活动组织者生成可在表格软件中打开的 CSV。</p></header>
+  <article><h2 id="section-1">8.1 约定文件内容与使用期限</h2>
+<p>内存名单在程序结束后消失。将它保存到文件前，先定义格式：活动编号为字符串，容量为非负整数，学生编号列表按成功报名的先后排列。JSON 适合保存这组带名字的字段，便于下次读取。CSV 适合按列交换名单，例如“活动编号、学号”，字段中含分隔符时交给 csv 模块转义。</p>
+<p>pathlib.Path 表示文件系统中的路径。相对路径以当前工作目录为基准。用 path.parent.mkdir(parents=True, exist_ok=True) 可创建所需目录。以文本方式打开文件时明确使用 UTF-8，避免不同系统默认编码产生差异。模式 w 会截断原文件，应先选择正确路径并确认覆盖意图。</p>
+
+<section class="playground" aria-label="Python 示例 1">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 1</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 1 代码" rows="14"
+    spellcheck="false" autocapitalize="off" autocomplete="off">import csv
+import json
+from pathlib import Path
+from tempfile import TemporaryDirectory
+
+event = {&quot;id&quot;: &quot;museum&quot;, &quot;title&quot;: &quot;博物馆&quot;, &quot;capacity&quot;: 2, &quot;students&quot;: [&quot;S01&quot;, &quot;S02&quot;]}
+
+with TemporaryDirectory() as folder:
+    json_path = Path(folder) / &quot;event.json&quot;
+    csv_path = Path(folder) / &quot;roster.csv&quot;
+
+    with json_path.open(&quot;w&quot;, encoding=&quot;utf-8&quot;) as stream:
+        json.dump(event, stream, ensure_ascii=False, indent=2)
+
+    with json_path.open(encoding=&quot;utf-8&quot;) as stream:
+        restored = json.load(stream)
+
+    with csv_path.open(&quot;w&quot;, encoding=&quot;utf-8&quot;, newline=&quot;&quot;) as stream:
+        writer = csv.writer(stream)
+        writer.writerow([&quot;活动编号&quot;, &quot;学号&quot;])
+        writer.writerows((restored[&quot;id&quot;], sid) for sid in restored[&quot;students&quot;])
+
+    print(restored[&quot;title&quot;], len(restored[&quot;students&quot;]))
+    print(csv_path.read_text(encoding=&quot;utf-8&quot;).strip())</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<p>with 通过上下文管理器管理资源。进入文件块时获取文件对象，离开时关闭文件，包括块中抛出异常的情况。TemporaryDirectory 在块结束时清理临时目录，适合写可重复执行的示例。csv 模块自行处理记录换行，打开文件时传 newline=&quot;&quot;。</p>
+<h2 id="section-2">8.2 读取成功以后仍需检查</h2>
+<p>json.load 可以确认文本是否是合法 JSON。像 {&quot;capacity&quot;: -1, &quot;students&quot;: []} 这样的内容仍需按业务契约验证。依次检查字段是否存在、类型是否合适、学生编号是否有效且唯一、名单长度是否超过容量。坏文件和从未创建的文件应得到不同处理：首次运行可以创建初始数据，读取损坏的数据时应保留现场并报告错误。</p>
+<p>读取时可能遇到 FileNotFoundError、PermissionError、UnicodeDecodeError 和 JSONDecodeError。用少量代码说明每种错误在哪个边界处理。保存正式数据时，可把完整内容写到同一目录的临时文件，关闭后再用 Path.replace 替换目标，避免在序列化失败时提前截断旧文件。第 9 章会实际采用这一步骤。</p>
+<h2 id="section-3">练习</h2>
+<p>给例中的 CSV 增加“签到”列，默认填“未签到”。将文件重新打开，使用 csv.DictReader 检查第一条记录的学号和签到状态。</p>
+<details class='answer'><summary>参考解答</summary><p>把表头改为 [&quot;活动编号&quot;, &quot;学号&quot;, &quot;签到&quot;]，在每条数据后追加 &quot;未签到&quot;。在临时目录块内打开 csv_path，传入 encoding=&quot;utf-8&quot;, newline=&quot;&quot;，取 next(csv.DictReader(stream)) 后读取 row[&quot;学号&quot;] 和 row[&quot;签到&quot;]。</p></details>
+<h2 id="section-4">本章自测</h2>
+
+<form class="quiz" data-correct="1">
+ <fieldset><legend>json.load 成功读出文件之后，程序还需要做什么？</legend><label><input type="radio" name="choice" value="1" required> 检查容量、学号和名单长度是否满足规则</label><label><input type="radio" name="choice" value="2" required> 把所有数字转为字符串</label><label><input type="radio" name="choice" value="3" required> 立即覆盖原文件</label></fieldset>
+ <button class="primary small" type="submit" disabled>检查答案</button>
+ <p class="feedback" aria-live="polite"></p>
+ <details><summary>查看解析</summary><p>解析确认 JSON 文本的结构合法。活动的取值范围和不变式由程序另外校验。</p></details>
+</form>
+</article>
+  <button type="button" class="complete" data-mark="08" aria-pressed="false" hidden>标记本章完成</button>
+  <nav class="adjacent" aria-label="前后章节"><a href="chapter-07.html"><small>← 上一节</small>对象协作的可靠性</a><a href="chapter-09.html"><small>下一节 →</small>综合项目 递归假设驱动的程序构造</a></nav>
+ </main>
+ <aside class="outline"><p>本节内容</p><nav aria-label="本节内容"><ol><li><a href="#section-1">8.1 约定文件内容与使用期限</a></li><li><a href="#section-2">8.2 读取成功以后仍需检查</a></li><li><a href="#section-3">练习</a></li><li><a href="#section-4">本章自测</a></li></ol></nav></aside>
+</div>
+<footer class="site-footer"><a href="index.html">Python 编程教材</a><a href="chapter-A.html">运行环境</a><a href="chapter-C.html">语言速查</a></footer>
+</body></html>

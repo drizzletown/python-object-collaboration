@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<meta name="description" content="以对象协作和假设三部曲为主线的 Python 编程教材。">
+<title>导论 从解决问题到程序设计 · Python 编程</title>
+<link rel="stylesheet" href="assets/style.css">
+<script src="assets/site.js" defer></script>
+</head>
+<body class="">
+<a class="skip" href="#main">跳到正文</a>
+<header class="topbar"><div class="top-inner">
+<a class="brand" href="index.html"><span aria-hidden="true">Py</span> Python 编程</a>
+<nav aria-label="主导航"><a href="index.html#catalog">章节目录</a><a href="chapter-09.html">综合项目</a></nav>
+</div></header>
+
+<div class="lesson-layout">
+ <aside class="side"><details class="mobile-nav" open><summary>章节目录</summary>
+  <nav aria-label="章节目录"><a href="chapter-00.html" aria-current="page"><span class="nav-num">序</span><span>导论 从解决问题到程序设计</span><span class="nav-done" data-done="00"></span></a><a href="chapter-01.html"><span class="nav-num">01</span><span>基础数据对象与信息处理</span><span class="nav-done" data-done="01"></span></a><a href="chapter-02.html"><span class="nav-num">02</span><span>容器对象与数据组织</span><span class="nav-done" data-done="02"></span></a><a href="chapter-03.html"><span class="nav-num">03</span><span>对象协作的流程控制</span><span class="nav-done" data-done="03"></span></a><a href="chapter-04.html"><span class="nav-num">04</span><span>第三视角 函数与协作封装</span><span class="nav-done" data-done="04"></span></a><a href="chapter-05.html"><span class="nav-num">05</span><span>第一视角 自定义对象与类</span><span class="nav-done" data-done="05"></span></a><a href="chapter-06.html"><span class="nav-num">06</span><span>多对象协作与程序组织</span><span class="nav-done" data-done="06"></span></a><a href="chapter-07.html"><span class="nav-num">07</span><span>对象协作的可靠性</span><span class="nav-done" data-done="07"></span></a><a href="chapter-08.html"><span class="nav-num">08</span><span>对象与外部环境的协作</span><span class="nav-done" data-done="08"></span></a><a href="chapter-09.html"><span class="nav-num">09</span><span>综合项目 递归假设驱动的程序构造</span><span class="nav-done" data-done="09"></span></a><a href="chapter-10.html"><span class="nav-num">10</span><span>对象协作系统的复用与演化</span><span class="nav-done" data-done="10"></span></a><a href="chapter-A.html"><span class="nav-num">A</span><span>Python 运行环境与学习工具</span><span class="nav-done" data-done="A"></span></a><a href="chapter-B.html"><span class="nav-num">B</span><span>项目工具链与开发实践</span><span class="nav-done" data-done="B"></span></a><a href="chapter-C.html"><span class="nav-num">C</span><span>语言速查与标准库索引</span><span class="nav-done" data-done="C"></span></a></nav>
+ </details></aside>
+ <main id="main" class="lesson">
+  <header class="lesson-head"><div class="crumb"><a href="index.html#catalog">教材目录</a> <span>›</span> 导论</div>
+  <h1>导论 从解决问题到程序设计</h1><p>从一次博物馆参观出发，认识对象、协作过程，以及怎样在一项能力尚未实现时继续设计程序。</p></header>
+  <article><h2 id="section-1">从出行计划到报名程序</h2>
+<p>30 名同学计划参观博物馆。车辆有座位和使用状态，驾驶员承担接送职责，名单保存已经确认的参加者。只有安排好报名、确认运力、发通知和核对名单，这些对象才能共同完成出行任务。我们把这套分析思路称为对象协作模型。</p>
+<p>站在车辆调度者的角度，可以描述先核实运力再排日程的过程。站在某个活动对象的角度，可以描述它如何检查名额并登记报名。书中分别用第三视角和第一视角来讨论这两种职责。通常，普通函数可以描述一段独立流程，方法可以表达对象提供的行为。第 4、5 章会逐步把这两个视角落实为代码。</p>
+<p>程序首先承担一部分职责：表示活动、检查名额、更新报名记录并生成回执。约定容量和人数使用相同单位，改一改下例中的人数，观察判断结果。</p>
+
+<section class="playground" aria-label="Python 示例 1">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 1</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 1 代码" rows="5"
+    spellcheck="false" autocapitalize="off" autocomplete="off">capacity = 30
+registered = 29
+remaining = capacity - registered
+print(f&quot;剩余名额：{remaining}&quot;)
+print(&quot;还有空位：&quot;, remaining &gt; 0)</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<h2 id="section-2">建立 使用 兑现</h2>
+<p>活动日程依赖交通，但车还没订好。先约定所需的运力、时间和预算，这是建立假设。按这个约定草拟集合和参观时间，这是使用假设。逐项核实运力、时段、费用并落实预订，这是兑现假设。兑现失败时，重新检查依赖它的日程。</p>
+<p>如果找不到能容纳 30 人的一辆车，可以在兑现交通假设时建立分组子假设。先用预估分组设计出发方案，再核对座位、集合地点和人员是否重复或遗漏。子任务具备直接处理的条件时即可停下来。核实结果会逐层返回，直到能确认整份方案。</p>
+<p>同样，第 9 章会先约定“给定活动编号，可以读出已有报名记录”，用内存中的样本验证主流程，再实现文件读取和校验。这个设计步骤可以层层展开。运行时递归则是函数在执行过程中直接或间接调用自身的一种技术。</p>
+<h2 id="section-3">怎样学习</h2>
+<p>初学者可以从第 1 章开始，需要在本机运行时查附录 A。已有基础的读者可以先做章末练习，再回到需要补足的小节。每章先读任务，预测示例结果，再修改一个条件进行验证。通过章节自测和练习后，可以标记本章完成。</p>
+<p>前五章逐步建立数据、流程、函数和类的基础。第 6 至 8 章加入职责分工、异常、测试与文件。第 9 章把这些能力集成为校园活动报名系统，第 10 章通过可替换的通知方式扩展它。</p>
+<p>书中使用虚构活动和学号。网页版示例在浏览器中运行，文件写入练习环境。第 9 章的项目也可下载到本机，观察数据在两次运行之间如何保存。</p></article>
+  
+  <nav class="adjacent" aria-label="前后章节"><span></span><a href="chapter-01.html"><small>下一节 →</small>基础数据对象与信息处理</a></nav>
+ </main>
+ <aside class="outline"><p>本节内容</p><nav aria-label="本节内容"><ol><li><a href="#section-1">从出行计划到报名程序</a></li><li><a href="#section-2">建立 使用 兑现</a></li><li><a href="#section-3">怎样学习</a></li></ol></nav></aside>
+</div>
+<footer class="site-footer"><a href="index.html">Python 编程教材</a><a href="chapter-A.html">运行环境</a><a href="chapter-C.html">语言速查</a></footer>
+</body></html>

@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<meta name="description" content="以对象协作和假设三部曲为主线的 Python 编程教材。">
+<title>综合项目 递归假设驱动的程序构造 · Python 编程</title>
+<link rel="stylesheet" href="assets/style.css">
+<script src="assets/site.js" defer></script>
+</head>
+<body class="">
+<a class="skip" href="#main">跳到正文</a>
+<header class="topbar"><div class="top-inner">
+<a class="brand" href="index.html"><span aria-hidden="true">Py</span> Python 编程</a>
+<nav aria-label="主导航"><a href="index.html#catalog">章节目录</a><a href="chapter-09.html">综合项目</a></nav>
+</div></header>
+
+<div class="lesson-layout">
+ <aside class="side"><details class="mobile-nav" open><summary>章节目录</summary>
+  <nav aria-label="章节目录"><a href="chapter-00.html"><span class="nav-num">序</span><span>导论 从解决问题到程序设计</span><span class="nav-done" data-done="00"></span></a><a href="chapter-01.html"><span class="nav-num">01</span><span>基础数据对象与信息处理</span><span class="nav-done" data-done="01"></span></a><a href="chapter-02.html"><span class="nav-num">02</span><span>容器对象与数据组织</span><span class="nav-done" data-done="02"></span></a><a href="chapter-03.html"><span class="nav-num">03</span><span>对象协作的流程控制</span><span class="nav-done" data-done="03"></span></a><a href="chapter-04.html"><span class="nav-num">04</span><span>第三视角 函数与协作封装</span><span class="nav-done" data-done="04"></span></a><a href="chapter-05.html"><span class="nav-num">05</span><span>第一视角 自定义对象与类</span><span class="nav-done" data-done="05"></span></a><a href="chapter-06.html"><span class="nav-num">06</span><span>多对象协作与程序组织</span><span class="nav-done" data-done="06"></span></a><a href="chapter-07.html"><span class="nav-num">07</span><span>对象协作的可靠性</span><span class="nav-done" data-done="07"></span></a><a href="chapter-08.html"><span class="nav-num">08</span><span>对象与外部环境的协作</span><span class="nav-done" data-done="08"></span></a><a href="chapter-09.html" aria-current="page"><span class="nav-num">09</span><span>综合项目 递归假设驱动的程序构造</span><span class="nav-done" data-done="09"></span></a><a href="chapter-10.html"><span class="nav-num">10</span><span>对象协作系统的复用与演化</span><span class="nav-done" data-done="10"></span></a><a href="chapter-A.html"><span class="nav-num">A</span><span>Python 运行环境与学习工具</span><span class="nav-done" data-done="A"></span></a><a href="chapter-B.html"><span class="nav-num">B</span><span>项目工具链与开发实践</span><span class="nav-done" data-done="B"></span></a><a href="chapter-C.html"><span class="nav-num">C</span><span>语言速查与标准库索引</span><span class="nav-done" data-done="C"></span></a></nav>
+ </details></aside>
+ <main id="main" class="lesson">
+  <header class="lesson-head"><div class="crumb"><a href="index.html#catalog">教材目录</a> <span>›</span> 第 9 章</div>
+  <h1>综合项目 递归假设驱动的程序构造</h1><p>从报名请求到文件保存，用可替换的存储验证主流程，再逐层兑现存储和数据校验。</p></header>
+  <article><h2 id="section-1">9.1 确定交付范围与验收条件</h2>
+<p>交付一个命令行报名程序。首次运行建立博物馆活动，容量为 2。输入学号可以报名，另一个命令可列出已保存名单。清理首尾空白，拒绝空学号，优先判断重复，再判断满员。退出后再次运行能读取上一次成功保存的数据。已有文件损坏时报告错误并保留原文件。</p>
+<p>用五个场景验收：第一次报名成功；同一学号再次提交得到重复；第二个学号成功且名额耗尽；第三个学号得到满员；重新创建存储对象后仍能读取两条记录。再用一份超容量 JSON 检查读取失败时文件未被覆盖。这个版本适用于同一时刻由一个命令进程操作一份名单的教学场景。</p>
+<h2 id="section-2">9.2 建立并使用存储假设</h2>
+<p>先约定存储对象可以 load 读出独立的活动快照，并通过 save 保存成功后的活动。主流程依赖这两个操作，先读再判断，只有成功报名才保存，且保存成功后才产生通过回执。这个顺序防止用户看到尚未写入文件的成功消息。</p>
+<p>现在还没有文件实现，可以让 MemoryStore 在内存里保存活动并复制快照。它兑现了测试所需的行为，足够验证主流程。下面的程序展示领域对象、内存存储、文件存储和命令行入口如何组合。先看 submit，再运行演示，观察两种存储产生相同回执。</p>
+
+<section class="simulator" aria-labelledby="sim-title" hidden>
+ <h3 id="sim-title">报名规则模拟器</h3>
+ <p>逐条提交学号，观察回执、剩余名额和名单变化。</p>
+ <form>
+  <label>活动容量 <input name="capacity" type="number" value="2" min="0" max="99" required></label>
+  <label>报名顺序（每行一个学号，空行视作空学号）
+   <textarea name="requests" rows="4">S01
+S02
+S01
+S03</textarea>
+  </label>
+  <div class="sim-actions">
+   <button class="primary small" type="submit">执行下一条</button>
+   <button class="quiet" type="reset">重置</button>
+   <span class="sim-status" aria-live="polite"></span>
+  </div>
+ </form>
+ <div class="sim-table"><table><thead><tr><th>学号</th><th>回执</th><th>剩余</th><th>已登记</th></tr></thead>
+ <tbody></tbody></table></div>
+</section>
+
+<h2 id="section-3">9.3 逐层兑现文件存储</h2>
+<p>兑现文件存储假设时产生两个子问题。读取需要把 JSON 转为可靠的活动对象，保存需要在写入成功后替换旧文件。先约定 activity_from_data 接收字典并返回符合约束的 Activity，用这个假设写出 JsonStore.load。再分别核对容量类型、编号规范、重复以及超容量，把契约落到实现。</p>
+<p>保存使用同目录的临时文件。完整写入并关闭后替换正式文件，清理可能留下的临时文件。这样，序列化出错时旧文件仍可读取。最后让集成检查使用一个临时目录，实际经历保存、重新打开和读取损坏数据的路径。子任务完成后，回到最初的五个场景验收主流程。</p>
+
+<section class="playground" aria-label="Python 示例 1">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 1</span>
+    <div><a href="campus.py" download>下载 campus.py</a><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 1 代码" rows="18"
+    spellcheck="false" autocapitalize="off" autocomplete="off">&quot;&quot;&quot;校园活动报名项目。执行 python campus.py --help 查看命令。&quot;&quot;&quot;
+import argparse
+from copy import deepcopy
+import json
+from pathlib import Path
+import sys
+from tempfile import NamedTemporaryFile, TemporaryDirectory
+from typing import Protocol
+
+
+class Activity:
+    &quot;&quot;&quot;保持学号唯一、人数不超过容量。&quot;&quot;&quot;
+
+    def __init__(self, title: str, capacity: int):
+        if not isinstance(title, str) or not title.strip():
+            raise ValueError(&quot;活动名称不能为空&quot;)
+        if type(capacity) is not int or capacity &lt; 0:
+            raise ValueError(&quot;容量须为非负整数&quot;)
+        self.title = title
+        self._capacity = capacity
+        self._students: dict[str, None] = {}
+
+    @property
+    def capacity(self) -&gt; int:
+        return self._capacity
+
+    @property
+    def students(self) -&gt; tuple[str, ...]:
+        return tuple(self._students)
+
+    def register(self, raw_id: str) -&gt; str:
+        student_id = raw_id.strip()
+        if not student_id:
+            return &quot;空学号&quot;
+        if student_id in self._students:
+            return &quot;重复&quot;
+        if len(self._students) &gt;= self.capacity:
+            return &quot;满员&quot;
+        self._students[student_id] = None
+        return &quot;通过&quot;
+
+
+class Store(Protocol):
+    def load(self) -&gt; Activity:
+        &quot;&quot;&quot;读出独立的活动快照。&quot;&quot;&quot;
+        ...
+
+    def save(self, activity: Activity) -&gt; None:
+        &quot;&quot;&quot;保存活动。如果失败，抛出异常。&quot;&quot;&quot;
+        ...
+
+
+class MemoryStore:
+    def __init__(self, activity: Activity):
+        self._activity = deepcopy(activity)
+
+    def load(self) -&gt; Activity:
+        return deepcopy(self._activity)
+
+    def save(self, activity: Activity) -&gt; None:
+        self._activity = deepcopy(activity)
+
+
+def activity_from_data(data: object) -&gt; Activity:
+    required = {&quot;title&quot;, &quot;capacity&quot;, &quot;students&quot;}
+    if not isinstance(data, dict) or not required &lt;= data.keys():
+        raise ValueError(&quot;名单缺少 title、capacity 或 students&quot;)
+    activity = Activity(data[&quot;title&quot;], data[&quot;capacity&quot;])
+    students = data[&quot;students&quot;]
+    if not isinstance(students, list):
+        raise ValueError(&quot;students 必须是列表&quot;)
+    for student_id in students:
+        if not isinstance(student_id, str) or student_id != student_id.strip():
+            raise ValueError(&quot;名单含格式错误的学号&quot;)
+        status = activity.register(student_id)
+        if status != &quot;通过&quot;:
+            raise ValueError(f&quot;名单校验失败：{status}&quot;)
+    return activity
+
+
+class JsonStore:
+    def __init__(self, path: Path):
+        self.path = path
+
+    def load(self) -&gt; Activity:
+        try:
+            content = self.path.read_text(encoding=&quot;utf-8&quot;)
+        except FileNotFoundError:
+            return Activity(&quot;博物馆参观&quot;, 2)
+        return activity_from_data(json.loads(content))
+
+    def save(self, activity: Activity) -&gt; None:
+        payload = {
+            &quot;title&quot;: activity.title,
+            &quot;capacity&quot;: activity.capacity,
+            &quot;students&quot;: list(activity.students),
+        }
+        temporary_path = None
+        try:
+            with NamedTemporaryFile(
+                mode=&quot;w&quot;, encoding=&quot;utf-8&quot;, dir=self.path.parent, delete=False
+            ) as stream:
+                temporary_path = Path(stream.name)
+                json.dump(payload, stream, ensure_ascii=False, indent=2)
+                stream.write(&quot;\n&quot;)
+            temporary_path.replace(self.path)
+        finally:
+            if temporary_path is not None:
+                temporary_path.unlink(missing_ok=True)
+
+
+def submit(store: Store, raw_id: str) -&gt; str:
+    activity = store.load()
+    status = activity.register(raw_id)
+    if status == &quot;通过&quot;:
+        store.save(activity)
+    return status
+
+
+def demo() -&gt; None:
+    requests = [&quot;S01&quot;, &quot;S01&quot;, &quot;S02&quot;, &quot;S03&quot;]
+    memory = MemoryStore(Activity(&quot;博物馆参观&quot;, 2))
+    print(&quot;内存回执&quot;, [submit(memory, student_id) for student_id in requests])
+    with TemporaryDirectory() as folder:
+        path = Path(folder) / &quot;roster.json&quot;
+        disk = JsonStore(path)
+        print(&quot;文件回执&quot;, [submit(disk, student_id) for student_id in requests])
+        print(&quot;重新读取&quot;, JsonStore(path).load().students)
+
+
+def self_test() -&gt; None:
+    requests = [&quot; S01 &quot;, &quot;S01&quot;, &quot;S02&quot;, &quot;S03&quot;]
+    expected = [&quot;通过&quot;, &quot;重复&quot;, &quot;通过&quot;, &quot;满员&quot;]
+    memory = MemoryStore(Activity(&quot;博物馆参观&quot;, 2))
+    assert [submit(memory, student_id) for student_id in requests] == expected
+    with TemporaryDirectory() as folder:
+        path = Path(folder) / &quot;roster.json&quot;
+        disk = JsonStore(path)
+        assert submit(disk, &quot; &quot;) == &quot;空学号&quot;
+        assert not path.exists()
+        assert [submit(disk, student_id) for student_id in requests] == expected
+        assert JsonStore(path).load().students == (&quot;S01&quot;, &quot;S02&quot;)
+        invalid = &#x27;{&quot;title&quot;:&quot;博物馆&quot;,&quot;capacity&quot;:0,&quot;students&quot;:[&quot;S01&quot;]}&#x27;
+        path.write_text(invalid, encoding=&quot;utf-8&quot;)
+        try:
+            submit(disk, &quot;S02&quot;)
+        except ValueError:
+            assert path.read_text(encoding=&quot;utf-8&quot;) == invalid
+        else:
+            raise AssertionError(&quot;应拒绝超容量文件&quot;)
+    print(&quot;项目验收通过&quot;)
+
+
+def main() -&gt; int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(&quot;--file&quot;, type=Path, default=Path(&quot;roster.json&quot;))
+    parser.add_argument(&quot;--self-test&quot;, action=&quot;store_true&quot;)
+    commands = parser.add_subparsers(dest=&quot;command&quot;)
+    enroll = commands.add_parser(&quot;enroll&quot;, help=&quot;提交学号&quot;)
+    enroll.add_argument(&quot;student_id&quot;)
+    commands.add_parser(&quot;list&quot;, help=&quot;读取报名名单&quot;)
+    args = parser.parse_args()
+
+    if args.self_test:
+        if args.command or not __debug__:
+            parser.error(&quot;--self-test 需要在普通解释器模式下单独运行&quot;)
+        self_test()
+        return 0
+    if args.command is None:
+        demo()
+        return 0
+    store = JsonStore(args.file)
+    try:
+        if args.command == &quot;enroll&quot;:
+            print(submit(store, args.student_id))
+        else:
+            activity = store.load()
+            print(f&quot;{activity.title}（{len(activity.students)}/{activity.capacity}）&quot;)
+            print(&quot;\n&quot;.join(activity.students) or &quot;暂无报名&quot;)
+    except (OSError, ValueError) as error:
+        print(f&quot;无法处理名单：{error}&quot;, file=sys.stderr)
+        return 1
+    return 0
+
+
+if __name__ == &quot;__main__&quot;:
+    if sys.platform == &quot;emscripten&quot;:
+        demo()
+    else:
+        raise SystemExit(main())</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<p>下载上方 Python 文件后，在终端进入文件所在目录。运行 python campus.py 自带演示，运行 python campus.py --self-test 执行验收。运行 python campus.py enroll S01 登记，再运行 python campus.py list 查看名单。可在子命令前加 --file demo.json 指定数据文件。请使用虚构学号。</p>
+<p>网页版运行完整代码时会启动演示。每次点击运行都重新初始化练习文件环境，持久化效果体现在一次运行中的多次读取。本机的 enroll 与 list 可以跨进程读取同一文件。</p>
+<h2 id="section-4">9.4 用需求追踪一次修改</h2>
+<p>若组织者希望“满员时也记录候补”，先约定候补名单的顺序、唯一性和取消规则，再判断哪些角色需要变化。领域对象维护正式与候补的关系，存储层处理新增字段，主流程根据新增回执决定是否保存。先把旧 JSON 当作一个单独的输入场景，确定它如何补全候补字段。</p>
+<p>本章的设计沿“先有能调用的契约、再有可验证的实现”前进。依赖方向由主流程通向存储约定，测试可以在实现顺序变化时继续检查相同的报名行为。</p>
+<h2 id="section-5">练习</h2>
+<p>把演示请求改为 [&quot; S01 &quot;, &quot;S01&quot;, &quot; &quot;, &quot;S02&quot;, &quot;S03&quot;]。预测每步回执与最终 JSON。然后在自测中加入一条断言，确认只提交空学号时不会创建数据文件。</p>
+<details class='answer'><summary>参考解答</summary><p>回执依次为通过、重复、空学号、通过、满员。保存的 students 为 [&quot;S01&quot;, &quot;S02&quot;]。在新的临时目录创建 JsonStore，调用 submit(store, &quot; &quot;) 后检查回执为“空学号”，并用 path.exists() 检查尚无数据文件。</p></details>
+<h2 id="section-6">本章自测</h2>
+
+<form class="quiz" data-correct="2">
+ <fieldset><legend>已经写通内存版报名流程，如何兑现文件存储假设？</legend><label><input type="radio" name="choice" value="1" required> 让界面直接编辑 JSON</label><label><input type="radio" name="choice" value="2" required> 保留 load 和 save 的契约，实现并测试文件存储</label><label><input type="radio" name="choice" value="3" required> 遇到坏文件就创建空名单并覆盖旧文件</label></fieldset>
+ <button class="primary small" type="submit" disabled>检查答案</button>
+ <p class="feedback" aria-live="polite"></p>
+ <details><summary>查看解析</summary><p>同一主流程可以换用文件存储。文件解析、字段校验和替换旧文件属于存储层的职责。</p></details>
+</form>
+</article>
+  <button type="button" class="complete" data-mark="09" aria-pressed="false" hidden>标记本章完成</button>
+  <nav class="adjacent" aria-label="前后章节"><a href="chapter-08.html"><small>← 上一节</small>对象与外部环境的协作</a><a href="chapter-10.html"><small>下一节 →</small>对象协作系统的复用与演化</a></nav>
+ </main>
+ <aside class="outline"><p>本节内容</p><nav aria-label="本节内容"><ol><li><a href="#section-1">9.1 确定交付范围与验收条件</a></li><li><a href="#section-2">9.2 建立并使用存储假设</a></li><li><a href="#section-3">9.3 逐层兑现文件存储</a></li><li><a href="#section-4">9.4 用需求追踪一次修改</a></li><li><a href="#section-5">练习</a></li><li><a href="#section-6">本章自测</a></li></ol></nav></aside>
+</div>
+<footer class="site-footer"><a href="index.html">Python 编程教材</a><a href="chapter-A.html">运行环境</a><a href="chapter-C.html">语言速查</a></footer>
+</body></html>

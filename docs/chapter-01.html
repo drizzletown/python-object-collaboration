@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<meta name="description" content="以对象协作和假设三部曲为主线的 Python 编程教材。">
+<title>基础数据对象与信息处理 · Python 编程</title>
+<link rel="stylesheet" href="assets/style.css">
+<script src="assets/site.js" defer></script>
+</head>
+<body class="">
+<a class="skip" href="#main">跳到正文</a>
+<header class="topbar"><div class="top-inner">
+<a class="brand" href="index.html"><span aria-hidden="true">Py</span> Python 编程</a>
+<nav aria-label="主导航"><a href="index.html#catalog">章节目录</a><a href="chapter-09.html">综合项目</a></nav>
+</div></header>
+
+<div class="lesson-layout">
+ <aside class="side"><details class="mobile-nav" open><summary>章节目录</summary>
+  <nav aria-label="章节目录"><a href="chapter-00.html"><span class="nav-num">序</span><span>导论 从解决问题到程序设计</span><span class="nav-done" data-done="00"></span></a><a href="chapter-01.html" aria-current="page"><span class="nav-num">01</span><span>基础数据对象与信息处理</span><span class="nav-done" data-done="01"></span></a><a href="chapter-02.html"><span class="nav-num">02</span><span>容器对象与数据组织</span><span class="nav-done" data-done="02"></span></a><a href="chapter-03.html"><span class="nav-num">03</span><span>对象协作的流程控制</span><span class="nav-done" data-done="03"></span></a><a href="chapter-04.html"><span class="nav-num">04</span><span>第三视角 函数与协作封装</span><span class="nav-done" data-done="04"></span></a><a href="chapter-05.html"><span class="nav-num">05</span><span>第一视角 自定义对象与类</span><span class="nav-done" data-done="05"></span></a><a href="chapter-06.html"><span class="nav-num">06</span><span>多对象协作与程序组织</span><span class="nav-done" data-done="06"></span></a><a href="chapter-07.html"><span class="nav-num">07</span><span>对象协作的可靠性</span><span class="nav-done" data-done="07"></span></a><a href="chapter-08.html"><span class="nav-num">08</span><span>对象与外部环境的协作</span><span class="nav-done" data-done="08"></span></a><a href="chapter-09.html"><span class="nav-num">09</span><span>综合项目 递归假设驱动的程序构造</span><span class="nav-done" data-done="09"></span></a><a href="chapter-10.html"><span class="nav-num">10</span><span>对象协作系统的复用与演化</span><span class="nav-done" data-done="10"></span></a><a href="chapter-A.html"><span class="nav-num">A</span><span>Python 运行环境与学习工具</span><span class="nav-done" data-done="A"></span></a><a href="chapter-B.html"><span class="nav-num">B</span><span>项目工具链与开发实践</span><span class="nav-done" data-done="B"></span></a><a href="chapter-C.html"><span class="nav-num">C</span><span>语言速查与标准库索引</span><span class="nav-done" data-done="C"></span></a></nav>
+ </details></aside>
+ <main id="main" class="lesson">
+  <header class="lesson-head"><div class="crumb"><a href="index.html#catalog">教材目录</a> <span>›</span> 第 1 章</div>
+  <h1>基础数据对象与信息处理</h1><p>用人数、票价和确认状态表示一次活动，计算剩余名额并生成一行通知。</p></header>
+  <article><h2 id="section-1">1.1 从需求识别数据</h2>
+<p>一次博物馆参观需要记录名称、容量、已报名人数和门票费用。写程序前先明确单位和取值范围。容量和人数用非负整数，金额用整数“分”，活动名称用字符串，是否确认预约用布尔值。预约尚无结果时，可以用 None 表示未知。此时“尚未确认”和“已确认不能预约”是不同状态。</p>
+<p>赋值语句先计算右边的表达式，再把左边的名字绑定到结果对象。执行 registered = registered + 1 会读取原来的整数，计算新的整数，再重新绑定 registered。Python 对象有身份、类型和值。type(x) 可以查看类型，== 比较值是否相等，is 判断两个引用是否指向同一对象。检查未知状态时可写 booking is None。</p>
+
+<section class="playground" aria-label="Python 示例 1">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 1</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 1 代码" rows="13"
+    spellcheck="false" autocapitalize="off" autocomplete="off">activity = &quot;博物馆参观&quot;
+capacity = 30
+registered = 28
+ticket_cents = 1250
+booking = None
+
+remaining = capacity - registered
+total_cents = registered * ticket_cents
+yuan, cents = divmod(total_cents, 100)
+print(f&quot;{activity}还剩 {remaining} 个名额&quot;)
+print(f&quot;门票合计 {yuan}.{cents:02d} 元&quot;)
+print(&quot;预约结果待确认：&quot;, booking is None)
+print(&quot;可接受下一位报名：&quot;, registered &lt; capacity)</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<p>例中剩余 2 个名额，总价 350.00 元。divmod 将金额分解为整元和余下的分，:02d 将分补足两位。先用括号表达计算顺序，再用格式化字符串拼成通知。/ 会产生浮点数，// 是向下取整除法，% 给出余数。金额示例先用整数计算，以便精确保留分。</p>
+<h2 id="section-2">1.2 用暂定票价编写预算规则</h2>
+<p>如果门票尚未报价，可以先建立假设：组织者会给出每人票价，单位为分，且金额非负。用暂定的 1250 分编写预算计算。正式报价到来后，确认价格是否按人计费、是否包含其他费用，再更新 ticket_cents 并核对总价。若报价按全班固定收费，计价规则也需要随之修订。</p>
+<h2 id="section-3">1.3 从文本得到可计算的数据</h2>
+<p>表单交给程序的数字可能是字符串。&quot;28&quot; + &quot;1&quot; 得到 &quot;281&quot;。使用 int(&quot;28&quot;) 后才可以把它用于人数运算。先 strip() 清理首尾空白，再转换。若输入是 &quot;二十八&quot;，int 会抛出 ValueError。第 7 章会处理这种失败；本章可以先写明前提“输入是十进制整数字符串，且人数在 0 到容量之间”。</p>
+<p>当多个条件都成立才允许继续，可以用 and。这个表达式会从左到右检查条件，左侧为假时无需继续求值右侧。试把 booking 依次改成 True、False 和 None，比较两条输出的意义。</p>
+
+<section class="playground" aria-label="Python 示例 2">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 2</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 2 代码" rows="7"
+    spellcheck="false" autocapitalize="off" autocomplete="off">raw_count = &quot; 28 &quot;
+registered = int(raw_count.strip())
+capacity = 30
+booking = True
+
+print(0 &lt;= registered &lt;= capacity)
+print(booking is True and registered &lt; capacity)</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<h2 id="section-4">练习</h2>
+<p>把第一段示例改为容量 32、报名 31、每张票 980 分。先写下预测，再运行核对。然后把报名人数改成 32，检查剩余名额和是否能继续报名。</p>
+<details class='answer'><summary>参考解答</summary><p>31 人时剩 1 个名额，门票合计 303.80 元，可以接受下一位。32 人时剩 0 个名额，继续报名的条件为假。报名人数超容量的输入应在后续章节的规则中拒绝。</p></details>
+<h2 id="section-5">本章自测</h2>
+
+<form class="quiz" data-correct="2">
+ <fieldset><legend>哪一项适合判断预约结果尚未获得？</legend><label><input type="radio" name="choice" value="1" required> booking == False</label><label><input type="radio" name="choice" value="2" required> booking is None</label><label><input type="radio" name="choice" value="3" required> booking == &quot;None&quot;</label></fieldset>
+ <button class="primary small" type="submit" disabled>检查答案</button>
+ <p class="feedback" aria-live="polite"></p>
+ <details><summary>查看解析</summary><p>None 表示缺少结果，使用 is None 检查这个单例。</p></details>
+</form>
+</article>
+  <button type="button" class="complete" data-mark="01" aria-pressed="false" hidden>标记本章完成</button>
+  <nav class="adjacent" aria-label="前后章节"><a href="chapter-00.html"><small>← 上一节</small>导论 从解决问题到程序设计</a><a href="chapter-02.html"><small>下一节 →</small>容器对象与数据组织</a></nav>
+ </main>
+ <aside class="outline"><p>本节内容</p><nav aria-label="本节内容"><ol><li><a href="#section-1">1.1 从需求识别数据</a></li><li><a href="#section-2">1.2 用暂定票价编写预算规则</a></li><li><a href="#section-3">1.3 从文本得到可计算的数据</a></li><li><a href="#section-4">练习</a></li><li><a href="#section-5">本章自测</a></li></ol></nav></aside>
+</div>
+<footer class="site-footer"><a href="index.html">Python 编程教材</a><a href="chapter-A.html">运行环境</a><a href="chapter-C.html">语言速查</a></footer>
+</body></html>

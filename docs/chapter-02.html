@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<meta name="description" content="以对象协作和假设三部曲为主线的 Python 编程教材。">
+<title>容器对象与数据组织 · Python 编程</title>
+<link rel="stylesheet" href="assets/style.css">
+<script src="assets/site.js" defer></script>
+</head>
+<body class="">
+<a class="skip" href="#main">跳到正文</a>
+<header class="topbar"><div class="top-inner">
+<a class="brand" href="index.html"><span aria-hidden="true">Py</span> Python 编程</a>
+<nav aria-label="主导航"><a href="index.html#catalog">章节目录</a><a href="chapter-09.html">综合项目</a></nav>
+</div></header>
+
+<div class="lesson-layout">
+ <aside class="side"><details class="mobile-nav" open><summary>章节目录</summary>
+  <nav aria-label="章节目录"><a href="chapter-00.html"><span class="nav-num">序</span><span>导论 从解决问题到程序设计</span><span class="nav-done" data-done="00"></span></a><a href="chapter-01.html"><span class="nav-num">01</span><span>基础数据对象与信息处理</span><span class="nav-done" data-done="01"></span></a><a href="chapter-02.html" aria-current="page"><span class="nav-num">02</span><span>容器对象与数据组织</span><span class="nav-done" data-done="02"></span></a><a href="chapter-03.html"><span class="nav-num">03</span><span>对象协作的流程控制</span><span class="nav-done" data-done="03"></span></a><a href="chapter-04.html"><span class="nav-num">04</span><span>第三视角 函数与协作封装</span><span class="nav-done" data-done="04"></span></a><a href="chapter-05.html"><span class="nav-num">05</span><span>第一视角 自定义对象与类</span><span class="nav-done" data-done="05"></span></a><a href="chapter-06.html"><span class="nav-num">06</span><span>多对象协作与程序组织</span><span class="nav-done" data-done="06"></span></a><a href="chapter-07.html"><span class="nav-num">07</span><span>对象协作的可靠性</span><span class="nav-done" data-done="07"></span></a><a href="chapter-08.html"><span class="nav-num">08</span><span>对象与外部环境的协作</span><span class="nav-done" data-done="08"></span></a><a href="chapter-09.html"><span class="nav-num">09</span><span>综合项目 递归假设驱动的程序构造</span><span class="nav-done" data-done="09"></span></a><a href="chapter-10.html"><span class="nav-num">10</span><span>对象协作系统的复用与演化</span><span class="nav-done" data-done="10"></span></a><a href="chapter-A.html"><span class="nav-num">A</span><span>Python 运行环境与学习工具</span><span class="nav-done" data-done="A"></span></a><a href="chapter-B.html"><span class="nav-num">B</span><span>项目工具链与开发实践</span><span class="nav-done" data-done="B"></span></a><a href="chapter-C.html"><span class="nav-num">C</span><span>语言速查与标准库索引</span><span class="nav-done" data-done="C"></span></a></nav>
+ </details></aside>
+ <main id="main" class="lesson">
+  <header class="lesson-head"><div class="crumb"><a href="index.html#catalog">教材目录</a> <span>›</span> 第 2 章</div>
+  <h1>容器对象与数据组织</h1><p>维护一批报名记录，按学号查找，并解释修改名单时其他引用会看到什么。</p></header>
+  <article><h2 id="section-1">2.1 从单条信息到记录集合</h2>
+<p>只有一个 registered 数字，无法查明某位同学是否报名。把学号设计成字符串，便于保留前导零。字典可用唯一学号作为键，记录姓名等资料。列表适合保留签到次序，元组适合将一组固定字段一起返回，集合适合快速判断某学号是否出现以及计算差集。</p>
+<p>容器的选择取决于后续操作。若记录需要按学号查询，用字典；若只需要知道参加者来自哪些班级，可以将班级名放进集合。集合元素和字典键必须可哈希；可变列表不能作为键。展示集合时可用 sorted 得到有确定顺序的列表。</p>
+
+<section class="playground" aria-label="Python 示例 1">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 1</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 1 代码" rows="13"
+    spellcheck="false" autocapitalize="off" autocomplete="off">registrations = {
+    &quot;S01&quot;: {&quot;name&quot;: &quot;林同学&quot;, &quot;group&quot;: &quot;一班&quot;},
+    &quot;S02&quot;: {&quot;name&quot;: &quot;周同学&quot;, &quot;group&quot;: &quot;二班&quot;},
+}
+arrival_order = [&quot;S02&quot;, &quot;S01&quot;]
+checked_in = {&quot;S02&quot;}
+missing = registrations.keys() - checked_in
+first_two = arrival_order[:2]
+route = (&quot;教学楼&quot;, &quot;博物馆&quot;)
+
+print(registrations.get(&quot;S02&quot;)[&quot;name&quot;])
+print(sorted(missing))
+print(first_two, route[1])</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<p>下标从 0 开始，切片左闭右开。空列表取 [0] 会抛出 IndexError。用字典下标访问缺失键会抛出 KeyError，get 可以提供一个默认值。例中 S02 已知存在，若由用户输入学号，应先检查 get 的结果再读取 name。</p>
+<h2 id="section-2">2.2 共享引用与可变性</h2>
+<p>列表和字典可原地修改。alias = roster 之后，两条名字指向同一个列表。roster.copy() 只复制外层列表，内部字典仍共享。元组的元素位置固定，位置上的引用仍可能指向可变对象。接口返回名单时，需要根据职责决定返回共享对象、只读结构或快照。</p>
+
+<section class="playground" aria-label="Python 示例 2">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 2</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 2 代码" rows="10"
+    spellcheck="false" autocapitalize="off" autocomplete="off">roster = [{&quot;id&quot;: &quot;S01&quot;, &quot;checked&quot;: False}]
+alias = roster
+snapshot = roster.copy()
+
+roster[0][&quot;checked&quot;] = True
+roster.append({&quot;id&quot;: &quot;S02&quot;, &quot;checked&quot;: False})
+
+print(len(alias), len(snapshot))
+print(snapshot[0][&quot;checked&quot;])
+print(alias is roster, snapshot is roster)</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<p>输出依次说明别名长度随原列表变为 2、快照外层长度仍是 1、共享的内部字典已经变化。如果这里只需要快照中的学号，可用 tuple(record[&quot;id&quot;] for record in roster) 收集字符串。生成式会在第 3、4 章展开。</p>
+<p>记录新增时，字典的相同键会被新值覆盖。要实现“重复报名应保留旧记录”，先判断 student_id in registrations，再决定是否赋值。第 3 章把这个判断写进完整流程。</p>
+<h2 id="section-3">练习</h2>
+<p>将签到顺序改成 S01、S02、S01。求签到过的学号和未签到名单，并保留原签到顺序以便核对重复记录。</p>
+<details class='answer'><summary>参考解答</summary><p>保留列表 arrival_order，令 checked_in = set(arrival_order)。registrations.keys() - checked_in 得到空集合。len(arrival_order) 比 len(checked_in) 大 1，说明存在一次重复签到。</p></details>
+<h2 id="section-4">本章自测</h2>
+
+<form class="quiz" data-correct="1">
+ <fieldset><legend>对列表调用 copy 后，修改原列表内部字典中的值，副本会看到什么？</legend><label><input type="radio" name="choice" value="1" required> 只要内部字典仍然共享，就会看到更新</label><label><input type="radio" name="choice" value="2" required> 永远看不到更新</label><label><input type="radio" name="choice" value="3" required> 副本外层会自动追加同样的元素</label></fieldset>
+ <button class="primary small" type="submit" disabled>检查答案</button>
+ <p class="feedback" aria-live="polite"></p>
+ <details><summary>查看解析</summary><p>浅复制只创建新的外层容器，原容器和副本的元素仍可引用同一对象。</p></details>
+</form>
+</article>
+  <button type="button" class="complete" data-mark="02" aria-pressed="false" hidden>标记本章完成</button>
+  <nav class="adjacent" aria-label="前后章节"><a href="chapter-01.html"><small>← 上一节</small>基础数据对象与信息处理</a><a href="chapter-03.html"><small>下一节 →</small>对象协作的流程控制</a></nav>
+ </main>
+ <aside class="outline"><p>本节内容</p><nav aria-label="本节内容"><ol><li><a href="#section-1">2.1 从单条信息到记录集合</a></li><li><a href="#section-2">2.2 共享引用与可变性</a></li><li><a href="#section-3">练习</a></li><li><a href="#section-4">本章自测</a></li></ol></nav></aside>
+</div>
+<footer class="site-footer"><a href="index.html">Python 编程教材</a><a href="chapter-A.html">运行环境</a><a href="chapter-C.html">语言速查</a></footer>
+</body></html>
