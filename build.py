@@ -1,5 +1,6 @@
 """Build the GitHub Pages /docs folder using the Python standard library."""
 from dataclasses import dataclass
+from hashlib import sha256
 from html import escape
 from pathlib import Path
 import re
@@ -7,6 +8,8 @@ from shutil import copy2
 
 ROOT = Path(__file__).resolve().parent
 DOCS = ROOT / "docs"
+ASSETS = ROOT / "assets"
+STYLE_VERSION = sha256((ASSETS / "style.css").read_bytes()).hexdigest()[:12]
 PROJECT = ROOT / "projects" / "campus.py"
 CHAPTER_IDS = ["00", *(f"{n:02}" for n in range(1, 11)), "A", "B", "C"]
 
@@ -217,7 +220,7 @@ def frame(title, content, *, page_class=""):
 <meta name="color-scheme" content="light">
 <meta name="description" content="以对象协作和假设三部曲为主线的 Python 编程教材。">
 <title>{escape(title)}</title>
-<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/style.css?v={STYLE_VERSION}">
 <script src="assets/site.js" defer></script>
 </head>
 <body class="{page_class}">
@@ -322,7 +325,7 @@ remaining = capacity - registered
 
 <strong>print</strong>(<em>f"剩余名额：{{remaining}}"</em>)</code></pre>
    <div class="terminal-output"><span>›</span> 剩余名额：1</div></div>
-   <a href="chapter-01.html#section-1">到第 1 章试一试 <span>↗</span></a>
+   <a href="chapter-01.html#section-7">到第 1 章试一试 <span>↗</span></a>
   </div>
  </div>
 </section>
@@ -340,7 +343,7 @@ remaining = capacity - registered
 def main():
     chapters = [read_chapter(key) for key in CHAPTER_IDS]
     (DOCS / "assets").mkdir(parents=True, exist_ok=True)
-    for asset in (ROOT / "assets").iterdir():
+    for asset in ASSETS.iterdir():
         if asset.is_file():
             copy2(asset, DOCS / "assets" / asset.name)
     copy2(PROJECT, DOCS / "campus.py")

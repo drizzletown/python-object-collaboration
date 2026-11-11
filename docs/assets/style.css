@@ -115,10 +115,12 @@ article h2 { line-height: 1.45; font-size: clamp(1.35rem, 2.7vw, 1.7rem); margin
 article p { margin: 0 0 14px; }
 article ul { padding-left: 1.3em; }
 article code { background: var(--purple-soft); color: #48376e; border-radius: 4px; padding: 1px 4px; font: .92em var(--mono); }
-.lesson-table { margin: 16px 0 24px; overflow-x: auto; }
-.lesson-table table { width: 100%; border-collapse: collapse; background: var(--white); font-size: .93rem; line-height: 1.6; }
-.lesson-table th, .lesson-table td { border: 1px solid var(--rule); padding: 8px 10px; text-align: left; vertical-align: top; }
-.lesson-table th { background: var(--purple-soft); }
+.lesson-table, .sim-table { overflow-x: auto; }
+.lesson-table { margin: 18px 0 26px; }
+article table { width: 100%; border-collapse: collapse; border: 2px solid #766b86; background: var(--white); font-size: .93rem; line-height: 1.6; }
+article :is(th, td) { border: 1px solid #8f859d; padding: 8px 10px; text-align: left; vertical-align: top; }
+article th { background: #e8e2f6; border-bottom: 2px solid #8f859d; }
+article tbody tr:nth-child(even) { background: #f5f2fa; }
 .listing { padding: 12px 14px; border: 1px solid var(--rule); border-radius: 8px; background: var(--white); overflow: auto; font: .9rem/1.65 var(--mono); }
 .playground { color: #f0ecfa; background: var(--dark); border: 1px solid #33415c; border-radius: 11px; overflow: hidden; margin: 19px 0 25px; }
 .editor-bar, .runner-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 7px; padding: 9px 12px; background: #28324a; font-size: .82rem; }
@@ -149,9 +151,9 @@ summary { cursor: pointer; font-weight: 600; }
 .simulator textarea { resize: vertical; }
 .sim-actions { display: flex; flex-wrap: wrap; gap: 9px; align-items: center; }
 .sim-status { font-size: .84rem; color: var(--muted); }
-.sim-table { overflow-x: auto; }
-.simulator table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: .86rem; text-align: left; }
-.simulator th, .simulator td { border-bottom: 1px solid var(--rule); padding: 5px 7px; }
+.sim-table { margin-top: 12px; }
+.sim-table table { font-size: .86rem; }
+.sim-table :is(th, td) { padding: 5px 7px; }
 .complete { margin: 15px 0 22px; color: var(--purple); background: var(--white); border-color: #ad9dcf; }
 .complete[aria-pressed="true"] { color: #176741; border-color: #8ab8a2; }
 .adjacent { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; border-top: 1px solid var(--rule); padding-top: 15px; }
