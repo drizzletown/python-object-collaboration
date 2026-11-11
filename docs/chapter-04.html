@@ -22,10 +22,14 @@
  </details></aside>
  <main id="main" class="lesson">
   <header class="lesson-head"><div class="crumb"><a href="index.html#catalog">教材目录</a> <span>›</span> 第 4 章</div>
-  <h1>第三视角 函数与协作封装</h1><p>用函数接口描述一项能力，分别验证单次登记、批量处理和回执生成。</p></header>
-  <article><h2 id="section-1">4.1 为登记函数写契约</h2>
-<p>第 3 章的一段循环负责清理输入、判断资格、登记和输出。如果以后还要在另一份名单上执行同样的登记，就需要把核心处理定义为函数。先约定 register 的输入为学号文本、现有名单和非负容量。返回回执字符串。仅在通过时修改传入名单。调用方决定怎样显示回执。这份约定说明函数接收什么、返回什么、改变什么，是可以测试的契约。</p>
-<p>def 定义函数，形参在调用时绑定到实参对象。传入可变字典时，修改字典的内容可以被调用方观察到。把形参重新赋值为另一个字典只会改变函数内部的绑定。return 结束调用并交出结果，省略 return 时结果为 None。</p>
+  <h1>第三视角 函数与协作封装</h1><p>把资格判断、单次登记和批量处理组织为可分别调用的能力。</p></header>
+  <article><h2 id="section-1">4.1 同一套报名规则要用在几个地方</h2>
+<p>第 3 章用一个循环处理一批请求。现在组织者还希望受理临时到达的单条请求，并且能在不改动名单的情况下回答“这个学号现在能报名吗”。这三个入口需要遵守同一套报名规则。</p>
+<div class="lesson-table"><table><thead><tr><th scope="col">任务</th><th scope="col">接收的信息</th><th scope="col">交出的结果</th></tr></thead><tbody><tr><td>检查报名资格</td><td>整理过的学号、现有名单、容量</td><td>一条回执，名单保持原样</td></tr><tr><td>登记单条请求</td><td>原始学号、现有名单、容量</td><td>整理后的学号和回执，通过时更新名单</td></tr><tr><td>处理整批请求</td><td>按到达顺序排列的学号、现有名单、容量</td><td>按相同顺序排列的回执记录</td></tr></tbody></table></div>
+<p>普通函数可以从第三视角接收这些对象，安排它们协作并交出结果。调用者只需要知道它接收什么、返回什么、会改变什么。</p>
+<h2 id="section-2">4.2 从定义到调用</h2>
+<h3>形参、实参与返回值</h3>
+<p><code>def</code> 创建函数对象，并把函数名绑定到它。调用时，实参是调用者提供的对象，形参是函数内接收这些对象的名字。函数执行到 <code>return</code> 时结束这次调用，把指定对象交给调用者。写空的 <code>return</code> 或执行到末尾，结果都是 <code>None</code>。</p>
 
 <section class="playground" aria-label="Python 示例 1">
   <div class="editor-bar">
@@ -33,26 +37,17 @@
     <div><button class="quiet" data-reset hidden>重置</button>
     <button class="quiet" data-copy hidden>复制</button></div>
   </div>
-  <textarea aria-label="Python 示例 1 代码" rows="14"
-    spellcheck="false" autocapitalize="off" autocomplete="off">def register(raw_id, roster, *, capacity):
-    student_id = raw_id.strip()
-    if not student_id:
-        return &quot;空学号&quot;
-    if student_id in roster:
-        return &quot;重复&quot;
-    if len(roster) &gt;= capacity:
-        return &quot;满员&quot;
-    roster[student_id] = &quot;已报名&quot;
-    return &quot;通过&quot;
+  <textarea aria-label="Python 示例 1 代码" rows="10"
+    spellcheck="false" autocapitalize="off" autocomplete="off">def split_seconds(total):
+    minutes = total // 60
+    seconds = total % 60
+    return minutes, seconds
 
-def process(requests, roster, *, capacity=2):
-    for raw_id in requests:
-        status = register(raw_id, roster, capacity=capacity)
-        print(raw_id.strip() or &quot;（空白）&quot;, status)
 
-museum = {}
-process([&quot;S01&quot;, &quot;S02&quot;, &quot;S01&quot;, &quot;S03&quot;], museum)
-print(list(museum))</textarea>
+result = split_seconds(125)
+minutes, seconds = result
+print(result)
+print(f&quot;{minutes} 分 {seconds} 秒&quot;)</textarea>
   <div class="runner-bar" hidden>
     <button class="primary small" data-run>▶ 运行代码</button>
     <button class="quiet" data-stop hidden>停止</button>
@@ -61,9 +56,10 @@ print(list(museum))</textarea>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
 
-<p>这里先把 register 当作具备约定行为的能力，写出 process，再独立检验 register 的四种结果。这个做法把假设落实到函数边界。参数列表中的 * 使 capacity 只能通过关键字传递，调用时单位和含义更容易辨认。默认值在定义函数时求值，应避免用空列表或空字典作为每次调用需要重新创建的默认值。需要时使用 None，在函数内部创建容器。</p>
-<h2 id="section-2">4.2 作用域与函数对象</h2>
-<p>函数内部定义的名字通常只在该次调用的局部作用域有效。内部函数可以引用外层函数的局部名字，并在外层函数返回后继续使用这个绑定，这就是闭包。下面让不同的活动各自得到一个格式化函数。format_all 只需要调用传进来的能力，活动前缀由创建它的地方决定。</p>
+<p><code>return minutes, seconds</code> 返回一个二元组。调用者可以把整个结果绑定到一个名字，也可以解包。这里由调用者负责显示，函数可以继续为其他调用者计算时长。</p>
+<h3>参数怎样接收实参</h3>
+<div class="lesson-table"><table><thead><tr><th scope="col">形式</th><th scope="col">例子</th><th scope="col">调用方式</th></tr></thead><tbody><tr><td>位置或关键字参数</td><td><code>value</code></td><td>按位置提供，或写成 <code>value=20</code></td></tr><tr><td>带默认值的参数</td><td><code>unit=&quot;米&quot;</code></td><td>省略时使用定义时的默认值</td></tr><tr><td>仅关键字参数</td><td><code>*, digits=1</code></td><td>提供时写成 <code>digits=2</code></td></tr><tr><td>仅位置参数</td><td><code>value, /</code></td><td>调用时通过位置提供 <code>value</code></td></tr><tr><td>接收额外位置实参</td><td><code>*values</code></td><td>额外的位置实参收成元组</td></tr><tr><td>接收额外关键字实参</td><td><code>**options</code></td><td>额外的关键字实参收成字典</td></tr></tbody></table></div>
+<p>单独的 <code>*</code> 标记后面的形参只接收关键字，<code>/</code> 标记前面的形参只接收位置实参。编写普通函数时，可以先用固定参数表达契约，再根据调用场景决定是否需要其余形式。</p>
 
 <section class="playground" aria-label="Python 示例 2">
   <div class="editor-bar">
@@ -71,17 +67,15 @@ print(list(museum))</textarea>
     <div><button class="quiet" data-reset hidden>重置</button>
     <button class="quiet" data-copy hidden>复制</button></div>
   </div>
-  <textarea aria-label="Python 示例 2 代码" rows="10"
-    spellcheck="false" autocapitalize="off" autocomplete="off">def make_formatter(event_name):
-    def format_notice(student_id):
-        return f&quot;{event_name}：{student_id} 已登记&quot;
-    return format_notice
+  <textarea aria-label="Python 示例 2 代码" rows="8"
+    spellcheck="false" autocapitalize="off" autocomplete="off">def format_measurement(value, unit=&quot;米&quot;, *, digits=1):
+    rounded = f&quot;{value:.{digits}f}&quot;
+    return f&quot;{rounded} {unit}&quot;
 
-def format_all(ids, formatter):
-    return [formatter(student_id) for student_id in ids]
 
-museum_notice = make_formatter(&quot;博物馆&quot;)
-print(format_all([&quot;S01&quot;, &quot;S02&quot;], museum_notice))</textarea>
+print(format_measurement(2.345))
+print(format_measurement(2.345, &quot;千米&quot;, digits=2))
+print(format_measurement(value=2.345, unit=&quot;秒&quot;, digits=0))</textarea>
   <div class="runner-bar" hidden>
     <button class="primary small" data-run>▶ 运行代码</button>
     <button class="quiet" data-stop hidden>停止</button>
@@ -90,9 +84,10 @@ print(format_all([&quot;S01&quot;, &quot;S02&quot;], museum_notice))</textarea>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
 
-<p>函数可以像其他对象一样被赋值、传入和返回。注意区分 format_notice（传递函数）和 format_notice(&quot;S01&quot;)（调用并取得字符串）。函数读取自由变量时，使用的是调用时该名字关联的对象。此处每次 make_formatter 调用都有自己的 event_name 绑定。</p>
-<h2 id="section-3">4.3 按需产生结果</h2>
-<p>批量读取很多记录时，可以边处理边产生结果。含 yield 的函数在被调用时返回生成器。每次迭代推进到下一个 yield，暂停时保留局部状态。迭代耗尽后，要重读需创建新的生成器。</p>
+<p>参数默认值在执行函数定义时求值。如果用空列表作为默认值，每次省略该参数时会得到同一个列表。若每次调用都应获得新列表，可以让参数默认值为 <code>None</code>，在函数内部用 <code>is None</code> 检查并创建列表。<a href="https://docs.python.org/3.12/tutorial/controlflow.html#defining-functions">Python 官方教程的函数定义与参数</a></p>
+<h2 id="section-3">4.3 作用域与函数的影响范围</h2>
+<p>每次调用都会建立自己的局部名字。函数体中对名字赋值，通常建立或改变本次调用的局部绑定。读一个名字时，Python 会根据作用域查找，可能找到局部、外层函数、模块或内置名字。显式传入数据更容易看清函数依赖哪些对象。</p>
+<p>形参与实参可以引用同一个对象。修改可变对象的内容，调用者可以看到变化。把形参改绑到新对象，外面的名字仍引用原来的对象。</p>
 
 <section class="playground" aria-label="Python 示例 3">
   <div class="editor-bar">
@@ -100,17 +95,21 @@ print(format_all([&quot;S01&quot;, &quot;S02&quot;], museum_notice))</textarea>
     <div><button class="quiet" data-reset hidden>重置</button>
     <button class="quiet" data-copy hidden>复制</button></div>
   </div>
-  <textarea aria-label="Python 示例 3 代码" rows="10"
-    spellcheck="false" autocapitalize="off" autocomplete="off">def cleaned_ids(raw_ids):
-    for raw_id in raw_ids:
-        student_id = raw_id.strip()
-        if student_id:
-            yield student_id
+  <textarea aria-label="Python 示例 3 代码" rows="14"
+    spellcheck="false" autocapitalize="off" autocomplete="off">def add_sample(values, reading):
+    values.append(reading)
 
-ids = cleaned_ids([&quot; S01 &quot;, &quot;&quot;, &quot;S02&quot;])
-print(next(ids))
-print(list(ids))
-print(list(ids))</textarea>
+
+def start_over(values):
+    values = []
+    return values
+
+
+samples = [12]
+add_sample(samples, 16)
+empty = start_over(samples)
+print(samples)
+print(empty)</textarea>
   <div class="runner-bar" hidden>
     <button class="primary small" data-run>▶ 运行代码</button>
     <button class="quiet" data-stop hidden>停止</button>
@@ -119,22 +118,174 @@ print(list(ids))</textarea>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
 
-<h2 id="section-4">练习</h2>
-<p>把第一段的打印移到调用处，让 process 返回 (学号, 回执) 的列表。测试空列表以及重复学号的输入。</p>
-<details class='answer'><summary>参考解答</summary><p>在 process 中新建 results，每轮调用 register 后 append((raw_id.strip(), status))，循环结束 return results。空输入返回空列表。传入 [&quot;S01&quot;, &quot;S01&quot;] 得到 [(&quot;S01&quot;, &quot;通过&quot;), (&quot;S01&quot;, &quot;重复&quot;)]，名单只含 S01。</p></details>
-<h2 id="section-5">本章自测</h2>
+<p><code>add_sample</code> 返回 <code>None</code> 并原地追加读数。<code>start_over</code> 返回一个新列表，<code>samples</code> 仍引用含有两项的旧列表。为函数写契约时，可以用一句话写明它会不会修改参数指向的对象。</p>
+<h2 id="section-4">4.4 函数也能作为参数或结果</h2>
+<p>一个函数可以交给另一个函数调用。传递 <code>abs</code> 是交出函数对象，写 <code>abs(-4)</code> 则立即调用并取得结果。接受函数作为参数，可以让调用者选择规则，组织步骤的函数只负责在合适时机使用它。</p>
+
+<section class="playground" aria-label="Python 示例 4">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 4</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 4 代码" rows="14"
+    spellcheck="false" autocapitalize="off" autocomplete="off">def convert_all(values, convert):
+    return [convert(value) for value in values]
+
+
+def make_multiplier(factor):
+    def multiply(value):
+        return value * factor
+
+    return multiply
+
+
+readings = [-4, 2]
+print(convert_all(readings, abs))
+double = make_multiplier(2)
+print(convert_all(readings, double))
+print(sorted([&quot;铅笔&quot;, &quot;三角板&quot;, &quot;尺&quot;], key=lambda text: len(text)))</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<p><code>make_multiplier</code> 返回的内部函数仍能访问创建它时外层调用中的 <code>factor</code> 绑定。这种函数称为闭包。分别调用 <code>make_multiplier(2)</code> 和 <code>make_multiplier(3)</code> 会得到使用不同倍数的函数。<code>lambda</code> 用一个表达式创建小函数，示例把它交给 <code>sorted</code>，以文字长度作为排序依据。</p>
+<h2 id="section-5">4.5 两种按结构组织处理的方式</h2>
+<h3>用递归函数处理嵌套结构</h3>
+<p>递归函数直接或间接调用自己。先确定可以直接回答的情形，再确保每次调用解决更小的问题。例如，统计一份零件清单时，遇到名称就计一个，遇到分组就分别统计组内各项。</p>
+
+<section class="playground" aria-label="Python 示例 5">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 5</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 5 代码" rows="12"
+    spellcheck="false" autocapitalize="off" autocomplete="off">def count_parts(group):
+    if isinstance(group, str):
+        return 1
+
+    total = 0
+    for item in group:
+        total += count_parts(item)
+    return total
+
+
+parts = [&quot;电池&quot;, [&quot;螺钉&quot;, &quot;垫片&quot;], &quot;外壳&quot;]
+print(count_parts(parts))</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<p><code>isinstance(group, str)</code> 判断对象是否为字符串。对本例的有限嵌套列表，每次递归都进入更小的分组或具体零件。导论中的递归使用假设三部曲是一种设计方法，每次兑现遇到新难题就形成子任务。子任务可以用函数、对象或现成的库来完成。</p>
+<h3>用生成器按需产生结果</h3>
+<p>含有 <code>yield</code> 的函数被调用时会返回生成器。每次取下一项才推进函数体，执行到 <code>yield</code> 就交出一个值并暂停。调用者可以先消费一部分结果，其余结果留到需要时再产生。</p>
+
+<section class="playground" aria-label="Python 示例 6">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 6</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 6 代码" rows="11"
+    spellcheck="false" autocapitalize="off" autocomplete="off">def nonempty_lines(lines):
+    for line in lines:
+        text = line.strip()
+        if text:
+            yield text
+
+
+lines = nonempty_lines([&quot;  第一行  &quot;, &quot; &quot;, &quot;第二行&quot;])
+print(next(lines))
+print(list(lines))
+print(list(lines))</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<p>第一次 <code>next</code> 得到“第一行”。第一次转为列表会取得余下的“第二行”，第二次转为列表时生成器已耗尽。一次性需要全部结果时，返回列表便于重复访问。按需处理很多数据时，可用生成器减少一次性保存的结果。<a href="https://docs.python.org/3.12/tutorial/classes.html#generators">Python 官方教程的生成器</a></p>
+<h2 id="section-6">4.6 回到案例 封装三个报名任务</h2>
+<p>先约定资格检查会给出一条回执。单次登记拿到回执后，据此决定是否写入名单，并交出整理后的学号和回执。批量处理对每条请求调用单次登记，把收到的结果累积起来。显示代码接收整批记录并负责输出。</p>
+
+<section class="playground" aria-label="Python 示例 7">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 7</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 7 代码" rows="14"
+    spellcheck="false" autocapitalize="off" autocomplete="off">def check_eligibility(student_id, roster, *, capacity):
+    &quot;&quot;&quot;接收已去掉首尾空白的学号，返回回执。&quot;&quot;&quot;
+    if not student_id:
+        return &quot;空学号&quot;
+    if student_id in roster:
+        return &quot;重复&quot;
+    if len(roster) &gt;= capacity:
+        return &quot;满员&quot;
+    return &quot;通过&quot;
+
+
+def register(raw_id, roster, *, capacity):
+    student_id = raw_id.strip()
+    status = check_eligibility(student_id, roster, capacity=capacity)
+    if status == &quot;通过&quot;:
+        roster[student_id] = &quot;已报名&quot;
+    return student_id, status
+
+
+def process(requests, roster, *, capacity=2):
+    receipts = []
+    for raw_id in requests:
+        receipt = register(raw_id, roster, capacity=capacity)
+        receipts.append(receipt)
+    return receipts
+
+
+roster = {}
+print(&quot;检查资格&quot;, check_eligibility(&quot;S01&quot;, roster, capacity=2))
+print(&quot;检查后的名单&quot;, list(roster))
+print(&quot;单次登记&quot;, register(&quot; S01 &quot;, roster, capacity=2))
+print(&quot;批量回执&quot;)
+for student_id, status in process([&quot; &quot;, &quot; S02 &quot;, &quot;S03&quot;, &quot;S01&quot;], roster):
+    print(student_id or &quot;（空白）&quot;, status)
+print(&quot;最终名单&quot;, list(roster))</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<p>前两行输出表明，资格检查返回“通过”时名单仍为空。单次登记后，批量处理的四条回执依次是“空学号、通过、满员、重复”。最终名单为 <code>[&quot;S01&quot;, &quot;S02&quot;]</code>。三个入口都沿用同一处资格规则。</p>
+<h2 id="section-7">练习</h2>
+<p>对一份新的空名单分别调用 <code>process([], roster)</code> 和 <code>process([&quot;S01&quot;, &quot;S01&quot;], roster)</code>，先预测返回列表和调用后的名单。再把第二次调用改为 <code>capacity=1</code>，检查回执顺序。</p>
+<details class='answer'><summary>参考解答</summary><p>空批次返回空列表，名单不变。第二个批次返回 [(&quot;S01&quot;, &quot;通过&quot;), (&quot;S01&quot;, &quot;重复&quot;)]，名单只含 S01。</p><p>在新的空名单上以容量 1 运行这个批次，回执保持相同。第二次请求先命中重复规则。</p></details>
+<h2 id="section-8">本章自测</h2>
 
 <form class="quiz" data-correct="1">
- <fieldset><legend>调用方把 roster 字典传给 register，函数里执行 roster[&quot;S01&quot;] = &quot;已报名&quot;，调用方能看到什么？</legend><label><input type="radio" name="choice" value="1" required> 原名单中新增 S01</label><label><input type="radio" name="choice" value="2" required> 只在函数内部新增 S01</label><label><input type="radio" name="choice" value="3" required> 名单会在函数返回时恢复</label></fieldset>
+ <fieldset><legend>函数收到一个字典 roster，并执行 roster[&quot;S01&quot;] = &quot;已报名&quot;。调用方能观察到什么？</legend><label><input type="radio" name="choice" value="1" required> 原名单中新增 S01</label><label><input type="radio" name="choice" value="2" required> 只在函数内部新增 S01</label><label><input type="radio" name="choice" value="3" required> 名单在函数返回时恢复</label></fieldset>
  <button class="primary small" type="submit" disabled>检查答案</button>
  <p class="feedback" aria-live="polite"></p>
- <details><summary>查看解析</summary><p>两处名字绑定到同一个字典，对该字典的原地更新可通过两个引用观察。</p></details>
+ <details><summary>查看解析</summary><p>形参与调用方的名字都引用原字典，给字典添加键会改变这个对象。</p></details>
 </form>
 </article>
   <button type="button" class="complete" data-mark="04" aria-pressed="false" hidden>标记本章完成</button>
   <nav class="adjacent" aria-label="前后章节"><a href="chapter-03.html"><small>← 上一节</small>对象协作的流程控制</a><a href="chapter-05.html"><small>下一节 →</small>第一视角 自定义对象与类</a></nav>
  </main>
- <aside class="outline"><p>本节内容</p><nav aria-label="本节内容"><ol><li><a href="#section-1">4.1 为登记函数写契约</a></li><li><a href="#section-2">4.2 作用域与函数对象</a></li><li><a href="#section-3">4.3 按需产生结果</a></li><li><a href="#section-4">练习</a></li><li><a href="#section-5">本章自测</a></li></ol></nav></aside>
+ <aside class="outline"><p>本节内容</p><nav aria-label="本节内容"><ol><li><a href="#section-1">4.1 同一套报名规则要用在几个地方</a></li><li><a href="#section-2">4.2 从定义到调用</a></li><li><a href="#section-3">4.3 作用域与函数的影响范围</a></li><li><a href="#section-4">4.4 函数也能作为参数或结果</a></li><li><a href="#section-5">4.5 两种按结构组织处理的方式</a></li><li><a href="#section-6">4.6 回到案例 封装三个报名任务</a></li><li><a href="#section-7">练习</a></li><li><a href="#section-8">本章自测</a></li></ol></nav></aside>
 </div>
 <footer class="site-footer"><a href="index.html">Python 编程教材</a><a href="chapter-A.html">运行环境</a><a href="chapter-C.html">语言速查</a></footer>
 </body></html>

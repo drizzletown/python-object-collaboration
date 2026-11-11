@@ -118,7 +118,7 @@ def submit(store: Store, raw_id: str) -> str:
 
 
 def demo() -> None:
-    requests = ["S01", "S01", "S02", "S03"]
+    requests = [" S01 ", " ", "S02", "S03", "S01"]
     memory = MemoryStore(Activity("博物馆参观", 2))
     print("内存回执", [submit(memory, student_id) for student_id in requests])
     with TemporaryDirectory() as folder:
@@ -129,8 +129,8 @@ def demo() -> None:
 
 
 def self_test() -> None:
-    requests = [" S01 ", "S01", "S02", "S03"]
-    expected = ["通过", "重复", "通过", "满员"]
+    requests = [" S01 ", " ", "S02", "S03", "S01"]
+    expected = ["通过", "空学号", "通过", "满员", "重复"]
     memory = MemoryStore(Activity("博物馆参观", 2))
     assert [submit(memory, student_id) for student_id in requests] == expected
     with TemporaryDirectory() as folder:
@@ -147,7 +147,7 @@ def self_test() -> None:
         except ValueError:
             assert path.read_text(encoding="utf-8") == invalid
         else:
-            raise AssertionError("应拒绝超容量文件")
+            raise AssertionError("应拒绝非法名单文件")
     print("项目验收通过")
 
 
@@ -186,5 +186,6 @@ def main() -> int:
 if __name__ == "__main__":
     if sys.platform == "emscripten":
         demo()
+        self_test()
     else:
         raise SystemExit(main())

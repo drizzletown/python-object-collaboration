@@ -22,10 +22,14 @@
  </details></aside>
  <main id="main" class="lesson">
   <header class="lesson-head"><div class="crumb"><a href="index.html#catalog">教材目录</a> <span>›</span> 第 10 章</div>
-  <h1>对象协作系统的复用与演化</h1><p>把回执发往终端或收集到内存，了解如何在保留报名规则的同时扩展协作方式。</p></header>
-  <article><h2 id="section-1">10.1 按能力替换对象</h2>
-<p>第 9 章将存储作为可替换能力。本章用相同思路扩展通知。组织者希望在终端显示回执，测试希望捕获回执进行检查。用 Protocol 写出 send(message) 的接口。只要对象提供兼容的方法，静态类型检查器就能按这个协议看待它。类可以通过继承共享行为，但可替换性来自调用约定和语义的一致。</p>
-<p>对象组合适合把一个独立变化的能力交给另一个角色。终端通知和内存通知只共享接口，因此可以分别实现。若将来几类活动共享一套稳定规则，且子类能遵守基类的契约，可以考虑继承，在子类中重写确有差异的行为。评估继承时，用同一组客户端测试检查每种实现。</p>
+  <h1>对象协作系统的复用与演化</h1><p>给校园报名系统接入可替换的通知方式，用测试核对回执、名单和通知结果。</p></header>
+  <article><h2 id="section-1">10.1 报名已经完成，回执可以发到哪里</h2>
+<p>第 9 章的项目会把报名结果交给调用者。现在活动组织者需要在终端查看回执，测试程序需要把同一批回执收集起来，逐条核对。以后若接入外部通知服务，还要能辨认报名已保存、通知却未完成的情形。</p>
+<ul><li>两种通知方式都应收到相同的回执内容，报名请求仍由第 9 章的程序处理。</li><li>通过报名时先保存再通知。空学号、满员和重复都应有自己的回执。</li><li>已保存的报名遇到通知故障时，应同时报告报名“通过”和“通知待处理”。用同一组用例验证更换通知方式前后的名单。</li></ul>
+<p>要做到这些，程序需要明确哪些能力可以替换、各自遵守什么约定。下面先用小例子比较 Python 中组织和复用行为的几种方式。</p>
+<h2 id="section-2">10.2 用组合、协议和继承组织可替换能力</h2>
+<h3>通过组合选择要使用的对象</h3>
+<p>当一项工作的一部分有多种实现，可以把这个能力交给单独的对象。下面的报告函数只需要一个能够接收字符串的输出端。输出端可以显示文字，也可以保存文字供后续使用。</p>
 
 <section class="playground" aria-label="Python 示例 1">
   <div class="editor-bar">
@@ -36,27 +40,33 @@
   <textarea aria-label="Python 示例 1 代码" rows="14"
     spellcheck="false" autocapitalize="off" autocomplete="off">from typing import Protocol
 
-class Notifier(Protocol):
-    def send(self, message: str) -&gt; None: ...
 
-class ConsoleNotifier:
-    def send(self, message: str) -&gt; None:
-        print(message)
+class TextSink(Protocol):
+    def write(self, text: str) -&gt; None:
+        ...
 
-class RecordingNotifier:
+
+class Screen:
+    def write(self, text: str) -&gt; None:
+        print(text)
+
+
+class Buffer:
     def __init__(self):
-        self.messages: list[str] = []
+        self.lines = []
 
-    def send(self, message: str) -&gt; None:
-        self.messages.append(message)
+    def write(self, text: str) -&gt; None:
+        self.lines.append(text)
 
-def announce(student_id: str, status: str, notifier: Notifier) -&gt; None:
-    notifier.send(f&quot;{student_id}：{status}&quot;)
 
-recording = RecordingNotifier()
-announce(&quot;S01&quot;, &quot;通过&quot;, ConsoleNotifier())
-announce(&quot;S02&quot;, &quot;满员&quot;, recording)
-print(recording.messages)</textarea>
+def report(value: float, target: TextSink) -&gt; None:
+    target.write(f&quot;测量结果 {value:.1f}&quot;)
+
+
+report(18.0, Screen())
+buffer = Buffer()
+report(18.0, buffer)
+print(buffer.lines)</textarea>
   <div class="runner-bar" hidden>
     <button class="primary small" data-run>▶ 运行代码</button>
     <button class="quiet" data-stop hidden>停止</button>
@@ -65,10 +75,9 @@ print(recording.messages)</textarea>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
 
-<p>如果将通知接到报名主流程，先完成保存再通知。通知发送失败时，应报告发送状态并允许重试发送；重新执行报名会先看到已登记的名单，产生重复回执。把“登记状态”和“通知状态”分别记录，调用方才能区分这两项工作。</p>
-<p>例如，若签到界面需要精简的活动名称，可以定义一个继承 Activity 的 LabActivity，重写用于显示的 summary 方法。登记容量与重复检查由基类统一维护。所有调用 summary 的代码继续接收字符串，也都可以调用 register。若实验室报名新增资格核验且会经常变化，可以将资格规则独立为对象，把它传给活动或报名服务。</p>
-<h2 id="section-2">10.2 用装饰器复用外围行为</h2>
-<p>装饰器接收函数并返回替代对象。@report 相当于用 report 处理刚定义的函数，再把结果绑定回原名字。它适合为多个函数统一加入计时或日志。用 functools.wraps 保留原函数名和文档字符串等元数据。编写包装时继续转发参数、返回值和异常，使调用者可以沿用已有契约。</p>
+<p>同一个调用位置可以通过共同约定使用不同对象，这体现了多态。<code>Protocol</code> 把调用者需要的能力写成类型标注。两个类只要提供兼容的 <code>write</code> 方法，就能满足静态类型检查所要求的形状。方法的实际行为仍要用测试检查，例如每次调用应该写入一条完整的记录。<a href="https://docs.python.org/3.12/library/typing.html#typing.Protocol">Python 官方文档的 Protocol</a></p>
+<h3>用继承复用共同的实现</h3>
+<p>子类可以继承基类的方法，也可以重写部分行为。例如，一个标题的标准格式保持一致，某类标题还需要加编号。</p>
 
 <section class="playground" aria-label="Python 示例 2">
   <div class="editor-bar">
@@ -77,21 +86,25 @@ print(recording.messages)</textarea>
     <button class="quiet" data-copy hidden>复制</button></div>
   </div>
   <textarea aria-label="Python 示例 2 代码" rows="14"
-    spellcheck="false" autocapitalize="off" autocomplete="off">from functools import wraps
+    spellcheck="false" autocapitalize="off" autocomplete="off">class Heading:
+    def __init__(self, title):
+        self.title = title
 
-def report(function):
-    @wraps(function)
-    def wrapped(*args, **kwargs):
-        result = function(*args, **kwargs)
-        print(f&quot;{function.__name__} 完成&quot;)
-        return result
-    return wrapped
+    def render(self):
+        return self.title
 
-@report
-def remaining(capacity, count):
-    return capacity - count
 
-print(remaining(2, count=1))</textarea>
+class NumberedHeading(Heading):
+    def __init__(self, title, number):
+        super().__init__(title)
+        self.number = number
+
+    def render(self):
+        return f&quot;{self.number}. {super().render()}&quot;
+
+
+for heading in [Heading(&quot;目录&quot;), NumberedHeading(&quot;观察结果&quot;, 2)]:
+    print(heading.render())</textarea>
   <div class="runner-bar" hidden>
     <button class="primary small" data-run>▶ 运行代码</button>
     <button class="quiet" data-stop hidden>停止</button>
@@ -100,8 +113,9 @@ print(remaining(2, count=1))</textarea>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
 
-<h2 id="section-3">10.3 迭代协议与泛型基础</h2>
-<p>可迭代对象提供 __iter__，迭代器还提供 __next__ 并在耗尽时抛出 StopIteration。名单对象可以在 __iter__ 中返回 iter(tuple(self._students))，让调用方遍历创建迭代器时的快照。泛型用于描述输入和输出中类型之间的关系。下面的 T 表示任意一种由调用决定的元素类型；给 first 传入字符串序列时，返回类型是 str | None。</p>
+<p><code>super()</code> 在这个例子中把调用交给基类的相应实现。使用标题的代码可以继续依赖 <code>render()</code> 交出字符串。设计继承时，检查子类是否仍遵守调用者依赖的约定。如果一个能力经常独立改变，可将该能力作为成员传入，通过组合选择所需对象。<a href="https://docs.python.org/3.12/tutorial/classes.html#inheritance">Python 官方教程的继承</a></p>
+<h2 id="section-3">10.3 用装饰器复用函数外围的行为</h2>
+<p>装饰器接收一个函数并交出替代对象。写在定义上方的 <code>@report_call</code>，相当于函数定义后用 <code>report_call</code> 处理它，再把结果绑定回原函数名。记录日志、统计耗时等重复工作可放进包装函数。</p>
 
 <section class="playground" aria-label="Python 示例 3">
   <div class="editor-bar">
@@ -109,16 +123,68 @@ print(remaining(2, count=1))</textarea>
     <div><button class="quiet" data-reset hidden>重置</button>
     <button class="quiet" data-copy hidden>复制</button></div>
   </div>
-  <textarea aria-label="Python 示例 3 代码" rows="10"
+  <textarea aria-label="Python 示例 3 代码" rows="14"
+    spellcheck="false" autocapitalize="off" autocomplete="off">from functools import wraps
+
+
+def report_call(function):
+    @wraps(function)
+    def wrapped(*args, **kwargs):
+        result = function(*args, **kwargs)
+        print(function.__name__, &quot;计算完成&quot;)
+        return result
+
+    return wrapped
+
+
+@report_call
+def rectangle_area(width, height):
+    return width * height
+
+
+print(rectangle_area(3, height=4))
+print(rectangle_area.__name__)</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<p><code>*args</code> 和 <code>**kwargs</code> 接收并转交位置实参与关键字实参。包装函数照常交出计算结果，调用异常也会继续传播。<code>wraps</code> 保留原函数名、文档字符串等元数据，帮助调用者和工具识别被包装的函数。<a href="https://docs.python.org/3.12/library/functools.html#functools.wraps">Python 官方文档的 functools.wraps</a></p>
+<h2 id="section-4">10.4 用迭代协议和泛型复用遍历能力</h2>
+<p>第 3 章已经通过 <code>iter</code> 和 <code>next</code> 观察过迭代。自定义对象可以通过 <code>__iter__</code> 交出迭代器，使 <code>for</code> 和 <code>list()</code> 等通用操作能够使用它。迭代器通过 <code>__next__</code> 取得下一项，耗尽时抛出 <code>StopIteration</code>。</p>
+
+<section class="playground" aria-label="Python 示例 4">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 4</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 4 代码" rows="14"
     spellcheck="false" autocapitalize="off" autocomplete="off">from collections.abc import Iterable
 from typing import TypeVar
 
+
 T = TypeVar(&quot;T&quot;)
+
 
 def first(values: Iterable[T]) -&gt; T | None:
     return next(iter(values), None)
 
-print(first([&quot;S01&quot;, &quot;S02&quot;]))
+
+class Readings:
+    def __init__(self, values):
+        self._values = tuple(values)
+
+    def __iter__(self):
+        return iter(self._values)
+
+
+print(first([&quot;东站&quot;, &quot;西站&quot;]))
+print(first(Readings([18, 20])))
+print(list(Readings([18, 20])))
 print(first([]))</textarea>
   <div class="runner-bar" hidden>
     <button class="primary small" data-run>▶ 运行代码</button>
@@ -128,29 +194,36 @@ print(first([]))</textarea>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
 
-<h2 id="section-4">10.4 等待多个通知操作</h2>
-<p>异步函数用 async def 声明，调用会创建协程对象，用 await 才会等待其结果。多个相互独立的等待任务可交给 asyncio.gather 组织。下面用 sleep 模拟异步通知，本机和网页可分别运行对应的入口。真实网络调用还要明确超时、失败处理和结果记录。</p>
+<p><code>Readings</code> 把实际迭代交给元组的迭代器。<code>T</code> 表示由调用决定的元素类型，使接口能表达“第一项的类型来自输入元素”。传入字符串列表时，结果标注对应 <code>str | None</code>。这种把类型关系写成参数的方式称为泛型。<a href="https://docs.python.org/3.12/library/stdtypes.html#iterator-types">Python 官方文档的迭代器类型</a> <a href="https://docs.python.org/3.12/library/typing.html#generics">Python 官方文档的泛型</a></p>
+<h2 id="section-5">10.5 用异步协作等待多个结果</h2>
+<p><code>async def</code> 定义异步函数。调用它会得到协程对象，通过 <code>await</code> 可以等待它完成。协程等待可以让出执行权的操作时，事件循环能够推进其他任务。适合一起等待的独立操作可以用 <code>asyncio.gather</code> 组织。</p>
 
-<section class="playground" aria-label="Python 示例 4">
+<section class="playground" aria-label="Python 示例 5">
   <div class="editor-bar">
-    <span><i></i> Python 示例 4</span>
+    <span><i></i> Python 示例 5</span>
     <div><button class="quiet" data-reset hidden>重置</button>
     <button class="quiet" data-copy hidden>复制</button></div>
   </div>
-  <textarea aria-label="Python 示例 4 代码" rows="14"
+  <textarea aria-label="Python 示例 5 代码" rows="14"
     spellcheck="false" autocapitalize="off" autocomplete="off">import asyncio
 import sys
 
-async def send(student_id):
-    await asyncio.sleep(0.02)
-    return f&quot;{student_id} 已通知&quot;
+
+async def read_station(name, delay, value):
+    await asyncio.sleep(delay)
+    print(name, &quot;完成&quot;)
+    return name, value
+
 
 async def main():
-    notices = await asyncio.gather(send(&quot;S01&quot;), send(&quot;S02&quot;))
-    print(notices)
+    results = await asyncio.gather(
+        read_station(&quot;东站&quot;, 0.03, 18),
+        read_station(&quot;西站&quot;, 0.01, 20),
+    )
+    print(&quot;汇总&quot;, results)
+
 
 if sys.platform == &quot;emscripten&quot;:
-    # 浏览器已经有事件循环。
     __lesson_task__ = asyncio.ensure_future(main())
 else:
     asyncio.run(main())</textarea>
@@ -162,23 +235,133 @@ else:
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
 
-<p>gather 返回结果的顺序与传入任务的顺序一致。协程在等待可让出执行权的操作时，事件循环可以推进其他任务。需要大量计算时，应先测量耗时，再选择合适的运行方式。</p>
-<h2 id="section-5">练习</h2>
-<p>实现一个 PrefixNotifier，保存另一个 Notifier，在转发消息前加上活动名称。用 RecordingNotifier 验证收到的文字。</p>
-<details class='answer'><summary>参考解答</summary><p>PrefixNotifier 初始化时接收 prefix 和 downstream。send 中调用 self.downstream.send(f&quot;{self.prefix} {message}&quot;)。将 PrefixNotifier(&quot;博物馆&quot;, recording) 交给 announce，检查 recording.messages 为 [&quot;博物馆 S01：通过&quot;]。</p></details>
-<h2 id="section-6">本章自测</h2>
+<p>示例用 <code>sleep</code> 模拟等待，西站可以先完成。<code>gather</code> 按传入协程的顺序交出汇总结果，因此汇总中东站仍排在前面。实际访问外部服务时，需要给每项等待规定超时和失败处理。网页运行器已有事件循环，示例最后几行用它启动协程。<a href="https://docs.python.org/3.12/library/asyncio-task.html#asyncio.gather">Python 官方文档的协程与任务</a></p>
+<h2 id="section-6">10.6 回到案例 为报名回执更换通知方式</h2>
+<p>第 9 章的 <code>submit</code> 在报名保存成功后返回回执。新增的 <code>submit_and_notify</code> 先取得这一回执，再交给提供 <code>send(message)</code> 的通知对象。存储异常会沿调用链传播。通知对象报告已知的发送故障时，调用者会同时取得报名回执和“通知待处理”。</p>
+
+<section class="playground" aria-label="Python 示例 6">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 6</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 6 代码" rows="14"
+    spellcheck="false" autocapitalize="off" autocomplete="off">import asyncio
+from collections.abc import Callable
+from functools import partial
+from pathlib import Path
+import sys
+from typing import Protocol
+
+
+class NoticeError(Exception):
+    pass
+
+
+class Notifier(Protocol):
+    def send(self, message: str) -&gt; None:
+        ...
+
+
+class ConsoleNotifier:
+    def send(self, message: str) -&gt; None:
+        print(message)
+
+
+class RecordingNotifier:
+    def __init__(self):
+        self.messages: list[str] = []
+
+    def send(self, message: str) -&gt; None:
+        self.messages.append(message)
+
+
+class FailingNotifier:
+    def send(self, message: str) -&gt; None:
+        raise NoticeError(&quot;通知暂时不可用&quot;)
+
+
+def submit_and_notify(
+    submit_request: Callable[[str], str], raw_id: str, notifier: Notifier
+) -&gt; tuple[str, str]:
+    status = submit_request(raw_id)
+    student_id = raw_id.strip() or &quot;（空白）&quot;
+    try:
+        notifier.send(f&quot;{student_id}：{status}&quot;)
+    except NoticeError:
+        return status, &quot;通知待处理&quot;
+    return status, &quot;已通知&quot;
+
+
+def verify() -&gt; None:
+    from campus import Activity, MemoryStore, submit
+
+    requests = [&quot; S01 &quot;, &quot; &quot;, &quot;S02&quot;, &quot;S03&quot;, &quot;S01&quot;]
+    expected = [&quot;通过&quot;, &quot;空学号&quot;, &quot;通过&quot;, &quot;满员&quot;, &quot;重复&quot;]
+
+    def verify_channel(notifier: Notifier) -&gt; None:
+        store = MemoryStore(Activity(&quot;博物馆参观&quot;, 2))
+        submit_request = partial(submit, store)
+        outcomes = [submit_and_notify(submit_request, raw, notifier) for raw in requests]
+        assert outcomes == [(status, &quot;已通知&quot;) for status in expected]
+        assert store.load().students == (&quot;S01&quot;, &quot;S02&quot;)
+
+    verify_channel(ConsoleNotifier())
+    recording = RecordingNotifier()
+    verify_channel(recording)
+    assert recording.messages == [
+        &quot;S01：通过&quot;, &quot;（空白）：空学号&quot;, &quot;S02：通过&quot;, &quot;S03：满员&quot;, &quot;S01：重复&quot;
+    ]
+    print(&quot;内存通知&quot;, recording.messages)
+
+    store = MemoryStore(Activity(&quot;博物馆参观&quot;, 2))
+    outcome = submit_and_notify(partial(submit, store), &quot;S01&quot;, FailingNotifier())
+    assert outcome == (&quot;通过&quot;, &quot;通知待处理&quot;)
+    assert store.load().students == (&quot;S01&quot;,)
+    print(&quot;通知故障时&quot;, outcome, store.load().students)
+    print(&quot;扩展验收通过&quot;)
+
+
+async def run_on_web() -&gt; None:
+    # 网页从教材网站加载第 9 章的项目文件。
+    from pyodide.http import pyfetch
+
+    response = await pyfetch(&quot;../campus.py&quot;)
+    response.raise_for_status()
+    Path(&quot;campus.py&quot;).write_bytes(await response.bytes())
+    sys.path.insert(0, str(Path.cwd()))
+    verify()
+
+
+if sys.platform == &quot;emscripten&quot;:
+    __lesson_task__ = asyncio.ensure_future(run_on_web())
+else:
+    verify()</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<p><code>partial(submit, store)</code> 固定第一个参数，使通知流程只需用学号调用报名能力。运行时会看到终端打印的五条回执和内存中的五条回执。两个实现接受相同的测试，都应留下 <code>(&quot;S01&quot;, &quot;S02&quot;)</code>。随后模拟一次通知故障，检查报名已经保存，并显示“通知待处理”。需要补发时，可以将原回执再次交给通知对象。</p>
+<h2 id="section-7">练习</h2>
+<p>定义 <code>PrefixNotifier</code>，让它接收活动名称和另一个通知对象。它应先在回执前加活动名称，再交给下一个对象。将它与 <code>RecordingNotifier</code> 组合后用于 <code>verify_channel</code>，核对消息是否带有前缀，以及原有的报名检查能否通过。</p>
+<details class='answer'><summary>参考解答</summary><p>在初始化时保存 prefix 与 downstream，在 send 中调用 self.downstream.send(f&quot;{self.prefix} {message}&quot;)。把 PrefixNotifier(&quot;博物馆&quot;, recording) 交给 verify_channel，并在消息的预期值中加上前缀。第一条通知应是“博物馆 S01：通过”，回执与名单检查仍使用原来的预期值。</p></details>
+<h2 id="section-8">本章自测</h2>
 
 <form class="quiz" data-correct="2">
- <fieldset><legend>终端通知改为内存通知后，哪项契约支撑 announce 继续工作？</legend><label><input type="radio" name="choice" value="1" required> 两个类的名字相同</label><label><input type="radio" name="choice" value="2" required> 两个类都提供兼容的 send 方法</label><label><input type="radio" name="choice" value="3" required> 两个类必须继承同一个实现类</label></fieldset>
+ <fieldset><legend>报名已经保存，通知对象抛出 NoticeError。这个示例会报告什么结果？</legend><label><input type="radio" name="choice" value="1" required> 报名失败，名单自动删除该学号</label><label><input type="radio" name="choice" value="2" required> 报名通过，通知待处理</label><label><input type="radio" name="choice" value="3" required> 报名通过，通知已发送</label></fieldset>
  <button class="primary small" type="submit" disabled>检查答案</button>
  <p class="feedback" aria-live="polite"></p>
- <details><summary>查看解析</summary><p>announce 通过 send 接口使用通知能力。提供兼容方法的对象就可以参与这段协作。</p></details>
+ <details><summary>查看解析</summary><p>保存发生在调用通知之前。通知故障改变的是发送状态，报名回执和已保存的名单保留。</p></details>
 </form>
 </article>
   <button type="button" class="complete" data-mark="10" aria-pressed="false" hidden>标记本章完成</button>
   <nav class="adjacent" aria-label="前后章节"><a href="chapter-09.html"><small>← 上一节</small>综合项目 递归假设驱动的程序构造</a><a href="chapter-A.html"><small>下一节 →</small>附录 A Python 运行环境与学习工具</a></nav>
  </main>
- <aside class="outline"><p>本节内容</p><nav aria-label="本节内容"><ol><li><a href="#section-1">10.1 按能力替换对象</a></li><li><a href="#section-2">10.2 用装饰器复用外围行为</a></li><li><a href="#section-3">10.3 迭代协议与泛型基础</a></li><li><a href="#section-4">10.4 等待多个通知操作</a></li><li><a href="#section-5">练习</a></li><li><a href="#section-6">本章自测</a></li></ol></nav></aside>
+ <aside class="outline"><p>本节内容</p><nav aria-label="本节内容"><ol><li><a href="#section-1">10.1 报名已经完成，回执可以发到哪里</a></li><li><a href="#section-2">10.2 用组合、协议和继承组织可替换能力</a></li><li><a href="#section-3">10.3 用装饰器复用函数外围的行为</a></li><li><a href="#section-4">10.4 用迭代协议和泛型复用遍历能力</a></li><li><a href="#section-5">10.5 用异步协作等待多个结果</a></li><li><a href="#section-6">10.6 回到案例 为报名回执更换通知方式</a></li><li><a href="#section-7">练习</a></li><li><a href="#section-8">本章自测</a></li></ol></nav></aside>
 </div>
 <footer class="site-footer"><a href="index.html">Python 编程教材</a><a href="chapter-A.html">运行环境</a><a href="chapter-C.html">语言速查</a></footer>
 </body></html>

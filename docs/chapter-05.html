@@ -22,10 +22,13 @@
  </details></aside>
  <main id="main" class="lesson">
   <header class="lesson-head"><div class="crumb"><a href="index.html#catalog">教材目录</a> <span>›</span> 第 5 章</div>
-  <h1>第一视角 自定义对象与类</h1><p>用活动对象集中保存容量和名单，让它维护自己的报名规则。</p></header>
-  <article><h2 id="section-1">5.1 把相关状态和行为交给同一个对象</h2>
-<p>普通函数可以接受一份名单和一个容量。多个活动并存时，如果把甲活动的名单和乙活动的容量传给同一次登记，程序仍可能运行，但结果会错。类允许把相关状态集中在实例中。类定义描述实例如何初始化以及提供什么方法，每次创建实例时都应给它一份独立名单。</p>
-<p>调用 museum.register(&quot;S01&quot;) 时，Python 会把 museum 作为方法的第一个参数传入。按惯例命名为 self。对象通过 self 读取和更新自己的属性。以下代码用活动对象承担检查学号和维护容量的职责，外部负责选择活动并展示回执。</p>
+  <h1>第一视角 自定义对象与类</h1><p>让每个活动对象维护自己的容量和名单，通过方法完成登记、取消与查询。</p></header>
+  <article><h2 id="section-1">5.1 两场活动各自管理什么</h2>
+<p>第 4 章把登记写成函数，调用时需要把名单和容量一起传入。现在同时开放博物馆参观和实验室体验，两场活动名额不同。如果调用时把甲活动的名单和乙活动的容量配到一起，程序就可能给出错误的回执。</p>
+<ul><li>博物馆容量为 2，实验室容量为 1。两场活动都从空名单开始。</li><li>同一学号可以分别参加两场活动。重复和满员以收到请求的活动为准。</li><li>取消一场活动的报名只影响这场活动。组织者可以查询名单和剩余名额。</li></ul>
+<p>需要一个角色把相关数据和操作集中在一起。调用者选定活动，然后请它自己处理登记或取消。Python 用类描述这种拥有专属状态和职责的对象。</p>
+<h2 id="section-2">5.2 从类到实例</h2>
+<p>类描述一种对象可以保存什么、能做什么。执行 <code>class</code> 定义后，类名绑定到一个类对象。调用这个类会创建实例，<code>__init__</code> 通常负责设置新实例的初始属性。一个类可以创建多个身份各异的实例。</p>
 
 <section class="playground" aria-label="Python 示例 1">
   <div class="editor-bar">
@@ -34,6 +37,117 @@
     <button class="quiet" data-copy hidden>复制</button></div>
   </div>
   <textarea aria-label="Python 示例 1 代码" rows="14"
+    spellcheck="false" autocapitalize="off" autocomplete="off">class StepCounter:
+    unit = &quot;步&quot;
+
+    def __init__(self, label):
+        self.label = label
+        self.total = 0
+
+    def record(self, steps):
+        self.total += steps
+        return self.total
+
+
+morning = StepCounter(&quot;上午&quot;)
+evening = StepCounter(&quot;傍晚&quot;)
+print(type(morning).__name__, morning is evening)
+print(morning.label, morning.record(120), morning.unit)
+print(evening.label, evening.total, evening.unit)</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<p><code>label</code> 和 <code>total</code> 属于各自的实例。<code>unit</code> 定义在类体里，两次访问都从类中取得同一个单位。若把一份可变列表写成类属性，各实例通过它追加元素时会改动同一个列表。需要独立保存的可变状态应当在 <code>__init__</code> 中为每个实例创建。</p>
+<h2 id="section-3">5.3 用方法描述对象自己的行为</h2>
+<p>读取 <code>morning.record</code> 会得到绑定到 <code>morning</code> 的方法。调用 <code>morning.record(120)</code> 时，Python 把 <code>morning</code> 传给方法的第一个形参，惯例写为 <code>self</code>。方法内通过 <code>self.total</code> 访问当前实例的总步数。</p>
+<div class="lesson-table"><table><thead><tr><th scope="col">写法</th><th scope="col">访问的内容</th><th scope="col">示例</th></tr></thead><tbody><tr><td><code>obj.name</code></td><td>对象公开的一个属性</td><td>读取计数器的标签</td></tr><tr><td><code>obj.method</code></td><td>绑定到这个实例的方法</td><td>把方法作为可调用对象传递</td></tr><tr><td><code>obj.method(value)</code></td><td>请这个实例执行一项操作</td><td>将新增步数累加到总步数</td></tr><tr><td><code>self.name</code></td><td>方法内访问当前实例的属性</td><td>更新接收调用的计数器</td></tr></tbody></table></div>
+<p>普通函数也可以接收实例，调用它的方法并使用结果。当任务需要协调多个角色时，函数可以从第三视角安排先后，实例仍负责各自的行为和状态。<a href="https://docs.python.org/3.12/tutorial/classes.html#class-objects">Python 官方教程的类与实例</a></p>
+<h2 id="section-4">5.4 用公开操作维护状态</h2>
+<p>对象的状态可能有需要始终成立的条件。例如，音量必须处在 0 到 100 之间。可以把直接保存的值视为内部实现，将读值和改值作为公开操作。方法先检查新值是否合规，再执行修改。</p>
+
+<section class="playground" aria-label="Python 示例 2">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 2</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 2 代码" rows="14"
+    spellcheck="false" autocapitalize="off" autocomplete="off">class Volume:
+    def __init__(self, level):
+        self.set_level(level)
+
+    @property
+    def level(self):
+        return self._level
+
+    def set_level(self, level):
+        if type(level) is not int or not 0 &lt;= level &lt;= 100:
+            raise ValueError(&quot;音量须为 0 到 100 的整数&quot;)
+        self._level = level
+
+
+speaker = Volume(30)
+speaker.set_level(45)
+print(speaker.level)</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<p><code>_level</code> 的前导下划线按惯例表示供类内部使用。外部通过 <code>speaker.level</code> 读取当前值，通过 <code>speaker.set_level(45)</code> 请求修改。<code>@property</code> 让读取操作采用属性的写法。这个属性只定义了读取方法，常规的 <code>speaker.level = 45</code> 赋值不会生效，并会报告属性错误。非法音量通过 <code>raise</code> 报告，稍后的第 7 章讲解怎样处理这种错误。</p>
+<p>如果对象内部保存的是可变容器，查询方法还要考虑调用者能否通过返回值改动原状态。可以按需求返回统计值、复制结果或由不可变值组成的元组快照。快照记录取得它时的数据。</p>
+<h2 id="section-5">5.5 让实例参与 Python 的通用操作</h2>
+<p><code>__init__</code> 是一种特殊方法。类似的双下划线方法也可为 <code>len(obj)</code>、<code>repr(obj)</code> 等通用操作定义行为。方法需要遵守相应约定，例如 <code>__len__</code> 返回非负整数，<code>__repr__</code> 返回便于查看的字符串。</p>
+
+<section class="playground" aria-label="Python 示例 3">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 3</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 3 代码" rows="14"
+    spellcheck="false" autocapitalize="off" autocomplete="off">class WordList:
+    def __init__(self, words):
+        self._words = list(words)
+
+    def __len__(self):
+        return len(self._words)
+
+    def __repr__(self):
+        return f&quot;WordList({self._words!r})&quot;
+
+
+words = WordList([&quot;蓝&quot;, &quot;绿&quot;])
+print(len(words))
+print(repr(words))
+print(bool(WordList([])))</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<p>本例没有定义 <code>__bool__</code>，因此 Python 用 <code>__len__</code> 的结果判断真值。长度为零的实例在条件中为假。如果要判断某个查找结果是否缺失，使用 <code>result is None</code> 可以明确检查缺失值。</p>
+<h2 id="section-6">5.6 回到案例 让活动维护自己的报名</h2>
+<p><code>Activity</code> 把容量和名单放在同一个实例里。登记依次检查空学号、重复和满员。取消只从当前名单移除对应学号，成功后释放一个名额。查询名单时交出由学号字符串组成的元组，外部可以读取而不会改动名单。</p>
+
+<section class="playground" aria-label="Python 示例 4">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 4</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 4 代码" rows="14"
     spellcheck="false" autocapitalize="off" autocomplete="off">class Activity:
     def __init__(self, title, capacity):
         if type(capacity) is not int or capacity &lt; 0:
@@ -57,17 +171,37 @@
         self._roster[student_id] = &quot;已报名&quot;
         return &quot;通过&quot;
 
+    def cancel(self, raw_id):
+        student_id = raw_id.strip()
+        if not student_id:
+            return &quot;空学号&quot;
+        if student_id not in self._roster:
+            return &quot;未报名&quot;
+        del self._roster[student_id]
+        return &quot;已取消&quot;
+
     def student_ids(self):
         return tuple(self._roster)
+
+    def remaining(self):
+        return self.capacity - len(self)
 
     def __len__(self):
         return len(self._roster)
 
+
+def show_status(activity):
+    print(activity.title, activity.student_ids(), &quot;剩余&quot;, activity.remaining())
+
+
 museum = Activity(&quot;博物馆&quot;, 2)
 lab = Activity(&quot;实验室&quot;, 1)
-print(museum.register(&quot;S01&quot;))
-print(lab.register(&quot;S01&quot;))
-print(museum.student_ids(), len(museum), museum.capacity)</textarea>
+print(&quot;同一学号分别报名&quot;, museum.register(&quot;S01&quot;), lab.register(&quot;S01&quot;))
+print(&quot;实验室再收请求&quot;, lab.register(&quot;S01&quot;), lab.register(&quot;S02&quot;))
+print(&quot;取消实验室报名&quot;, lab.cancel(&quot;S01&quot;))
+print(&quot;实验室重新接收 S02&quot;, lab.register(&quot;S02&quot;))
+show_status(museum)
+show_status(lab)</textarea>
   <div class="runner-bar" hidden>
     <button class="primary small" data-run>▶ 运行代码</button>
     <button class="quiet" data-stop hidden>停止</button>
@@ -76,28 +210,23 @@ print(museum.student_ids(), len(museum), museum.capacity)</textarea>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
 
-<p>__init__ 在实例创建之后初始化属性。_roster 前面的下划线提示外部代码将它视作内部实现。student_ids 返回由字符串构成的元组快照，调用方可读取学号，无法通过这个快照改变名单。property 提供可读取的 capacity；类的内部仍可以访问 _capacity。raise 会在容量不合法时报告错误，第 7 章介绍如何接收错误。</p>
-<h2 id="section-2">5.2 让实例参加通用操作</h2>
-<p>len(museum) 使用 __len__ 返回名单长度。形如 __len__ 的特殊方法可以让自定义对象参与 Python 的通用操作。还可以定义 __repr__，给调试时查看的对象提供简洁表示。定义特殊方法时要遵守它的含义，例如 __len__ 返回非负整数。</p>
-<p>在条件表达式中，定义了 __len__ 且长度为 0 的活动对象会被当成假值。要判断活动是否缺失，用 activity is None。用 if activity 同时检查了对象的真值，可能把合法的空活动遗漏。</p>
-<h2 id="section-3">5.3 同时保留两种视角</h2>
-<p>Activity.register 决定这个活动接受谁。一个批量登记函数可以接收 activity 和请求列表，逐一调用 register，把回执交给显示端。类维护状态和不变式，函数描述跨对象的步骤。创建类时先问“这个实例需要长期维护哪些状态”，再决定把哪些行为交给它。</p>
-<h2 id="section-4">练习</h2>
-<p>为 Activity 添加 remaining 方法，返回剩余名额。分别测试空活动、满员活动以及重复报名。</p>
-<details class='answer'><summary>参考解答</summary><p>在方法内返回 self.capacity - len(self)。新建容量为 1 的活动，初始结果为 1；成功登记后为 0；再次登记同一学号后仍为 0。</p></details>
-<h2 id="section-5">本章自测</h2>
+<p>最后博物馆的名单为 <code>(&quot;S01&quot;,)</code>，还剩一个名额。实验室的名单为 <code>(&quot;S02&quot;,)</code>，剩余名额为零。两次 <code>show_status</code> 调用都使用活动提供的公开操作，同样的函数可以查看任何一个活动的状态。</p>
+<h2 id="section-7">练习</h2>
+<p>在取消实验室的 <code>S01</code> 前，保存 <code>before = lab.student_ids()</code>。登记 <code>S02</code> 后对比 <code>before</code>、<code>lab.student_ids()</code> 和 <code>museum.student_ids()</code>，说明每份数据对应哪个时间和活动。</p>
+<details class='answer'><summary>参考解答</summary><p>before 仍是 (&quot;S01&quot;,)，它记录取消之前的实验室名单。当前实验室名单为 (&quot;S02&quot;,)，博物馆名单为 (&quot;S01&quot;,)。两个活动的名单在初始化时分别创建。</p></details>
+<h2 id="section-8">本章自测</h2>
 
 <form class="quiz" data-correct="2">
- <fieldset><legend>把 _roster = {} 写在 class 体里，且从未在 __init__ 中创建同名属性，会怎样？</legend><label><input type="radio" name="choice" value="1" required> 每次访问都会创建新字典</label><label><input type="radio" name="choice" value="2" required> 各实例通过该属性原地修改时可能共享同一个字典</label><label><input type="radio" name="choice" value="3" required> 类定义会立即抛出异常</label></fieldset>
+ <fieldset><legend>把每个活动的名单写成一个可变的类属性，所有实例通过它原地追加学号，会发生什么？</legend><label><input type="radio" name="choice" value="1" required> 每次访问都会得到一份空名单</label><label><input type="radio" name="choice" value="2" required> 这些实例会修改同一份名单</label><label><input type="radio" name="choice" value="3" required> 每个实例会在首次修改时自动得到一份副本</label></fieldset>
  <button class="primary small" type="submit" disabled>检查答案</button>
  <p class="feedback" aria-live="polite"></p>
- <details><summary>查看解析</summary><p>类属性由类持有。每个活动都需要独立的可变名单，应在初始化实例时创建。</p></details>
+ <details><summary>查看解析</summary><p>实例会查找到同一个类属性。独立的可变状态需要在初始化每个实例时分别创建。</p></details>
 </form>
 </article>
   <button type="button" class="complete" data-mark="05" aria-pressed="false" hidden>标记本章完成</button>
   <nav class="adjacent" aria-label="前后章节"><a href="chapter-04.html"><small>← 上一节</small>第三视角 函数与协作封装</a><a href="chapter-06.html"><small>下一节 →</small>多对象协作与程序组织</a></nav>
  </main>
- <aside class="outline"><p>本节内容</p><nav aria-label="本节内容"><ol><li><a href="#section-1">5.1 把相关状态和行为交给同一个对象</a></li><li><a href="#section-2">5.2 让实例参加通用操作</a></li><li><a href="#section-3">5.3 同时保留两种视角</a></li><li><a href="#section-4">练习</a></li><li><a href="#section-5">本章自测</a></li></ol></nav></aside>
+ <aside class="outline"><p>本节内容</p><nav aria-label="本节内容"><ol><li><a href="#section-1">5.1 两场活动各自管理什么</a></li><li><a href="#section-2">5.2 从类到实例</a></li><li><a href="#section-3">5.3 用方法描述对象自己的行为</a></li><li><a href="#section-4">5.4 用公开操作维护状态</a></li><li><a href="#section-5">5.5 让实例参与 Python 的通用操作</a></li><li><a href="#section-6">5.6 回到案例 让活动维护自己的报名</a></li><li><a href="#section-7">练习</a></li><li><a href="#section-8">本章自测</a></li></ol></nav></aside>
 </div>
 <footer class="site-footer"><a href="index.html">Python 编程教材</a><a href="chapter-A.html">运行环境</a><a href="chapter-C.html">语言速查</a></footer>
 </body></html>
