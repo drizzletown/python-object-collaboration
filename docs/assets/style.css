@@ -73,16 +73,13 @@ button:disabled { cursor: default; opacity: .58; }
 .method-card { display: flex; flex-direction: column; padding: clamp(18px, 2.6vw, 29px); background: var(--white); border: 1px solid #ded5e6; border-top: 3px solid var(--purple); border-radius: 11px; }
 .method-card-assumptions { border-top-color: #3f755f; }
 .method-card h3 { margin: 0 0 12px; font-size: clamp(1.25rem, 2.2vw, 1.55rem); line-height: 1.4; }
-.method-card p, .method-views dd { margin: 0; color: var(--muted); line-height: 1.7; }
-.method-card .method-formula { margin: 0 0 12px; padding: 9px 12px; background: var(--purple-soft); color: #4b3783; font-weight: 700; border-radius: 7px; }
-.method-views, .method-steps { margin: 12px 0 17px; }
-.method-views > div { padding-block: 8px; border-top: 1px solid var(--rule); }
-.method-views dt, .method-steps strong { font-weight: 700; }
-.method-steps { padding-inline-start: 1.5em; }
+.method-card p { margin: 0; color: var(--muted); line-height: 1.7; }
+.method-card > p + p { margin-top: 10px; }
+.method-card .method-formula { padding: 9px 12px; background: var(--purple-soft); color: #4b3783; font-weight: 700; border-radius: 7px; }
+.method-steps { margin: 12px 0 0; padding-inline-start: 1.5em; }
 .method-steps li::marker { color: #286247; font-weight: 700; }
 .method-steps li + li { margin-top: 6px; }
-.method-link { align-self: flex-start; margin-top: auto; padding-top: 8px; font-weight: 700; }
-.methods-practice { margin: 18px 0 0; color: var(--muted); line-height: 1.7; }
+.method-link { align-self: flex-start; margin-top: auto; padding-top: 16px; font-weight: 700; }
 .catalog { padding-block: 52px 68px; }
 .catalog-head { display: flex; justify-content: space-between; align-items: end; gap: 14px; margin-bottom: 20px; }
 .catalog-head h2 { font-size: clamp(1.8rem, 4vw, 2.4rem); margin: 0; letter-spacing: -.025em; }

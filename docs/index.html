@@ -6,7 +6,7 @@
 <meta name="color-scheme" content="light">
 <meta name="description" content="以对象协作和假设三部曲为主线的 Python 编程教材。">
 <title>Python 编程 · 从解决问题到程序设计</title>
-<link rel="stylesheet" href="assets/style.css?v=4a7d2a0e4f49">
+<link rel="stylesheet" href="assets/style.css?v=0ad9eec5b9b0">
 <script src="assets/site.js" defer></script>
 </head>
 <body class="home">
@@ -45,27 +45,22 @@ remaining = capacity - registered
   <div class="methods-grid">
    <article class="method-card" id="object-collaboration">
     <h3>对象协作编程</h3>
+    <p>解决问题就是找到合适的对象，让它们沟通协作，发挥各自的能力。</p>
+    <p>对象协作编程就是描述解决问题所需的对象，以及对象之间的沟通协作过程。</p>
     <p class="method-formula">程序 = 对象 + 对象协作过程</p>
-    <p>从要交出的结果往回找对象，明确谁提供信息、谁维护状态，再安排它们交换信息并完成任务。</p>
-    <dl class="method-views">
-     <div><dt>第一视角</dt><dd>活动对象收到学号，按自己的名单和名额决定是否登记。</dd></div>
-     <div><dt>第三视角</dt><dd>报名流程从存储读出活动，请它处理请求。报名通过时先保存，再交回回执。</dd></div>
-    </dl>
-    <a class="method-link" href="chapter-00.html#section-2">读导论中的两种视角 <span aria-hidden="true">→</span></a>
+    <a class="method-link" href="chapter-00.html#section-2">读导论中的对象协作编程 <span aria-hidden="true">→</span></a>
    </article>
    <article class="method-card method-card-assumptions" id="assumption-trilogy">
     <h3>假设三部曲</h3>
-    <p>暂时缺少一项能力时，先约定它会交出什么，再用这个结果继续设计主流程。</p>
+    <p>解决问题时遇到难以处理的环节，可以分三步继续推进。</p>
     <ol class="method-steps">
-     <li><strong>建立假设</strong><p>约定存储对象能交出活动容量和当前名单。</p></li>
-     <li><strong>使用假设</strong><p>用名单查重复，结合活动容量算余量，再决定是否登记。</p></li>
-     <li><strong>兑现假设</strong><p>先用内存验证报名流程，需要保留真实记录时，再接上 JSON 文件并核对结果。</p></li>
+     <li><strong>建立假设</strong><p>假设有一种工具能够处理这个环节。</p></li>
+     <li><strong>使用假设</strong><p>利用假设中的工具继续解决问题。</p></li>
+     <li><strong>兑现假设</strong><p>在合适的时机，自己实现、请他人实现，或使用标准库提供的工具来兑现假设。</p></li>
     </ol>
-    <p>兑现时遇到新的难点，可以把它当作子任务，再用一次三部曲。</p>
     <a class="method-link" href="chapter-00.html#section-3">读导论中的假设三部曲 <span aria-hidden="true">→</span></a>
    </article>
   </div>
-  <p class="methods-practice">在<a href="chapter-09.html#section-5">第 9 章用模拟器试一次报名</a>，再到<a href="chapter-10.html#section-7">第 10 章更换通知方式</a>，检验原有的报名规则。</p>
  </div>
 </section>
 <section class="home-width catalog" id="catalog">
