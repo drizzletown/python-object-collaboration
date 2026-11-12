@@ -69,14 +69,15 @@ button:disabled { cursor: default; opacity: .58; }
 .terminal > a:hover { background: #343f5c; }
 .home-methods { padding-block: clamp(34px, 5vw, 60px); background: #f2eef6; border-bottom: 1px solid #e3dce9; }
 .home-methods h2 { margin: 0 0 20px; font-size: clamp(1.65rem, 3.5vw, 2.2rem); letter-spacing: -.025em; }
-.methods-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(14px, 2.5vw, 28px); }
+.methods-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr)); gap: clamp(14px, 2.5vw, 28px); }
 .method-card { display: flex; flex-direction: column; padding: clamp(18px, 2.6vw, 29px); background: var(--white); border: 1px solid #ded5e6; border-top: 3px solid var(--purple); border-radius: 11px; }
 .method-card-assumptions { border-top-color: #3f755f; }
 .method-card h3 { margin: 0 0 12px; font-size: clamp(1.25rem, 2.2vw, 1.55rem); line-height: 1.4; }
 .method-card p { margin: 0; color: var(--muted); line-height: 1.7; }
 .method-card > p + p { margin-top: 10px; }
 .method-card .method-formula { padding: 9px 12px; background: var(--purple-soft); color: #4b3783; font-weight: 700; border-radius: 7px; }
-.method-steps { margin: 12px 0 0; padding-inline-start: 1.5em; }
+.method-steps { margin: 0; padding-inline-start: 1.45em; color: var(--muted); line-height: 1.7; }
+.method-steps strong { color: var(--ink); white-space: nowrap; }
 .method-steps li::marker { color: #286247; font-weight: 700; }
 .method-steps li + li { margin-top: 6px; }
 .method-link { align-self: flex-start; margin-top: auto; padding-top: 16px; font-weight: 700; }
@@ -184,7 +185,6 @@ summary { cursor: pointer; font-weight: 600; }
 @media (max-width: 760px) {
   .hero-grid { grid-template-columns: 1fr; gap: 30px; padding-block: 38px 41px; }
   .terminal { transform: none; }
-  .methods-grid { grid-template-columns: 1fr; }
   .catalog { padding-top: 36px; }
   .catalog-group > div { grid-template-columns: 1fr; }
   .lesson-layout { width: 91%; display: block; }
@@ -192,6 +192,11 @@ summary { cursor: pointer; font-weight: 600; }
   .side summary { display: list-item; padding: 8px 10px; background: var(--purple-soft); border-radius: 7px; }
   .side nav { padding-top: 6px; }
   .lesson { padding-top: 24px; }
+}
+@media (max-width: 420px) {
+  .home-methods .home-width { width: 94%; }
+  .method-card { padding-inline: 12px; }
+  .method-steps { padding-inline-start: 1.3em; font-size: .875rem; }
 }
 @media (max-width: 360px) {
   .home .top-inner { padding-inline: 3%; gap: 6px; }
