@@ -178,3 +178,8 @@ summary { cursor: pointer; font-weight: 600; }
   .side nav { padding-top: 6px; }
   .lesson { padding-top: 24px; }
 }
+@media (max-width: 360px) {
+  .home .top-inner { padding-inline: 3%; gap: 6px; }
+  .home .top-inner nav { flex-wrap: wrap; justify-content: flex-end; gap: 3px 8px; }
+  .home .top-inner nav a { white-space: nowrap; }
+}
