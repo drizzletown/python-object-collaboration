@@ -41,6 +41,7 @@ button:disabled { cursor: default; opacity: .58; }
 .hero h1 { margin: 0; font-size: clamp(2.65rem, 6vw, 5.35rem); letter-spacing: -.055em; line-height: 1.08; font-weight: 700; }
 .hero h1 span { display: block; color: #55427f; font-size: .47em; letter-spacing: -.035em; margin-top: .37em; }
 .hero-summary { color: #46536b; font-size: 1rem; line-height: 1.9; max-width: 420px; margin: 22px 0 26px; }
+.hero-summary a { font-weight: 700; }
 .hero-links { display: flex; gap: 12px; flex-wrap: wrap; }
 .primary, .secondary, .complete { display: inline-flex; gap: 14px; align-items: center; padding: 11px 17px; border-radius: 8px; text-decoration: none; font-weight: 700; border: 1px solid transparent; }
 .primary { background: var(--purple); color: white; }
@@ -66,6 +67,22 @@ button:disabled { cursor: default; opacity: .58; }
 .terminal-output span { color: #a295d7; margin-right: 6px; }
 .terminal > a { display: flex; justify-content: space-between; color: #e0d8f9; padding: 12px 20px; background: #28324a; font-size: .86rem; text-decoration: none; }
 .terminal > a:hover { background: #343f5c; }
+.home-methods { padding-block: clamp(34px, 5vw, 60px); background: #f2eef6; border-bottom: 1px solid #e3dce9; }
+.home-methods h2 { margin: 0 0 20px; font-size: clamp(1.65rem, 3.5vw, 2.2rem); letter-spacing: -.025em; }
+.methods-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(14px, 2.5vw, 28px); }
+.method-card { display: flex; flex-direction: column; padding: clamp(18px, 2.6vw, 29px); background: var(--white); border: 1px solid #ded5e6; border-top: 3px solid var(--purple); border-radius: 11px; }
+.method-card-assumptions { border-top-color: #3f755f; }
+.method-card h3 { margin: 0 0 12px; font-size: clamp(1.25rem, 2.2vw, 1.55rem); line-height: 1.4; }
+.method-card p, .method-views dd { margin: 0; color: var(--muted); line-height: 1.7; }
+.method-card .method-formula { margin: 0 0 12px; padding: 9px 12px; background: var(--purple-soft); color: #4b3783; font-weight: 700; border-radius: 7px; }
+.method-views, .method-steps { margin: 12px 0 17px; }
+.method-views > div { padding-block: 8px; border-top: 1px solid var(--rule); }
+.method-views dt, .method-steps strong { font-weight: 700; }
+.method-steps { padding-inline-start: 1.5em; }
+.method-steps li::marker { color: #286247; font-weight: 700; }
+.method-steps li + li { margin-top: 6px; }
+.method-link { align-self: flex-start; margin-top: auto; padding-top: 8px; font-weight: 700; }
+.methods-practice { margin: 18px 0 0; color: var(--muted); line-height: 1.7; }
 .catalog { padding-block: 52px 68px; }
 .catalog-head { display: flex; justify-content: space-between; align-items: end; gap: 14px; margin-bottom: 20px; }
 .catalog-head h2 { font-size: clamp(1.8rem, 4vw, 2.4rem); margin: 0; letter-spacing: -.025em; }
@@ -170,6 +187,7 @@ summary { cursor: pointer; font-weight: 600; }
 @media (max-width: 760px) {
   .hero-grid { grid-template-columns: 1fr; gap: 30px; padding-block: 38px 41px; }
   .terminal { transform: none; }
+  .methods-grid { grid-template-columns: 1fr; }
   .catalog { padding-top: 36px; }
   .catalog-group > div { grid-template-columns: 1fr; }
   .lesson-layout { width: 91%; display: block; }
