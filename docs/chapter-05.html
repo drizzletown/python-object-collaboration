@@ -6,7 +6,7 @@
 <meta name="color-scheme" content="light">
 <meta name="description" content="以对象协作和假设三部曲为主线的 Python 编程教材。">
 <title>第一视角 自定义对象与类 · Python 编程</title>
-<link rel="stylesheet" href="assets/style.css?v=acff13e538d4">
+<link rel="stylesheet" href="assets/style.css?v=466d49260340">
 <script src="assets/site.js" defer></script>
 </head>
 <body class="">
@@ -23,10 +23,14 @@
  <main id="main" class="lesson">
   <header class="lesson-head"><div class="crumb"><a href="index.html#catalog">教材目录</a> <span>›</span> 第 5 章</div>
   <h1>第一视角 自定义对象与类</h1><p>让每个活动对象维护自己的容量和名单，通过方法完成登记、取消与查询。</p></header>
+  <details class="lesson-contents"><summary>本页目录</summary>
+   <nav aria-label="本页目录"><ol><li><a href="#section-1">5.1 两场活动各自管理什么</a></li><li><a href="#section-2">5.2 从类到实例</a></li><li><a href="#section-3">5.3 属性怎样查找与共享</a></li><li><a href="#section-4">5.4 方法怎样得到要操作的对象</a></li><li><a href="#section-5">5.5 用公开操作维护状态</a></li><li><a href="#section-6">5.6 让实例参与 Python 的通用操作</a></li><li><a href="#section-7">5.7 回到案例 让活动维护自己的报名</a></li><li><a href="#section-8">练习</a></li><li><a href="#section-9">本章自测</a></li></ol></nav>
+  </details>
   <article><h2 id="section-1">5.1 两场活动各自管理什么</h2>
 <p>第 4 章把登记写成函数，调用时需要把名单和容量一起传入。现在同时开放博物馆参观和实验室体验，两场活动名额不同。如果调用时把甲活动的名单和乙活动的容量配到一起，程序就可能给出错误的回执。</p>
 <ul><li>博物馆容量为 2，实验室容量为 1。两场活动都从空名单开始。</li><li>同一学号可以分别参加两场活动。重复和满员以收到请求的活动为准。</li><li>取消一场活动的报名只影响这场活动。组织者可以查询名单和剩余名额。</li></ul>
 <p>需要一个角色把相关数据和操作集中在一起。调用者选定活动，然后请它自己处理登记或取消。Python 用类描述这种拥有专属状态和职责的对象。</p>
+<p>可以先写出两份状态的预期变化。用同一个学号分别报名时，两场活动都能各自接受一次。实验室取消这个学号后，它应释放一个名额，博物馆仍保留原来的报名。后面会用这一组操作检查每个实例是否真的拥有自己的状态。</p>
 <h2 id="section-2">5.2 从类到实例</h2>
 <p>类描述一种对象可以保存什么、能做什么。执行 <code>class</code> 定义后，类名绑定到一个类对象。调用这个类会创建实例，<code>__init__</code> 通常负责设置新实例的初始属性。一个类可以创建多个身份各异的实例。</p>
 
@@ -63,12 +67,12 @@ print(evening.label, evening.total, evening.unit)</textarea>
 </section>
 
 <p><code>label</code> 和 <code>total</code> 属于各自的实例。<code>unit</code> 定义在类体里，两次访问都从类中取得同一个单位。若把一份可变列表写成类属性，各实例通过它追加元素时会改动同一个列表。需要独立保存的可变状态应当在 <code>__init__</code> 中为每个实例创建。</p>
-<h2 id="section-3">5.3 用方法描述对象自己的行为</h2>
-<p>读取 <code>morning.record</code> 会得到绑定到 <code>morning</code> 的方法。调用 <code>morning.record(120)</code> 时，Python 把 <code>morning</code> 传给方法的第一个形参，惯例写为 <code>self</code>。方法内通过 <code>self.total</code> 访问当前实例的总步数。</p>
-<div class="lesson-table"><table><thead><tr><th scope="col">写法</th><th scope="col">访问的内容</th><th scope="col">示例</th></tr></thead><tbody><tr><td><code>obj.name</code></td><td>对象公开的一个属性</td><td>读取计数器的标签</td></tr><tr><td><code>obj.method</code></td><td>绑定到这个实例的方法</td><td>把方法作为可调用对象传递</td></tr><tr><td><code>obj.method(value)</code></td><td>请这个实例执行一项操作</td><td>将新增步数累加到总步数</td></tr><tr><td><code>self.name</code></td><td>方法内访问当前实例的属性</td><td>更新接收调用的计数器</td></tr></tbody></table></div>
-<p>普通函数也可以接收实例，调用它的方法并使用结果。当任务需要协调多个角色时，函数可以从第三视角安排先后，实例仍负责各自的行为和状态。<a href="https://docs.python.org/3.12/tutorial/classes.html#class-objects">Python 官方教程的类与实例</a></p>
-<h2 id="section-4">5.4 用公开操作维护状态</h2>
-<p>对象的状态可能有需要始终成立的条件。例如，音量必须处在 0 到 100 之间。可以把直接保存的值视为内部实现，将读值和改值作为公开操作。方法先检查新值是否合规，再执行修改。</p>
+<h3>类对象、实例和初始化的分工</h3>
+<p><code>StepCounter</code> 是类对象，<code>morning</code> 和 <code>evening</code> 是通过调用它创建的实例。<code>type(morning) is StepCounter</code> 可以核对实际类型。<code>__init__</code> 接收刚创建的实例并设置初始属性，它执行完毕后由类调用交出实例。初始化方法本身应正常结束，通常省略 <code>return</code>。</p>
+<p>构造对象时要决定初始状态应该是什么。调用 <code>StepCounter(&quot;上午&quot;)</code> 只要求提供标签，计数从 0 开始。需要为每个实例维护的计数和列表，都应在每次初始化时建立。可以从预期操作反推初始状态，例如允许空记录就要能在刚创建时给出长度 0。</p>
+<h2 id="section-3">5.3 属性怎样查找与共享</h2>
+<h3>区分实例状态和类上的公共信息</h3>
+<p>普通实例属性可由 <code>self.name = value</code> 建立。读取普通属性时，实例上有自己的值就读取它，否则可以从类上找到公共值。下面让一个标签使用特殊单位，再修改类上的公共单位，观察两个实例读取的是哪里。</p>
 
 <section class="playground" aria-label="Python 示例 2">
   <div class="editor-bar">
@@ -77,6 +81,153 @@ print(evening.label, evening.total, evening.unit)</textarea>
     <button class="quiet" data-copy hidden>复制</button></div>
   </div>
   <textarea aria-label="Python 示例 2 代码" rows="14"
+    spellcheck="false" autocapitalize="off" autocomplete="off">class Label:
+    unit = &quot;厘米&quot;
+
+    def __init__(self, name):
+        self.name = name
+
+
+left = Label(&quot;左&quot;)
+right = Label(&quot;右&quot;)
+right.unit = &quot;毫米&quot;
+Label.unit = &quot;米&quot;
+
+print(&quot;类的单位&quot;, Label.unit)
+print(left.name, left.unit)
+print(right.name, right.unit)</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<p>右侧标签已建立自己的 <code>unit</code> 属性，所以会继续读到“毫米”。左侧标签使用类上的值。<code>@property</code> 等机制还可以约定怎样计算或限制某个属性，稍后会介绍。</p>
+<h3>每个实例应拥有独立的可变状态</h3>
+<p>若把一个列表设在类上，多个实例可能通过属性找到同一份列表。对其中一个引用做原地追加，会影响其他实例看到的内容。要让每个对象保存自己的操作记录，应在 <code>__init__</code> 中分别创建列表。</p>
+
+<section class="playground" aria-label="Python 示例 3">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 3</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 3 代码" rows="14"
+    spellcheck="false" autocapitalize="off" autocomplete="off">class SharedNotebook:
+    lines = []
+
+
+class Notebook:
+    def __init__(self):
+        self.lines = []
+
+
+a = SharedNotebook()
+b = SharedNotebook()
+a.lines.append(&quot;甲的第一条&quot;)
+print(&quot;共享的记录&quot;, b.lines, a.lines is b.lines)
+
+first = Notebook()
+second = Notebook()
+first.lines.append(&quot;甲的第一条&quot;)
+print(&quot;独立的记录&quot;, second.lines, first.lines is second.lines)</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<p>前一组中的两个属性引用同一个列表，后一组由两次初始化各建一份。给实例属性重新赋值与修改某个已有列表，是第 2 章讲过的两种操作。</p>
+<h2 id="section-4">5.4 方法怎样得到要操作的对象</h2>
+<p>读取 <code>morning.record</code> 会得到绑定到 <code>morning</code> 的方法。调用 <code>morning.record(120)</code> 时，Python 把 <code>morning</code> 传给方法的第一个形参，惯例写为 <code>self</code>。方法内通过 <code>self.total</code> 访问当前实例的总步数。</p>
+<div class="lesson-table"><table><thead><tr><th scope="col">写法</th><th scope="col">访问的内容</th><th scope="col">示例</th></tr></thead><tbody><tr><td><code>obj.name</code></td><td>对象公开的一个属性</td><td>读取计数器的标签</td></tr><tr><td><code>obj.method</code></td><td>绑定到这个实例的方法</td><td>把方法作为可调用对象传递</td></tr><tr><td><code>obj.method(value)</code></td><td>请这个实例执行一项操作</td><td>将新增步数累加到总步数</td></tr><tr><td><code>self.name</code></td><td>方法内访问当前实例的属性</td><td>更新接收调用的计数器</td></tr></tbody></table></div>
+<p>普通函数也可以接收实例，调用它的方法并使用结果。当任务需要协调多个角色时，函数可以从第三视角安排先后，实例仍负责各自的行为和状态。<a href="https://docs.python.org/3.12/tutorial/classes.html#class-objects">Python 官方教程的类与实例</a></p>
+<h3>可以保存绑定后的方法</h3>
+<p><code>counter.add</code> 在读取时就与当前计数器绑定。以后调用这个方法，仍会把那个对象作为 <code>self</code>。通过类取得普通函数时，可以显式提供实例。这两种调用方式有助于看清方法的参数从哪里来。</p>
+
+<section class="playground" aria-label="Python 示例 4">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 4</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 4 代码" rows="14"
+    spellcheck="false" autocapitalize="off" autocomplete="off">class Counter:
+    def __init__(self):
+        self.total = 0
+
+    def add(self, amount):
+        self.total += amount
+        return self.total
+
+
+counter = Counter()
+add_to_counter = counter.add
+print(&quot;调用保存的方法&quot;, add_to_counter(2))
+print(&quot;从类取得函数并提供实例&quot;, Counter.add(counter, 3))
+print(&quot;计数结果&quot;, counter.total)</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<p>第一次调用使总数变为 2，第二次继续加 3。函数定义中的 <code>self</code> 在两次调用中都引用同一个对象。读取属性来获得数据，或者读取方法来传递一项能力，由调用处根据任务选择。</p>
+<h3>实例方法、类方法和静态方法</h3>
+<div class="lesson-table"><table><thead><tr><th scope="col">方法形式</th><th scope="col">由 Python 自动提供</th><th scope="col">常见职责</th></tr></thead><tbody><tr><td><code>def method(self, ...)</code></td><td>当前实例</td><td>读取或修改该实例的状态</td></tr><tr><td><code>@classmethod</code></td><td>当前类，惯例写作 <code>cls</code></td><td>从另一种输入格式构造实例，或使用类级别配置</td></tr><tr><td><code>@staticmethod</code></td><td>没有自动提供的实例或类</td><td>定义和这个类型相关、只依赖实参的操作</td></tr></tbody></table></div>
+
+<section class="playground" aria-label="Python 示例 5">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 5</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 5 代码" rows="14"
+    spellcheck="false" autocapitalize="off" autocomplete="off">class Length:
+    def __init__(self, centimeters):
+        if not self.is_valid(centimeters):
+            raise ValueError(&quot;长度须为非负整数厘米&quot;)
+        self.centimeters = centimeters
+
+    @classmethod
+    def from_meters(cls, meters):
+        if meters &lt; 0:
+            raise ValueError(&quot;以米计的长度须为非负值&quot;)
+        return cls(round(meters * 100))
+
+    @staticmethod
+    def is_valid(centimeters):
+        return type(centimeters) is int and centimeters &gt;= 0
+
+
+length = Length.from_meters(1.25)
+print(&quot;厘米数&quot;, length.centimeters)
+print(&quot;负数是有效长度&quot;, Length.is_valid(-2))</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<p><code>from_meters</code> 先把单位换成厘米，再通过 <code>cls(...)</code> 走同一套初始化规则。<code>is_valid</code> 只使用传来的值。是否要把这种操作写在类中，可以看它是否属于这个类型的约定。只依赖数据、也常为其他对象使用的计算，可以写成普通函数。</p>
+<h2 id="section-5">5.5 用公开操作维护状态</h2>
+<p>对象的状态可能有需要始终成立的条件。例如，音量必须处在 0 到 100 之间。可以把直接保存的值视为内部实现，将读值和改值作为公开操作。方法先检查新值是否合规，再执行修改。</p>
+
+<section class="playground" aria-label="Python 示例 6">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 6</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 6 代码" rows="14"
     spellcheck="false" autocapitalize="off" autocomplete="off">class Volume:
     def __init__(self, level):
         self.set_level(level)
@@ -104,16 +255,94 @@ print(speaker.level)</textarea>
 
 <p><code>_level</code> 的前导下划线按惯例表示供类内部使用。外部通过 <code>speaker.level</code> 读取当前值，通过 <code>speaker.set_level(45)</code> 请求修改。<code>@property</code> 让读取操作采用属性的写法。这个属性只定义了读取方法，常规的 <code>speaker.level = 45</code> 赋值不会生效，并会报告属性错误。非法音量通过 <code>raise</code> 报告，稍后的第 7 章讲解怎样处理这种错误。</p>
 <p>如果对象内部保存的是可变容器，查询方法还要考虑调用者能否通过返回值改动原状态。可以按需求返回统计值、复制结果或由不可变值组成的元组快照。快照记录取得它时的数据。</p>
-<h2 id="section-5">5.5 让实例参与 Python 的通用操作</h2>
-<p><code>__init__</code> 是一种特殊方法。类似的双下划线方法也可为 <code>len(obj)</code>、<code>repr(obj)</code> 等通用操作定义行为。方法需要遵守相应约定，例如 <code>__len__</code> 返回非负整数，<code>__repr__</code> 返回便于查看的字符串。</p>
+<h3>属性可以计算，也可以检查赋值</h3>
+<p>一个属性可以由已有状态计算出来。例如摄氏温度和华氏温度之间可以转换。只保存摄氏值，读取华氏值时再计算，可以避免同时维护两个容易失去一致性的数值。若希望支持赋值写法，可以用 <code>@name.setter</code> 把赋值交给指定的方法。</p>
 
-<section class="playground" aria-label="Python 示例 3">
+<section class="playground" aria-label="Python 示例 7">
   <div class="editor-bar">
-    <span><i></i> Python 示例 3</span>
+    <span><i></i> Python 示例 7</span>
     <div><button class="quiet" data-reset hidden>重置</button>
     <button class="quiet" data-copy hidden>复制</button></div>
   </div>
-  <textarea aria-label="Python 示例 3 代码" rows="14"
+  <textarea aria-label="Python 示例 7 代码" rows="14"
+    spellcheck="false" autocapitalize="off" autocomplete="off">from math import isfinite
+
+
+class Temperature:
+    def __init__(self, celsius):
+        self.celsius = celsius
+
+    @property
+    def celsius(self):
+        return self._celsius
+
+    @celsius.setter
+    def celsius(self, value):
+        if not isfinite(value) or value &lt; -273.15:
+            raise ValueError(&quot;摄氏温度须为有限值且不低于绝对零度&quot;)
+        self._celsius = value
+
+    @property
+    def fahrenheit(self):
+        return self._celsius * 9 / 5 + 32
+
+
+temperature = Temperature(0)
+print(&quot;摄氏与华氏&quot;, temperature.celsius, temperature.fahrenheit)
+temperature.celsius = 20
+print(&quot;更新后&quot;, temperature.celsius, temperature.fahrenheit)</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<p>初始化和外部赋值都通过 <code>celsius</code> 的赋值方法，检查结束后才更新底层属性。<code>fahrenheit</code> 只提供读取，用同一份状态计算。对需要有明确动作含义的操作，例如“充值”“取消”或“重置”，用有名字的方法通常更容易说明影响。</p>
+<h3>容器怎样进入和离开对象</h3>
+<p>对象接受外部列表时，要决定保留共享引用还是独立保存数据。查询时也要决定交出内部列表、外层副本，还是由不可变元素组成的快照。下面的路线只需要记住创建时的站点顺序。</p>
+
+<section class="playground" aria-label="Python 示例 8">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 8</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 8 代码" rows="13"
+    spellcheck="false" autocapitalize="off" autocomplete="off">class Route:
+    def __init__(self, stops):
+        self._stops = tuple(stops)
+
+    def stops(self):
+        return self._stops
+
+
+planned = [&quot;起点&quot;, &quot;东站&quot;]
+route = Route(planned)
+planned.append(&quot;西站&quot;)
+print(&quot;原计划列表&quot;, planned)
+print(&quot;路线对象的站点&quot;, route.stops())</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<p>路线使用元组保存站点顺序，站名本身是字符串。传入列表随后增加站点，路线仍保留创建时的两个站名。若成员本身是可变对象，需要根据第 2 章的复制规则判断内层状态是否共享。</p>
+<h2 id="section-6">5.6 让实例参与 Python 的通用操作</h2>
+<p><code>__init__</code> 是一种特殊方法。类似的双下划线方法也可为 <code>len(obj)</code>、<code>repr(obj)</code> 等通用操作定义行为。方法需要遵守相应约定，例如 <code>__len__</code> 返回非负整数，<code>__repr__</code> 返回便于查看的字符串。</p>
+<div class="lesson-table"><table><thead><tr><th scope="col">公开操作</th><th scope="col">对应的特殊方法</th><th scope="col">约定</th></tr></thead><tbody><tr><td><code>len(obj)</code></td><td><code>__len__</code></td><td>交出非负整数</td></tr><tr><td><code>bool(obj)</code></td><td><code>__bool__</code>，也可依据 <code>__len__</code></td><td>表示在真假判断中的意义</td></tr><tr><td><code>repr(obj)</code></td><td><code>__repr__</code></td><td>交出用于查看对象的字符串</td></tr><tr><td><code>str(obj)</code>、<code>print(obj)</code></td><td><code>__str__</code></td><td>交出面向读者的显示文字</td></tr><tr><td><code>item in obj</code></td><td>可通过 <code>__contains__</code> 实现</td><td>判断成员关系</td></tr><tr><td><code>left == right</code></td><td>可通过 <code>__eq__</code> 实现</td><td>按领域约定比较值</td></tr></tbody></table></div>
+
+<section class="playground" aria-label="Python 示例 9">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 9</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 9 代码" rows="14"
     spellcheck="false" autocapitalize="off" autocomplete="off">class WordList:
     def __init__(self, words):
         self._words = list(words)
@@ -124,11 +353,19 @@ print(speaker.level)</textarea>
     def __repr__(self):
         return f&quot;WordList({self._words!r})&quot;
 
+    def __str__(self):
+        return &quot;、&quot;.join(self._words)
+
+    def __contains__(self, word):
+        return word in self._words
+
 
 words = WordList([&quot;蓝&quot;, &quot;绿&quot;])
-print(len(words))
-print(repr(words))
-print(bool(WordList([])))</textarea>
+print(&quot;长度&quot;, len(words))
+print(&quot;查看对象&quot;, repr(words))
+print(&quot;给读者看的文字&quot;, words)
+print(&quot;包含绿&quot;, &quot;绿&quot; in words)
+print(&quot;空对象的真值&quot;, bool(WordList([])))</textarea>
   <div class="runner-bar" hidden>
     <button class="primary small" data-run>▶ 运行代码</button>
     <button class="quiet" data-stop hidden>停止</button>
@@ -138,16 +375,52 @@ print(bool(WordList([])))</textarea>
 </section>
 
 <p>本例没有定义 <code>__bool__</code>，因此 Python 用 <code>__len__</code> 的结果判断真值。长度为零的实例在条件中为假。如果要判断某个查找结果是否缺失，使用 <code>result is None</code> 可以明确检查缺失值。</p>
-<h2 id="section-6">5.6 回到案例 让活动维护自己的报名</h2>
-<p><code>Activity</code> 把容量和名单放在同一个实例里。登记依次检查空学号、重复和满员。取消只从当前名单移除对应学号，成功后释放一个名额。查询名单时交出由学号字符串组成的元组，外部可以读取而不会改动名单。</p>
+<h3>什么时候适合按值比较</h3>
+<p>一对坐标可按横、纵坐标比较。同一坐标的两个对象可以有相同的值和不同的标识。对两个活动对象，则可能需要按活动编号或对象身份区分，标题相同也可能是两场不同的活动。</p>
 
-<section class="playground" aria-label="Python 示例 4">
+<section class="playground" aria-label="Python 示例 10">
   <div class="editor-bar">
-    <span><i></i> Python 示例 4</span>
+    <span><i></i> Python 示例 10</span>
     <div><button class="quiet" data-reset hidden>重置</button>
     <button class="quiet" data-copy hidden>复制</button></div>
   </div>
-  <textarea aria-label="Python 示例 4 代码" rows="14"
+  <textarea aria-label="Python 示例 10 代码" rows="14"
+    spellcheck="false" autocapitalize="off" autocomplete="off">class Point:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+    def __eq__(self, other):
+        if not isinstance(other, Point):
+            return NotImplemented
+        return (self.x, self.y) == (other.x, other.y)
+
+
+left = Point(3, 4)
+right = Point(3, 4)
+print(&quot;坐标相等&quot;, left == right)
+print(&quot;是同一对象&quot;, left is right)</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<p><code>NotImplemented</code> 表示此方法没有定义与该类型的比较，由 Python 继续处理这次运算。定义特殊方法时，可以先写出它对该对象应表达的含义。若对象没有自然的长度、顺序或相等规则，可以只提供任务实际需要的方法。<a href="https://docs.python.org/3.12/reference/datamodel.html#special-method-names">Python 官方文档的特殊方法</a></p>
+<h2 id="section-7">5.7 回到案例 让活动维护自己的报名</h2>
+<p><code>Activity</code> 把容量和名单放在同一个实例里。登记依次检查空学号、重复和满员。取消只从当前名单移除对应学号，成功后释放一个名额。查询名单时交出由学号字符串组成的元组，外部可以读取而不会改动名单。</p>
+<div class="lesson-table"><table><thead><tr><th scope="col">活动对外提供的操作</th><th scope="col">结果</th><th scope="col">对状态的影响</th></tr></thead><tbody><tr><td><code>register(raw_id)</code></td><td>通过、空学号、重复或满员</td><td>通过时新增一人</td></tr><tr><td><code>cancel(raw_id)</code></td><td>已取消、空学号或未报名</td><td>已取消时移除一人</td></tr><tr><td><code>student_ids()</code></td><td>按登记次序保存学号的元组</td><td>查询</td></tr><tr><td><code>remaining()</code>、<code>len(activity)</code></td><td>剩余名额或人数</td><td>查询</td></tr></tbody></table></div>
+<p>名额和名单共同决定两条不变式，人数不能超过容量，学号在同一活动中只出现一次。构造时创建空名单。登记先检查，再写入。取消从当前实例的名单移除指定记录，也就能在下一次登记时重新利用这个名额。</p>
+
+<section class="playground" aria-label="Python 示例 11">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 11</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 11 代码" rows="14"
     spellcheck="false" autocapitalize="off" autocomplete="off">class Activity:
     def __init__(self, title, capacity):
         if type(capacity) is not int or capacity &lt; 0:
@@ -211,10 +484,13 @@ show_status(lab)</textarea>
 </section>
 
 <p>最后博物馆的名单为 <code>(&quot;S01&quot;,)</code>，还剩一个名额。实验室的名单为 <code>(&quot;S02&quot;,)</code>，剩余名额为零。两次 <code>show_status</code> 调用都使用活动提供的公开操作，同样的函数可以查看任何一个活动的状态。</p>
-<h2 id="section-7">练习</h2>
-<p>在取消实验室的 <code>S01</code> 前，保存 <code>before = lab.student_ids()</code>。登记 <code>S02</code> 后对比 <code>before</code>、<code>lab.student_ids()</code> 和 <code>museum.student_ids()</code>，说明每份数据对应哪个时间和活动。</p>
-<details class='answer'><summary>参考解答</summary><p>before 仍是 (&quot;S01&quot;,)，它记录取消之前的实验室名单。当前实验室名单为 (&quot;S02&quot;,)，博物馆名单为 (&quot;S01&quot;,)。两个活动的名单在初始化时分别创建。</p></details>
-<h2 id="section-8">本章自测</h2>
+<h3>对比对象内部和外部的职责</h3>
+<div class="lesson-table"><table><thead><tr><th scope="col">执行后</th><th scope="col">博物馆名单</th><th scope="col">实验室名单</th></tr></thead><tbody><tr><td>S01 分别报名</td><td>S01</td><td>S01</td></tr><tr><td>实验室重复登记 S01，再收 S02</td><td>S01</td><td>S01</td></tr><tr><td>实验室取消 S01</td><td>S01</td><td>空</td></tr><tr><td>实验室再收 S02</td><td>S01</td><td>S02</td></tr></tbody></table></div>
+<p><code>register</code> 和 <code>cancel</code> 使用 <code>self</code> 维护各自的状态，体现第一视角。<code>show_status</code> 从第三视角使用对象公开的查询能力。它既能读取博物馆的状态，也能读取实验室的状态。后面如果收到的只有活动编号，就要在调用之前由另一个角色把编号对应到对象。<a href="chapter-06.html">第 6 章 多对象协作与程序组织</a></p>
+<h2 id="section-8">练习</h2>
+<ul><li>在取消实验室的 <code>S01</code> 前，保存 <code>before = lab.student_ids()</code>。登记 <code>S02</code> 后对比 <code>before</code>、<code>lab.student_ids()</code> 和 <code>museum.student_ids()</code>。</li><li>把实验室容量改为 0，预测两次登记 S01、取消 S01 和再次登记 S02 的结果。解释实例为什么仍然有效。</li><li>运行类属性示例后，在 <code>right</code> 上执行 <code>del right.unit</code>，预测接下来两个实例各自读取到的单位。</li><li>仿照 <code>Length.from_meters()</code>，为 <code>Length</code> 增加一个接收整数毫米的类方法。检查长度非负，再用 <code>round()</code> 取最接近的整数厘米。</li></ul>
+<details class='answer'><summary>参考解答</summary><p>before 仍是 (&quot;S01&quot;,)，它记录取消之前的实验室名单。当前实验室名单为 (&quot;S02&quot;,)，博物馆名单为 (&quot;S01&quot;,)。两个活动的名单在初始化时分别创建。</p><p>容量为 0 时，新建活动的空名单符合约定。实验室的登记都回执“满员”，取消回执“未报名”，名单仍为空。</p><p>删除右侧实例自己绑定的 unit 后，两个实例都从 Label.unit 读取“米”。</p><p>定义接收 cls 和 millimeters 的类方法，检查 millimeters 非负后返回 cls(round(millimeters / 10))。例如 1250 毫米换算为 125 厘米。</p></details>
+<h2 id="section-9">本章自测</h2>
 
 <form class="quiz" data-correct="2">
  <fieldset><legend>把每个活动的名单写成一个可变的类属性，所有实例通过它原地追加学号，会发生什么？</legend><label><input type="radio" name="choice" value="1" required> 每次访问都会得到一份空名单</label><label><input type="radio" name="choice" value="2" required> 这些实例会修改同一份名单</label><label><input type="radio" name="choice" value="3" required> 每个实例会在首次修改时自动得到一份副本</label></fieldset>
@@ -226,7 +502,7 @@ show_status(lab)</textarea>
   <button type="button" class="complete" data-mark="05" aria-pressed="false" hidden>标记本章完成</button>
   <nav class="adjacent" aria-label="前后章节"><a href="chapter-04.html"><small>← 上一节</small>第三视角 函数与协作封装</a><a href="chapter-06.html"><small>下一节 →</small>多对象协作与程序组织</a></nav>
  </main>
- <aside class="outline"><p>本节内容</p><nav aria-label="本节内容"><ol><li><a href="#section-1">5.1 两场活动各自管理什么</a></li><li><a href="#section-2">5.2 从类到实例</a></li><li><a href="#section-3">5.3 用方法描述对象自己的行为</a></li><li><a href="#section-4">5.4 用公开操作维护状态</a></li><li><a href="#section-5">5.5 让实例参与 Python 的通用操作</a></li><li><a href="#section-6">5.6 回到案例 让活动维护自己的报名</a></li><li><a href="#section-7">练习</a></li><li><a href="#section-8">本章自测</a></li></ol></nav></aside>
+ <aside class="outline"><p>本页目录</p><nav aria-label="本页目录"><ol><li><a href="#section-1">5.1 两场活动各自管理什么</a></li><li><a href="#section-2">5.2 从类到实例</a></li><li><a href="#section-3">5.3 属性怎样查找与共享</a></li><li><a href="#section-4">5.4 方法怎样得到要操作的对象</a></li><li><a href="#section-5">5.5 用公开操作维护状态</a></li><li><a href="#section-6">5.6 让实例参与 Python 的通用操作</a></li><li><a href="#section-7">5.7 回到案例 让活动维护自己的报名</a></li><li><a href="#section-8">练习</a></li><li><a href="#section-9">本章自测</a></li></ol></nav></aside>
 </div>
 <footer class="site-footer"><a href="index.html">Python 编程教材</a><a href="chapter-A.html">运行环境</a><a href="chapter-C.html">语言速查</a></footer>
 </body></html>

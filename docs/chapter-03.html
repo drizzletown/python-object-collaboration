@@ -6,7 +6,7 @@
 <meta name="color-scheme" content="light">
 <meta name="description" content="以对象协作和假设三部曲为主线的 Python 编程教材。">
 <title>对象协作的流程控制 · Python 编程</title>
-<link rel="stylesheet" href="assets/style.css?v=acff13e538d4">
+<link rel="stylesheet" href="assets/style.css?v=466d49260340">
 <script src="assets/site.js" defer></script>
 </head>
 <body class="">
@@ -23,10 +23,13 @@
  <main id="main" class="lesson">
   <header class="lesson-head"><div class="crumb"><a href="index.html#catalog">教材目录</a> <span>›</span> 第 3 章</div>
   <h1>对象协作的流程控制</h1><p>用条件和循环安排协作步骤，按顺序处理报名请求并解释每一条回执。</p></header>
+  <details class="lesson-contents"><summary>本页目录</summary>
+   <nav aria-label="本页目录"><ol><li><a href="#section-1">3.1 一批报名请求怎样逐条处理</a></li><li><a href="#section-2">3.2 用条件选择执行路径</a></li><li><a href="#section-3">3.3 用 for 遍历一组对象</a></li><li><a href="#section-4">3.4 用 while 持续到条件改变</a></li><li><a href="#section-5">3.5 选择跳过、退出或继续查找</a></li><li><a href="#section-6">3.6 用循环累计、筛选和分组</a></li><li><a href="#section-7">3.7 从迭代到推导式和结构匹配</a></li><li><a href="#section-8">3.8 回到案例 批量处理报名</a></li><li><a href="#section-9">练习</a></li><li><a href="#section-10">本章自测</a></li></ol></nav>
+  </details>
   <article><h2 id="section-1">3.1 一批报名请求怎样逐条处理</h2>
 <p>第 2 章已经选好保存活动配置和名单的容器。现在活动开放报名，程序收到一批有先后顺序的学号。组织者需要为每条请求给出回执，也需要知道整批处理完后谁进入了名单。</p>
 <ul><li>输入是一场容量为 2 的活动、一份空名单，以及依次到达的请求 <code>S01</code>、空白、<code>S02</code>、<code>S03</code>、<code>S01</code>。</li><li>处理时先去掉学号首尾空白，再依次检查空学号、重复、满员。满足登记条件时才更新名单。</li><li>输出应有五条回执。最后一次请求到达时，名单既已满又包含 <code>S01</code>，按本活动的规则应回执“重复”。</li></ul>
-<p>这个任务需要两类安排。一类决定一条请求走哪条路，另一类决定同一组步骤对哪些对象重复执行。先分别学习 Python 怎样表达这两类安排。</p>
+<p>如果只有一条请求，仍要根据名单和容量选择回执。如果有一批请求，同一判断要反复执行，而且每次判断都要使用上一条处理后的名单。这两类要求决定了程序既要能选择路径，也要能组织重复。</p>
 <h2 id="section-2">3.2 用条件选择执行路径</h2>
 <h3>条件的真值与代码块</h3>
 <p><code>if</code> 后面的条件可以是比较结果，也可以直接是对象。空字符串、空容器、数值零、<code>None</code> 和 <code>False</code> 的真值都为假。例如，<code>if not text</code> 对空字符串成立。冒号后缩进的语句属于这个分支，退回原来的缩进就离开分支。教材统一用四个空格表示一级缩进。</p>
@@ -65,10 +68,8 @@ if humidity &gt;= 75:
 </section>
 
 <p>若只需根据条件在两个值中选一个，可以写 <code>label = &quot;合格&quot; if score &gt;= 60 else &quot;待复核&quot;</code>。每条路径需要执行多条语句时，使用分支代码块来展示步骤。</p>
-<h2 id="section-3">3.3 用循环安排重复</h2>
-<h3>用 for 逐项处理可迭代对象</h3>
-<p><code>for</code> 从可迭代对象中逐项取得值，每一轮把当前值绑定到循环变量。列表、元组、字符串、字典和集合都可以遍历。遍历字典时默认得到键，用 <code>items()</code> 可以同时取得键和值。空容器不会执行循环体。</p>
-<div class="lesson-table"><table><thead><tr><th scope="col">工具</th><th scope="col">依次提供什么</th><th scope="col">使用场景</th></tr></thead><tbody><tr><td><code>range(start, stop, step)</code></td><td>从起点按步长取整数，不包含终点</td><td>重复固定次数或按间隔取数</td></tr><tr><td><code>enumerate(values, start=1)</code></td><td>序号与当前值组成的二元组</td><td>给记录编号</td></tr><tr><td><code>zip(left, right)</code></td><td>从两组数据各取一项组成二元组</td><td>把名称与测量值配对</td></tr><tr><td><code>mapping.items()</code></td><td>键和值组成的二元组</td><td>同时读取字典的两个字段</td></tr></tbody></table></div>
+<h3>先判断能否执行，再判断要怎样执行</h3>
+<p>同一个对象的不同状态可能需要不同的处理。温度记录尚未收到时，可以先提示缺失。有了读数后，再检查阈值。空值判断必须放在大小比较前，避免拿缺失值参与数值运算。</p>
 
 <section class="playground" aria-label="Python 示例 2">
   <div class="editor-bar">
@@ -76,7 +77,42 @@ if humidity &gt;= 75:
     <div><button class="quiet" data-reset hidden>重置</button>
     <button class="quiet" data-copy hidden>复制</button></div>
   </div>
-  <textarea aria-label="Python 示例 2 代码" rows="7"
+  <textarea aria-label="Python 示例 2 代码" rows="11"
+    spellcheck="false" autocapitalize="off" autocomplete="off">reading = None
+limit = 28
+
+if reading is None:
+    message = &quot;等待读数&quot;
+elif reading &gt;= limit:
+    message = &quot;达到阈值&quot;
+else:
+    message = &quot;低于阈值&quot;
+
+print(message)</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<p>把 <code>reading</code> 依次改为 <code>0</code>、<code>27</code>、<code>28</code>。零和 27 都有读数，只是低于阈值。等于 28 时恰好满足 <code>&gt;=</code>。如果只需要判断“是否有读数且达到阈值”，也可以写 <code>reading is not None and reading &gt;= limit</code>，利用短路先检查安全条件。</p>
+<h3>用一张表检查边界和重叠</h3>
+<div class="lesson-table"><table><thead><tr><th scope="col">输入情形</th><th scope="col">首个成立的条件</th><th scope="col">执行结果</th></tr></thead><tbody><tr><td>尚未取得读数</td><td><code>reading is None</code></td><td>等待读数</td></tr><tr><td>27，低于阈值</td><td>前两个条件都不成立</td><td>低于阈值</td></tr><tr><td>28，正好等于阈值</td><td><code>reading &gt;= limit</code></td><td>达到阈值</td></tr><tr><td>35，高于阈值</td><td><code>reading &gt;= limit</code></td><td>达到阈值</td></tr></tbody></table></div>
+<p>设计分支时，可以分别挑选一个能进入每条分支的输入。两个条件都能成立时，再检查它们的先后是否符合任务规则。测试分界点时，要特意包含恰好等于阈值的情况。</p>
+<h2 id="section-3">3.3 用 for 遍历一组对象</h2>
+<h3>用 for 逐项处理可迭代对象</h3>
+<p><code>for</code> 从可迭代对象中逐项取得值，每一轮把当前值绑定到循环变量。列表、元组、字符串、字典和集合都可以遍历。遍历字典时默认得到键，用 <code>items()</code> 可以同时取得键和值。空容器不会执行循环体。</p>
+<div class="lesson-table"><table><thead><tr><th scope="col">工具</th><th scope="col">依次提供什么</th><th scope="col">使用场景</th></tr></thead><tbody><tr><td><code>range(start, stop, step)</code></td><td>从起点按步长取整数，不包含终点</td><td>重复固定次数或按间隔取数</td></tr><tr><td><code>enumerate(values, start=1)</code></td><td>序号与当前值组成的二元组</td><td>给记录编号</td></tr><tr><td><code>zip(left, right)</code></td><td>从两组数据各取一项组成二元组</td><td>把名称与测量值配对</td></tr><tr><td><code>mapping.items()</code></td><td>键和值组成的二元组</td><td>同时读取字典的两个字段</td></tr></tbody></table></div>
+
+<section class="playground" aria-label="Python 示例 3">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 3</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 3 代码" rows="7"
     spellcheck="false" autocapitalize="off" autocomplete="off">for minute in range(0, 10, 3):
     print(&quot;采样时间&quot;, minute)
 
@@ -93,16 +129,73 @@ for row, (station, reading) in enumerate(zip(stations, readings), start=1):
 </section>
 
 <p><code>range(0, 10, 3)</code> 给出 0、3、6、9。上例先用 <code>zip</code> 配对，再用 <code>enumerate</code> 编号。<code>zip</code> 默认到最短的一组为止。如果两组数据应当一一对应，可用 <code>zip(stations, readings, strict=True)</code>，在遍历发现长度不一致时报告错误。</p>
-<h3>用 while 等待条件变化</h3>
-<p><code>while</code> 在每轮开始前重新判断条件，条件一开始为假时一次也不执行。设计这种循环要指出什么变化会让条件变假，或者在哪个分支明确退出。</p>
+<h3>字典、序列和循环变量</h3>
+<p>遍历字典可以按键、值或键值对进行。循环每取一项就绑定一次循环变量。用 <code>for name, amount in readings.items()</code>，元组中的两个位置分别绑定到两个名字。读取字典时，可以准备另一份容器收集结果，待遍历结束再决定怎样更新原数据。</p>
 
-<section class="playground" aria-label="Python 示例 3">
+<section class="playground" aria-label="Python 示例 4">
   <div class="editor-bar">
-    <span><i></i> Python 示例 3</span>
+    <span><i></i> Python 示例 4</span>
     <div><button class="quiet" data-reset hidden>重置</button>
     <button class="quiet" data-copy hidden>复制</button></div>
   </div>
-  <textarea aria-label="Python 示例 3 代码" rows="8"
+  <textarea aria-label="Python 示例 4 代码" rows="10"
+    spellcheck="false" autocapitalize="off" autocomplete="off">readings = {&quot;东站&quot;: 18, &quot;西站&quot;: None, &quot;南站&quot;: 20}
+available = {}
+
+for station, value in readings.items():
+    if value is not None:
+        available[station] = value
+        print(station, value)
+
+print(&quot;可用记录&quot;, available)
+print(&quot;原记录&quot;, readings)</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<p>如果在遍历一个字典时增删其键，正在遍历的数据范围会改变，Python 可能报告运行错误。也可以先用 <code>list(readings)</code> 取得键的快照，再根据各个键更新字典。这个办法利用了第 2 章的视图和复制知识。</p>
+<h3>嵌套循环描述两层重复</h3>
+<p>先取一个地点，再对这个地点逐项读取时段。内层循环在每次外层循环时重新开始。缩进表示两个层次分别包含哪些工作。</p>
+
+<section class="playground" aria-label="Python 示例 5">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 5</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 5 代码" rows="8"
+    spellcheck="false" autocapitalize="off" autocomplete="off">rooms = [&quot;东室&quot;, &quot;西室&quot;]
+times = [&quot;上午&quot;, &quot;下午&quot;]
+
+for room in rooms:
+    print(&quot;开始安排&quot;, room)
+    for time in times:
+        print(room, time)
+    print(&quot;完成安排&quot;, room)</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<p>按顺序读输出。东室的两个时段都处理完才轮到西室。如果把两层循环交换，地点和时段的所有组合仍会出现，先后次序会改为先安排各个地点的上午，再安排下午。</p>
+<h2 id="section-4">3.4 用 while 持续到条件改变</h2>
+<h3>用 while 等待条件变化</h3>
+<p><code>while</code> 在每轮开始前重新判断条件，条件一开始为假时一次也不执行。设计这种循环要指出什么变化会让条件变假，或者在哪个分支明确退出。</p>
+
+<section class="playground" aria-label="Python 示例 6">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 6</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 6 代码" rows="8"
     spellcheck="false" autocapitalize="off" autocomplete="off">balance = 38
 payment = 15
 
@@ -120,16 +213,46 @@ print(&quot;停止扣款，余额&quot;, balance)</textarea>
 </section>
 
 <p>每次扣款都使余额变小，余额从 38 到 23，再到 8，循环结束。这里约定 <code>payment</code> 是正数，这个前提保证循环会停止。</p>
-<h3>跳过一轮、提前退出与查找结束</h3>
-<p><code>continue</code> 跳过本轮剩余的语句，<code>break</code> 退出所在的最内层循环。循环后可以接 <code>else</code>，在循环正常结束时执行。查找任务中常用 <code>break</code> 标记找到目标，用循环的 <code>else</code> 处理查找完毕仍未找到的情况。</p>
+<h3>找出每轮变化的量</h3>
+<p>还可以用 <code>while</code> 重复缩小差距。例如，纸条宽 64 毫米，每次折成一半，直到不超过 10 毫米。每轮之后都重新检查宽度，折叠次数也要一起更新。</p>
 
-<section class="playground" aria-label="Python 示例 4">
+<section class="playground" aria-label="Python 示例 7">
   <div class="editor-bar">
-    <span><i></i> Python 示例 4</span>
+    <span><i></i> Python 示例 7</span>
     <div><button class="quiet" data-reset hidden>重置</button>
     <button class="quiet" data-copy hidden>复制</button></div>
   </div>
-  <textarea aria-label="Python 示例 4 代码" rows="10"
+  <textarea aria-label="Python 示例 7 代码" rows="10"
+    spellcheck="false" autocapitalize="off" autocomplete="off">width = 64
+limit = 10
+folds = 0
+
+while width &gt; limit:
+    width = width // 2
+    folds += 1
+    print(&quot;第几次、当前宽度&quot;, folds, width)
+
+print(&quot;总次数&quot;, folds)</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<p>这里依次得到 32、16、8，第三轮后条件为假。若初始宽度已经不超过限制，循环执行零次。写这类循环时，先检查初始化是否给出了第一次判断所需的数据，再检查每条会继续执行的路径是否都推进了状态。</p>
+<h2 id="section-5">3.5 选择跳过、退出或继续查找</h2>
+<h3>跳过一轮、提前退出与查找结束</h3>
+<p><code>continue</code> 跳过本轮剩余的语句，<code>break</code> 退出所在的最内层循环。循环后可以接 <code>else</code>，在循环正常结束时执行。查找任务中常用 <code>break</code> 标记找到目标，用循环的 <code>else</code> 处理查找完毕仍未找到的情况。</p>
+
+<section class="playground" aria-label="Python 示例 8">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 8</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 8 代码" rows="10"
     spellcheck="false" autocapitalize="off" autocomplete="off">readings = [None, 16, 20, 28, 31]
 
 for reading in readings:
@@ -149,17 +272,107 @@ else:
 </section>
 
 <p>把 28 和 31 都改为小于 25 的数，再运行一次。循环会检查完所有数据，然后执行 <code>else</code>。</p>
-<h2 id="section-4">3.4 从迭代到推导式和结构匹配</h2>
-<h3>可迭代对象与迭代器</h3>
-<p>调用 <code>iter</code> 会取得一个迭代器，再调用 <code>next</code> 就会取出下一项。迭代器记住取到哪里。耗尽时，<code>next(iterator)</code> 会抛出 <code>StopIteration</code>，而 <code>next(iterator, 默认值)</code> 会返回给定的默认值。平常用 <code>for</code> 就能自动完成获取和停止的过程。</p>
+<h3>break 只退出所在的循环</h3>
+<p>在两层循环中，内层的 <code>break</code> 结束本次内层搜索，外层仍可以继续处理下一个对象。下面为每一行寻找第一个非空读数。找到了就停止这一行，整行都没有时输出缺失。</p>
 
-<section class="playground" aria-label="Python 示例 5">
+<section class="playground" aria-label="Python 示例 9">
   <div class="editor-bar">
-    <span><i></i> Python 示例 5</span>
+    <span><i></i> Python 示例 9</span>
     <div><button class="quiet" data-reset hidden>重置</button>
     <button class="quiet" data-copy hidden>复制</button></div>
   </div>
-  <textarea aria-label="Python 示例 5 代码" rows="6"
+  <textarea aria-label="Python 示例 9 代码" rows="8"
+    spellcheck="false" autocapitalize="off" autocomplete="off">rows = [[None, 18, 21], [None], [19, None]]
+for number, row in enumerate(rows, start=1):
+    for value in row:
+        if value is not None:
+            print(number, &quot;首个读数&quot;, value)
+            break
+    else:
+        print(number, &quot;本行没有读数&quot;)</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<p><code>else</code> 与内层 <code>for</code> 对齐，所以它说明“这一行没有找到”。如果在 <code>while</code> 里使用 <code>continue</code>，要检查跳过后是否仍推进循环。计数或位置的更新若被跳过，下一轮可能一直看到同一条件。</p>
+<h2 id="section-6">3.6 用循环累计、筛选和分组</h2>
+<h3>每轮交出一个中间状态</h3>
+<p>循环常要维护一份正在构建的结果。例如求平均值时，可以累计有效读数的和以及条数，全部读完再相除。每轮处理后，累计值只反映已经处理的部分。先说明这一点，就容易检查初始值和更新位置。</p>
+
+<section class="playground" aria-label="Python 示例 10">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 10</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 10 代码" rows="14"
+    spellcheck="false" autocapitalize="off" autocomplete="off">readings = [12, None, 18, 15]
+total = 0
+count = 0
+
+for value in readings:
+    if value is None:
+        continue
+    total += value
+    count += 1
+
+if count:
+    print(&quot;有效条数&quot;, count)
+    print(&quot;平均值&quot;, total / count)
+else:
+    print(&quot;没有可用读数&quot;)</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<div class="lesson-table"><table><thead><tr><th scope="col">已处理的元素</th><th scope="col">和</th><th scope="col">条数</th></tr></thead><tbody><tr><td>暂无</td><td>0</td><td>0</td></tr><tr><td>12</td><td>12</td><td>1</td></tr><tr><td>12、空值</td><td>12</td><td>1</td></tr><tr><td>12、空值、18</td><td>30</td><td>2</td></tr><tr><td>12、空值、18、15</td><td>45</td><td>3</td></tr></tbody></table></div>
+<p>每一轮之后，“和与条数只统计了已读到的有效值”都成立。这样的关系称为循环不变式。将所有值改为缺失后，程序会进入“没有可用读数”的分支，计算平均值之前就处理了条数为零的情形。</p>
+<h3>按键累计并保留所需信息</h3>
+<p>输入是“地点、读数”组成的记录时，可以按地点组织结果。第 2 章的 <code>setdefault()</code> 可以在地点第一次出现时建立列表。循环负责重复取记录，字典负责找到对应列表。</p>
+
+<section class="playground" aria-label="Python 示例 11">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 11</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 11 代码" rows="8"
+    spellcheck="false" autocapitalize="off" autocomplete="off">samples = [(&quot;东站&quot;, 18), (&quot;西站&quot;, 20), (&quot;东站&quot;, 21)]
+by_station = {}
+
+for station, value in samples:
+    values = by_station.setdefault(station, [])
+    values.append(value)
+
+print(by_station)</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<p>得到的东站读数是 <code>[18, 21]</code>。如果只需要各地点的条数，可用 <code>counts[station] = counts.get(station, 0) + 1</code>。在设计循环前，先决定最后需要保留全部记录，还是只需要累计值。</p>
+<h2 id="section-7">3.7 从迭代到推导式和结构匹配</h2>
+<h3>可迭代对象与迭代器</h3>
+<p>调用 <code>iter</code> 会取得一个迭代器，再调用 <code>next</code> 就会取出下一项。迭代器记住取到哪里。耗尽时，<code>next(iterator)</code> 会抛出 <code>StopIteration</code>，而 <code>next(iterator, 默认值)</code> 会返回给定的默认值。平常用 <code>for</code> 就能自动完成获取和停止的过程。</p>
+
+<section class="playground" aria-label="Python 示例 12">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 12</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 12 代码" rows="6"
     spellcheck="false" autocapitalize="off" autocomplete="off">colors = [&quot;蓝&quot;, &quot;绿&quot;]
 cursor = iter(colors)
 print(next(cursor))
@@ -175,16 +388,17 @@ print(list(colors))</textarea>
 </section>
 
 <p>最后一行重新遍历原列表，仍得到两项。如果继续用原来的 <code>cursor</code>，它仍停在末尾。</p>
+<p>同一列表可以分别交出两个迭代器，两个迭代器有自己的读取位置。某些对象本身就是迭代器，例如已经创建的 <code>zip(...)</code> 结果。把它交给第二个循环时，第二个循环只会拿到尚未消费的部分。若需要反复读同一批结果，可以先转成列表。</p>
 <h3>用推导式直接生成容器</h3>
 <p>推导式把逐项转换和可选的筛选写在一起。列表推导式使用方括号，集合推导式使用花括号，字典推导式在花括号中给出键和值。需要同时维护几份状态、选择多条处理路径时，普通循环能明确写出每次更新的时机。</p>
 
-<section class="playground" aria-label="Python 示例 6">
+<section class="playground" aria-label="Python 示例 13">
   <div class="editor-bar">
-    <span><i></i> Python 示例 6</span>
+    <span><i></i> Python 示例 13</span>
     <div><button class="quiet" data-reset hidden>重置</button>
     <button class="quiet" data-copy hidden>复制</button></div>
   </div>
-  <textarea aria-label="Python 示例 6 代码" rows="7"
+  <textarea aria-label="Python 示例 13 代码" rows="7"
     spellcheck="false" autocapitalize="off" autocomplete="off">readings = [-1, 4, 9, 4]
 valid = [value for value in readings if value &gt;= 0]
 unique = {value for value in valid}
@@ -200,16 +414,17 @@ print(squares)</textarea>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
 
+<p>推导式可以从展开的循环读回去。<code>[value * 2 for value in readings if value &gt;= 0]</code> 先逐项取值，再用条件决定是否保留，最后计算要加入列表的值。右边的表达式每保留一项才求值。比如 <code>[100 // value for value in readings if value &gt; 0]</code> 会先排除零，再做除法。</p>
 <h3>用 match 识别数据形状</h3>
 <p>如果输入包含不同形状的记录，<code>match</code> 可以在识别结构时提取其中的值。按顺序尝试各个 <code>case</code>，执行第一个模式匹配且附加条件成立的分支。最后的 <code>case _</code> 可以接收其余情况。</p>
 
-<section class="playground" aria-label="Python 示例 7">
+<section class="playground" aria-label="Python 示例 14">
   <div class="editor-bar">
-    <span><i></i> Python 示例 7</span>
+    <span><i></i> Python 示例 14</span>
     <div><button class="quiet" data-reset hidden>重置</button>
     <button class="quiet" data-copy hidden>复制</button></div>
   </div>
-  <textarea aria-label="Python 示例 7 代码" rows="8"
+  <textarea aria-label="Python 示例 14 代码" rows="8"
     spellcheck="false" autocapitalize="off" autocomplete="off">for command in [&quot;缩放 3&quot;, &quot;查看&quot;, &quot;缩放&quot;, &quot;缩放 大&quot;]:
     match command.split():
         case [&quot;缩放&quot;, factor] if factor.isdecimal():
@@ -227,16 +442,16 @@ print(squares)</textarea>
 </section>
 
 <p>这里的模式同时约定首项的值和列表的长度，<code>factor</code> 取得第二项，再由 <code>if</code> 检查它的内容。<a href="https://docs.python.org/3.12/tutorial/controlflow.html">Python 官方教程的流程控制章节</a></p>
-<h2 id="section-5">3.5 回到案例 批量处理报名</h2>
+<h2 id="section-8">3.8 回到案例 批量处理报名</h2>
 <p>用 <code>for</code> 按到达顺序取请求。空学号在清理后立即回执，并用 <code>continue</code> 进入下一轮。其余请求通过一组互斥分支确定回执，只有“通过”分支写入名单。每轮结束后都应满足两条规则，已登记的学号互不重复，人数不超过容量。这样的条件称为不变式。</p>
 
-<section class="playground" aria-label="Python 示例 8">
+<section class="playground" aria-label="Python 示例 15">
   <div class="editor-bar">
-    <span><i></i> Python 示例 8</span>
+    <span><i></i> Python 示例 15</span>
     <div><button class="quiet" data-reset hidden>重置</button>
     <button class="quiet" data-copy hidden>复制</button></div>
   </div>
-  <textarea aria-label="Python 示例 8 代码" rows="14"
+  <textarea aria-label="Python 示例 15 代码" rows="14"
     spellcheck="false" autocapitalize="off" autocomplete="off">capacity = 2
 requests = [&quot;S01&quot;, &quot; &quot;, &quot; S02 &quot;, &quot;S03&quot;, &quot;S01&quot;]
 roster = {}
@@ -269,10 +484,14 @@ print(&quot;剩余名额&quot;, capacity - len(roster))</textarea>
 
 <div class="lesson-table"><table><thead><tr><th scope="col">步骤</th><th scope="col">学号</th><th scope="col">回执</th><th scope="col">处理后的名单</th></tr></thead><tbody><tr><td>1</td><td>S01</td><td>通过</td><td>S01</td></tr><tr><td>2</td><td>空白</td><td>空学号</td><td>S01</td></tr><tr><td>3</td><td>S02</td><td>通过</td><td>S01、S02</td></tr><tr><td>4</td><td>S03</td><td>满员</td><td>S01、S02</td></tr><tr><td>5</td><td>S01</td><td>重复</td><td>S01、S02</td></tr></tbody></table></div>
 <p>对照表格核对每一步。第 4、5 步都发生在满员之后，回执却不同，因为第 5 步先满足了重复条件。名单及余量由各轮的更新逐步得出。</p>
-<h2 id="section-6">练习</h2>
-<p>先把容量改成 0，预测五条回执和最终名单，再运行核对。恢复容量为 2 后，调换重复与满员判断的顺序，找出第一条发生变化的回执。</p>
-<details class='answer'><summary>参考解答</summary><p>容量为 0 时，五条回执依次为“满员、空学号、满员、满员、满员”，名单为空。</p><p>恢复容量 2 后，调换顺序会使第 5 条从“重复”变成“满员”。此前第 4 条学号是新学号，两种顺序都返回“满员”。</p></details>
-<h2 id="section-7">本章自测</h2>
+<h3>根据新旧状态核对每次处理</h3>
+<p>这段流程只从“通过”分支写入字典。某轮开始时，容量的判断依据是已有名单的长度。某轮结束时，名单可能多一人，也可能保持原样。下一轮读取的是已经更新的名单，因此同一学号稍后出现时会变成重复。</p>
+<div class="lesson-table"><table><thead><tr><th scope="col">待检查的初始状态或请求</th><th scope="col">对回执的预期</th><th scope="col">对名单的预期</th></tr></thead><tbody><tr><td>请求列表为空</td><td>没有逐条回执</td><td>名单保持初始状态</td></tr><tr><td>只剩一个名额，收到新学号</td><td>通过</td><td>新增一人，剩余名额为零</td></tr><tr><td>满员后收到另一个新学号</td><td>满员</td><td>没有新增</td></tr><tr><td>满员后收到已登记学号</td><td>重复</td><td>没有新增</td></tr><tr><td>学号只包含空白</td><td>空学号</td><td>不写入空键</td></tr></tbody></table></div>
+<p>可以先用这张表预测每种输入。流程变长时，把可独立验证的资格检查、单次登记和批量处理写成不同能力，会更容易定位规则发生变化的位置。<a href="chapter-04.html">第 4 章 第三视角 函数与协作封装</a></p>
+<h2 id="section-9">练习</h2>
+<ul><li>先把容量改成 0，预测五条回执和最终名单，再运行核对。恢复容量为 2 后，调换重复与满员判断的顺序，找出第一条发生变化的回执。</li><li>把报名名单的初始值改成 <code>{&quot;S02&quot;: &quot;已报名&quot;}</code>，容量仍为 2。预测前四条回执，并指出哪一步恰好填满活动。</li><li>把折纸条示例的初始宽度改为 10。预测循环次数，再用一个更大的初值检查终止条件。</li><li>仿照按站点分组，把每个地点的读数列表换成读数总和。说明循环每轮应该修改哪个键。</li></ul>
+<details class='answer'><summary>参考解答</summary><p>容量为 0 时，五条回执依次为“满员、空学号、满员、满员、满员”，名单为空。</p><p>恢复容量 2 后，调换顺序会使第 5 条从“重复”变成“满员”。此前第 4 条学号是新学号，两种顺序都返回“满员”。</p><p>初始已登记 S02 时，前四条依次是“通过、空学号、重复、满员”。第一条加入 S01 后恰好满员。</p><p>宽度为 10 时 while 的条件一开始就为假，执行零次。任何大于 10 的正整数宽度都在每轮折半后减小，最终达到限制。</p><p>用 <code>totals[station] = totals.get(station, 0) + value</code> 更新当前站名对应的和。最后东站是 39，西站是 20。</p></details>
+<h2 id="section-10">本章自测</h2>
 
 <form class="quiz" data-correct="3">
  <fieldset><legend>已经登记 S01、S02，容量为 2。按本章规则处理 S01，会得到什么回执？</legend><label><input type="radio" name="choice" value="1" required> 满员</label><label><input type="radio" name="choice" value="2" required> 通过</label><label><input type="radio" name="choice" value="3" required> 重复</label></fieldset>
@@ -284,7 +503,7 @@ print(&quot;剩余名额&quot;, capacity - len(roster))</textarea>
   <button type="button" class="complete" data-mark="03" aria-pressed="false" hidden>标记本章完成</button>
   <nav class="adjacent" aria-label="前后章节"><a href="chapter-02.html"><small>← 上一节</small>容器对象与数据组织</a><a href="chapter-04.html"><small>下一节 →</small>第三视角 函数与协作封装</a></nav>
  </main>
- <aside class="outline"><p>本节内容</p><nav aria-label="本节内容"><ol><li><a href="#section-1">3.1 一批报名请求怎样逐条处理</a></li><li><a href="#section-2">3.2 用条件选择执行路径</a></li><li><a href="#section-3">3.3 用循环安排重复</a></li><li><a href="#section-4">3.4 从迭代到推导式和结构匹配</a></li><li><a href="#section-5">3.5 回到案例 批量处理报名</a></li><li><a href="#section-6">练习</a></li><li><a href="#section-7">本章自测</a></li></ol></nav></aside>
+ <aside class="outline"><p>本页目录</p><nav aria-label="本页目录"><ol><li><a href="#section-1">3.1 一批报名请求怎样逐条处理</a></li><li><a href="#section-2">3.2 用条件选择执行路径</a></li><li><a href="#section-3">3.3 用 for 遍历一组对象</a></li><li><a href="#section-4">3.4 用 while 持续到条件改变</a></li><li><a href="#section-5">3.5 选择跳过、退出或继续查找</a></li><li><a href="#section-6">3.6 用循环累计、筛选和分组</a></li><li><a href="#section-7">3.7 从迭代到推导式和结构匹配</a></li><li><a href="#section-8">3.8 回到案例 批量处理报名</a></li><li><a href="#section-9">练习</a></li><li><a href="#section-10">本章自测</a></li></ol></nav></aside>
 </div>
 <footer class="site-footer"><a href="index.html">Python 编程教材</a><a href="chapter-A.html">运行环境</a><a href="chapter-C.html">语言速查</a></footer>
 </body></html>

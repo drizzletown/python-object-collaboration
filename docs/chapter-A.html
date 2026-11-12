@@ -6,7 +6,7 @@
 <meta name="color-scheme" content="light">
 <meta name="description" content="以对象协作和假设三部曲为主线的 Python 编程教材。">
 <title>附录 A Python 运行环境与学习工具 · Python 编程</title>
-<link rel="stylesheet" href="assets/style.css?v=acff13e538d4">
+<link rel="stylesheet" href="assets/style.css?v=466d49260340">
 <script src="assets/site.js" defer></script>
 </head>
 <body class="">
@@ -22,12 +22,15 @@
  </details></aside>
  <main id="main" class="lesson">
   <header class="lesson-head"><div class="crumb"><a href="index.html#catalog">教材目录</a> <span>›</span> 附录 A</div>
-  <h1>附录 A Python 运行环境与学习工具</h1><p>完成安装检查，从交互解释器和终端分别运行一段 Python。</p></header>
-  <article><h2 id="section-1">A.1 检查解释器</h2>
-<p>安装 Python 3.12 或兼容的更新版本。可以从 <a href="https://www.python.org/downloads/">Python 官方下载</a> 获取安装入口。Windows 打开 PowerShell，运行 py -3 --version；如果安装方式提供 python 命令，也可以运行 python --version。macOS 和 Linux 常用 python3 --version。记录输出的主版本与次版本。若命令找不到，检查解释器是否安装、终端是否需要重新打开以及命令是否在 PATH 上。</p>
-<p>在终端运行 python 或 python3，看到 &gt;&gt;&gt; 时进入交互模式。键入 print(2 + 3) 并回车，预期显示 5。用 exit() 退出。终端运行命令，交互解释器接收 Python 语句，遇到错误时先确认当前所在的界面。</p>
-<h2 id="section-2">A.2 运行脚本</h2>
-<p>创建练习目录，把下面的内容保存为 hello.py，使用 UTF-8 编码。终端切换到文件所在目录，运行 python hello.py。使用 py -3 或 python3 的读者可替换命令开头。文件名 hello.py 要完整，包括扩展名。找不到文件时先检查当前目录及文件名。</p>
+  <h1>附录 A Python 运行环境与学习工具</h1><p>用浏览器找到章节与示例，练习预测、运行和修改代码，再检查输出、进度和练习结果。</p></header>
+  <details class="lesson-contents"><summary>本页目录</summary>
+   <nav aria-label="本页目录"><ol><li><a href="#section-1">A.1 从目录找到要读的内容</a></li><li><a href="#section-2">A.2 在网页里运行和修改示例</a></li><li><a href="#section-3">A.3 阅读输出和错误信息</a></li><li><a href="#section-4">A.4 做完一章后怎样回看</a></li></ol></nav>
+  </details>
+  <article><h2 id="section-1">A.1 从目录找到要读的内容</h2>
+<p>首页的课程目录按学习阶段排列。知道要读哪一章时，可以直接打开章节。想查某个概念或写法时，可以在搜索框输入“浅复制”“异常”或 <code>setdefault</code>，从匹配结果进入相关章节。</p>
+<p>章节目录用于在全书中切换。进入一章后，用“本页目录”跳转到其中的小节。窄屏上可以展开章节目录和本页目录。查阅某个语法时，先读该小节的独立例子，再看章末怎样把它用回原任务。</p>
+<h2 id="section-2">A.2 在网页里运行和修改示例</h2>
+<p>有运行按钮的代码框可以直接编辑。先读示例准备了哪些输入，再预测输出，然后点击“运行代码”或按 <code>Ctrl + Enter</code>。输出会显示在同一个代码框下方。</p>
 
 <section class="playground" aria-label="Python 示例 1">
   <div class="editor-bar">
@@ -46,11 +49,43 @@ print(message)</textarea>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
 
-<p>使用 VS Code 时先打开练习目录，再选择刚验证过的 Python 解释器。在编辑器的终端重跑版本命令，确认它和运行脚本所用的是同一套环境。若网页运行器在加载阶段超时，可将示例复制到本机脚本继续练习。</p></article>
+<p>先运行一次，核对输出与字符串内容。再修改 <code>message</code> 的值，保留 <code>print(message)</code>，观察哪一行决定输入、哪一行负责输出。使用“重置”可以恢复教材原来的示例，使用“复制”可以把当前代码粘贴到自己的练习记录中。</p>
+<div class="lesson-table"><table><thead><tr><th scope="col">练习动作</th><th scope="col">可以观察什么</th></tr></thead><tbody><tr><td>先预测再运行</td><td>检查自己是否读懂表达式和执行顺序</td></tr><tr><td>只改一个输入</td><td>找到结果变化由哪一项数据引起</td></tr><tr><td>改一处判断或调用</td><td>比较两种写法的行为</td></tr><tr><td>重置后再运行</td><td>用原示例核对偏差来自哪里</td></tr></tbody></table></div>
+<p>示例使用网页上的 Python 运行环境，每次运行会重新准备一份练习环境。第 8、9 章中的文件在一次示例运行里创建、关闭和重新读取。若需要比较两次操作，可以把它们写在同一个代码框中，并分别输出结果。</p>
+<h2 id="section-3">A.3 阅读输出和错误信息</h2>
+<p>输出面板中的文字可以来自 <code>print()</code>、测试运行器或错误报告。读输出时，先找最后一项结果，再沿着它的来源检查中间值。例如一个“空名单”的结果，可能来自初始化，也可能来自某条分支跳过了写入。</p>
+<div class="lesson-table"><table><thead><tr><th scope="col">页面显示</th><th scope="col">接下来查看</th></tr></thead><tbody><tr><td>正在加载浏览器中的 Python</td><td>等待运行环境准备完成，之后再观察输出</td></tr><tr><td>Python 加载失败或加载超时</td><td>刷新页面后重试，检查网络是否可用</td></tr><tr><td>出现异常类型和回溯</td><td>找到错误说明，再定位对应的代码和输入</td></tr><tr><td>程序运行超时</td><td>检查循环是否有终止条件，再运行一次</td></tr><tr><td>运行结束但没有输出</td><td>检查代码是否只是定义了对象，或是否需要调用和输出结果</td></tr></tbody></table></div>
+<p>示例可逐步添加少量输出帮助定位。例如先显示原文字和转换后的数值，再显示最后的计算结果。下面可以改变原文字，观察它是否真的能按预期转换。</p>
+
+<section class="playground" aria-label="Python 示例 2">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 2</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 2 代码" rows="5"
+    spellcheck="false" autocapitalize="off" autocomplete="off">raw = &quot; 18 &quot;
+value = int(raw)
+print(&quot;原文字&quot;, repr(raw))
+print(&quot;整数&quot;, value)
+print(&quot;增加一项后的值&quot;, value + 1)</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<p>把输入换成 <code>&quot;十八&quot;</code> 后，转换会报告 <code>ValueError</code>。这是可以预期的练习结果。恢复数字文本后再运行，核对三个输出。更多错误类型和调试方法见<a href="chapter-07.html">第 7 章 对象协作的可靠性</a>。</p>
+<h2 id="section-4">A.4 做完一章后怎样回看</h2>
+<p>每章最后的练习可以先自己做，再展开参考解答。自测会给出反馈。答错时，可以回到对应小节，用一组更简单的数据重现规则，再重新作答。</p>
+<p>“标记本章完成”会更新首页的学习进度。首页也可以继续打开上次阅读的正文。进度记录保存在当前浏览器中。需要带到另一处时，可以保存章节链接和自己的练习结果。</p>
+<p>继续阅读时，建议每章至少挑一项输入变化、一项边界情况和一项迁移任务。能先预测结果并解释原因，就可以尝试把学过的机制用到新的数据上。<a href="chapter-B.html">附录 B 项目工具链与开发实践</a></p></article>
   
   <nav class="adjacent" aria-label="前后章节"><a href="chapter-10.html"><small>← 上一节</small>对象协作系统的复用与演化</a><a href="chapter-B.html"><small>下一节 →</small>附录 B 项目工具链与开发实践</a></nav>
  </main>
- <aside class="outline"><p>本节内容</p><nav aria-label="本节内容"><ol><li><a href="#section-1">A.1 检查解释器</a></li><li><a href="#section-2">A.2 运行脚本</a></li></ol></nav></aside>
+ <aside class="outline"><p>本页目录</p><nav aria-label="本页目录"><ol><li><a href="#section-1">A.1 从目录找到要读的内容</a></li><li><a href="#section-2">A.2 在网页里运行和修改示例</a></li><li><a href="#section-3">A.3 阅读输出和错误信息</a></li><li><a href="#section-4">A.4 做完一章后怎样回看</a></li></ol></nav></aside>
 </div>
 <footer class="site-footer"><a href="index.html">Python 编程教材</a><a href="chapter-A.html">运行环境</a><a href="chapter-C.html">语言速查</a></footer>
 </body></html>

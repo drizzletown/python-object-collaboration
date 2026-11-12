@@ -100,10 +100,11 @@ progress { width: min(155px, 25vw); accent-color: var(--purple); height: 9px; }
 .nav-num { color: #60518a; font: .77rem var(--mono); }
 .outline { font-size: .8rem; }
 .outline > p { margin: 0 0 12px; font-weight: 700; }
-.outline ol { margin: 0; list-style: none; padding: 0 0 0 12px; border-left: 1px solid var(--rule); }
-.outline li + li { margin-top: 11px; }
-.outline a { color: var(--muted); text-decoration: none; }
-.outline a:hover { color: var(--purple); }
+:is(.outline, .lesson-contents) ol { margin: 0; list-style: none; padding: 0 0 0 12px; border-left: 1px solid var(--rule); }
+:is(.outline, .lesson-contents) li + li { margin-top: 11px; }
+:is(.outline, .lesson-contents) a { color: var(--muted); text-decoration: none; }
+:is(.outline, .lesson-contents) a:hover { color: var(--purple); }
+.lesson-contents { display: none; }
 .lesson { padding: 40px 0 60px; min-width: 0; }
 .crumb { color: var(--muted); font-size: .86rem; margin: 0 0 15px; }
 .crumb span { margin: 0 4px; }
@@ -163,6 +164,8 @@ summary { cursor: pointer; font-weight: 600; }
 @media (max-width: 1120px) {
   .lesson-layout { grid-template-columns: minmax(175px, 210px) minmax(0, 720px); }
   .outline { display: none; }
+  .lesson-contents { display: block; margin: 0 0 24px; padding: 10px 14px; border: 1px solid var(--rule); border-radius: 7px; background: var(--white); }
+  .lesson-contents nav { margin-top: 10px; font-size: .92rem; }
 }
 @media (max-width: 760px) {
   .hero-grid { grid-template-columns: 1fr; gap: 30px; padding-block: 38px 41px; }

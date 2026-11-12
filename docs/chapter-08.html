@@ -6,7 +6,7 @@
 <meta name="color-scheme" content="light">
 <meta name="description" content="以对象协作和假设三部曲为主线的 Python 编程教材。">
 <title>对象与外部环境的协作 · Python 编程</title>
-<link rel="stylesheet" href="assets/style.css?v=acff13e538d4">
+<link rel="stylesheet" href="assets/style.css?v=466d49260340">
 <script src="assets/site.js" defer></script>
 </head>
 <body class="">
@@ -23,16 +23,18 @@
  <main id="main" class="lesson">
   <header class="lesson-head"><div class="crumb"><a href="index.html#catalog">教材目录</a> <span>›</span> 第 8 章</div>
   <h1>对象与外部环境的协作</h1><p>把活动状态保存为 JSON，重新读取并校验，再导出可用于表格软件的 CSV 名单。</p></header>
+  <details class="lesson-contents"><summary>本页目录</summary>
+   <nav aria-label="本页目录"><ol><li><a href="#section-1">8.1 关闭报名程序以后，名单在哪里</a></li><li><a href="#section-2">8.2 用路径定位外部资源</a></li><li><a href="#section-3">8.3 选择打开方式并管理文件对象</a></li><li><a href="#section-4">8.4 理解字符、字节和编码</a></li><li><a href="#section-5">8.5 用 JSON 保存结构化数据</a></li><li><a href="#section-6">8.6 用 CSV 交换表格数据</a></li><li><a href="#section-7">8.7 在边界区分缺失、格式错误与非法数据</a></li><li><a href="#section-8">8.8 让保存失败保留可恢复的旧数据</a></li><li><a href="#section-9">8.9 回到案例 保存、恢复并导出报名名单</a></li><li><a href="#section-10">练习</a></li><li><a href="#section-11">本章自测</a></li></ol></nav>
+  </details>
   <article><h2 id="section-1">8.1 关闭报名程序以后，名单在哪里</h2>
 <p>前几章的活动对象把名单保存在内存中。组织者结束本次工作后，下次打开程序还需要继续使用同一份名单。另一个需求是把名单交给负责签到的同学，在表格软件里查看。</p>
 <ul><li>输入是一场已登记 <code>S01</code>、<code>S02</code> 的博物馆活动，容量为 2。</li><li>保存活动名称、容量和报名顺序。恢复时从保存的记录重新取得这些数据，并验证名额与名单规则。</li><li>另外生成一份有表头的名单，每位参加者占一行，供表格软件导入。</li></ul>
 <p>这两份文件服务于不同任务。恢复时需要保留有名字的字段及其关系，导出时需要有稳定的行和列。先了解 Python 怎样使用文件资源和两种常见的数据格式。</p>
-<h2 id="section-2">8.2 用路径定位资源，用文件对象读写内容</h2>
+<h2 id="section-2">8.2 用路径定位外部资源</h2>
 <h3>路径怎样指向一个位置</h3>
 <p><code>pathlib.Path</code> 表示文件系统中的路径。绝对路径从系统规定的位置开始，相对路径通常以当前工作目录为基准。<code>Path.cwd()</code> 返回当前工作目录。用 <code>/</code> 可以拼接路径段，<code>path.parent</code> 取得父目录。若需要创建中间目录，可用 <code>mkdir(parents=True, exist_ok=True)</code>。</p>
-<h3>打开文件时声明读写方式</h3>
-<div class="lesson-table"><table><thead><tr><th scope="col">模式</th><th scope="col">用途</th><th scope="col">对已有文件的影响</th></tr></thead><tbody><tr><td><code>&quot;r&quot;</code></td><td>读取，默认模式</td><td>保留内容，文件必须存在</td></tr><tr><td><code>&quot;w&quot;</code></td><td>写入，可创建新文件</td><td>打开时截断已有内容</td></tr><tr><td><code>&quot;a&quot;</code></td><td>追加，可创建新文件</td><td>将新内容加到末尾</td></tr><tr><td><code>&quot;x&quot;</code></td><td>创建新文件并写入</td><td>已存在时报告错误</td></tr><tr><td><code>&quot;rb&quot;</code> 或 <code>&quot;wb&quot;</code></td><td>按字节读写</td><td>读写规则沿用对应的 <code>r</code> 或 <code>w</code></td></tr></tbody></table></div>
-<p>文本模式负责在字符与字节之间转换，打开文本文件时可以指定 <code>encoding=&quot;utf-8&quot;</code>。二进制模式直接读写字节。文件对象持有打开的资源，使用 <code>with</code> 可以在离开代码块时自动关闭文件，包括块内发生异常的情况。</p>
+<h3>先构造路径，再使用路径</h3>
+<p>路径对象可以描述一个尚未创建的文件。<code>path.name</code> 取得最后一段文件名，<code>path.suffix</code> 取得扩展名，<code>path.stem</code> 取得去掉最后一个扩展名的名称。拼接路径只是计算位置，创建目录、打开文件是另外的操作。</p>
 
 <section class="playground" aria-label="Python 示例 1">
   <div class="editor-bar">
@@ -40,7 +42,35 @@
     <div><button class="quiet" data-reset hidden>重置</button>
     <button class="quiet" data-copy hidden>复制</button></div>
   </div>
-  <textarea aria-label="Python 示例 1 代码" rows="14"
+  <textarea aria-label="Python 示例 1 代码" rows="7"
+    spellcheck="false" autocapitalize="off" autocomplete="off">from pathlib import Path
+
+path = Path(&quot;records&quot;) / &quot;morning.csv&quot;
+print(&quot;父目录&quot;, path.parent)
+print(&quot;文件名&quot;, path.name)
+print(&quot;主文件名与扩展名&quot;, path.stem, path.suffix)
+print(&quot;是否为绝对路径&quot;, path.is_absolute())</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<p>示例中的路径是相对的，同一写法在不同工作目录下可能指向不同文件。将目标目录作为参数交给函数，能明确在哪个位置读写。相对路径需要先弄清相对的是哪一个目录，绝对路径则可以直接定位到指定位置。<a href="https://docs.python.org/3.12/library/pathlib.html">Python 官方文档的 pathlib</a></p>
+<h2 id="section-3">8.3 选择打开方式并管理文件对象</h2>
+<h3>打开文件时声明读写方式</h3>
+<div class="lesson-table"><table><thead><tr><th scope="col">模式</th><th scope="col">用途</th><th scope="col">对已有文件的影响</th></tr></thead><tbody><tr><td><code>&quot;r&quot;</code></td><td>读取，默认模式</td><td>保留内容，文件必须存在</td></tr><tr><td><code>&quot;w&quot;</code></td><td>写入，可创建新文件</td><td>打开时截断已有内容</td></tr><tr><td><code>&quot;a&quot;</code></td><td>追加，可创建新文件</td><td>将新内容加到末尾</td></tr><tr><td><code>&quot;x&quot;</code></td><td>创建新文件并写入</td><td>已存在时报告错误</td></tr><tr><td><code>&quot;rb&quot;</code> 或 <code>&quot;wb&quot;</code></td><td>按字节读写</td><td>读写规则沿用对应的 <code>r</code> 或 <code>w</code></td></tr></tbody></table></div>
+<p>文本模式负责在字符与字节之间转换，打开文本文件时可以指定 <code>encoding=&quot;utf-8&quot;</code>。二进制模式直接读写字节。文件对象持有打开的资源，使用 <code>with</code> 可以在离开代码块时自动关闭文件，包括块内发生异常的情况。</p>
+
+<section class="playground" aria-label="Python 示例 2">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 2</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 2 代码" rows="14"
     spellcheck="false" autocapitalize="off" autocomplete="off">from pathlib import Path
 from tempfile import TemporaryDirectory
 
@@ -65,16 +95,110 @@ with TemporaryDirectory() as folder:
 </section>
 
 <p><code>TemporaryDirectory</code> 也由 <code>with</code> 管理，离开外层块时清理示例文件。<code>read_text</code> 适合一次读取整个小文件，内容较多时可以在打开文件的块内用 <code>for line in stream</code> 逐行读。<a href="https://docs.python.org/3.12/library/pathlib.html">Python 官方文档的 pathlib</a></p>
-<h2 id="section-3">8.3 用 JSON 保存结构化数据</h2>
-<p>JSON 把结构化数据写成文本。Python 的字典、列表、字符串、数字、布尔值和 <code>None</code> 可转换为对应的 JSON 对象、数组、字符串、数值、真假和 <code>null</code>。交换数据时宜使用字符串作为字典键，并事先约定必需字段与类型。</p>
+<h3>一次读完与逐行处理</h3>
+<p><code>read_text()</code> 一次读出完整文本，适合内容较小、后续要整体处理的文件。逐行处理时可以一边读一边累计结果。下面用一条内存文本流演示同样的迭代写法，每轮得到一行带换行符的文字。</p>
 
-<section class="playground" aria-label="Python 示例 2">
+<section class="playground" aria-label="Python 示例 3">
   <div class="editor-bar">
-    <span><i></i> Python 示例 2</span>
+    <span><i></i> Python 示例 3</span>
     <div><button class="quiet" data-reset hidden>重置</button>
     <button class="quiet" data-copy hidden>复制</button></div>
   </div>
-  <textarea aria-label="Python 示例 2 代码" rows="8"
+  <textarea aria-label="Python 示例 3 代码" rows="14"
+    spellcheck="false" autocapitalize="off" autocomplete="off">from io import StringIO
+
+total = 0
+count = 0
+with StringIO(&quot;18\n\n21\n20\n&quot;) as stream:
+    for number, line in enumerate(stream, start=1):
+        text = line.strip()
+        if not text:
+            continue
+        value = int(text)
+        print(&quot;第几行、读数&quot;, number, value)
+        total += value
+        count += 1
+
+print(&quot;读数的条数和总和&quot;, count, total)</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<p>程序跳过空行，在读取下一行前完成当前行的处理。文件流读到末尾后停止迭代。想从头再读，可以重新打开，或对支持定位的流用 <code>seek(0)</code> 回到开头。具体的读数格式应由调用者约定，非法行可以按第 7 章的方法报告。</p>
+<h3>with 在正常结束和异常时都执行退出动作</h3>
+<p><code>with</code> 通过资源对象的进入与退出约定管理资源。文件对象退出时关闭，临时目录退出时清理。嵌套使用时，先离开内层文件块，再离开外层目录块。下面让一个错误发生在读取之后，检查离开代码块时文本流的状态。</p>
+
+<section class="playground" aria-label="Python 示例 4">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 4</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 4 代码" rows="8"
+    spellcheck="false" autocapitalize="off" autocomplete="off">from io import StringIO
+
+try:
+    with StringIO(&quot;无读数&quot;) as stream:
+        value = int(stream.read())
+except ValueError as error:
+    print(&quot;转换失败&quot;, type(error).__name__)
+    print(&quot;流是否已经关闭&quot;, stream.closed)</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<p>异常传播到 <code>except</code> 前，<code>with</code> 已完成关闭动作。把使用文件的代码放在 <code>with</code> 内，将需要交给后续步骤的值保留为普通对象，就能清楚区分文件的使用期限和数据的使用期限。<a href="https://docs.python.org/3.12/tutorial/inputoutput.html#reading-and-writing-files">Python 官方教程的文件读写</a></p>
+<h2 id="section-4">8.4 理解字符、字节和编码</h2>
+<p>文件中保存的是字节。按文本打开时，Python 依据指定的编码在字符和字节之间转换。用 <code>encoding=&quot;utf-8&quot;</code> 明确约定，可以让写入和读取使用同一种编码。按二进制打开时，<code>read()</code> 得到字节序列，解释这些字节的工作交给后续步骤。</p>
+
+<section class="playground" aria-label="Python 示例 5">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 5</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 5 代码" rows="13"
+    spellcheck="false" autocapitalize="off" autocomplete="off">from pathlib import Path
+from tempfile import TemporaryDirectory
+
+with TemporaryDirectory() as folder:
+    path = Path(folder) / &quot;note.txt&quot;
+    path.write_text(&quot;东站&quot;, encoding=&quot;utf-8&quot;)
+    data = path.read_bytes()
+    print(&quot;保存的字节数&quot;, len(data))
+    print(&quot;按 UTF-8 解读&quot;, data.decode(&quot;utf-8&quot;))
+    try:
+        print(data.decode(&quot;ascii&quot;))
+    except UnicodeDecodeError:
+        print(&quot;ASCII 无法解释这些字节&quot;)</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<p>“东站”是两个字符，UTF-8 保存为六个字节。相同的字节交给不同解码规则，可能产生错误或不同文字。读到 <code>UnicodeDecodeError</code> 时，先核对实际保存的编码，再选择相应的解码方式。</p>
+<h2 id="section-5">8.5 用 JSON 保存结构化数据</h2>
+<p>JSON 把结构化数据写成文本。Python 的字典、列表、字符串、数字、布尔值和 <code>None</code> 可转换为对应的 JSON 对象、数组、字符串、数值、真假和 <code>null</code>。交换数据时宜使用字符串作为字典键，并事先约定必需字段与类型。</p>
+<div class="lesson-table"><table><thead><tr><th scope="col">JSON 中的数据</th><th scope="col">读取为 Python 对象</th><th scope="col">保存时常用的 Python 对象</th></tr></thead><tbody><tr><td>对象</td><td><code>dict</code></td><td>用字符串字段名组织的字典</td></tr><tr><td>数组</td><td><code>list</code></td><td>列表，或可以转成数组的元组</td></tr><tr><td>字符串</td><td><code>str</code></td><td>字符串</td></tr><tr><td>数字</td><td><code>int</code> 或 <code>float</code></td><td>整数、有限的浮点数</td></tr><tr><td><code>true</code>、<code>false</code></td><td><code>True</code>、<code>False</code></td><td>布尔值</td></tr><tr><td><code>null</code></td><td><code>None</code></td><td>缺失值</td></tr></tbody></table></div>
+
+<section class="playground" aria-label="Python 示例 6">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 6</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 6 代码" rows="8"
     spellcheck="false" autocapitalize="off" autocomplete="off">import json
 
 reading = {&quot;地点&quot;: &quot;东站&quot;, &quot;温度&quot;: [18, 20], &quot;已复核&quot;: True, &quot;备注&quot;: None}
@@ -92,16 +216,45 @@ print(restored[&quot;温度&quot;][0], restored[&quot;已复核&quot;])</textare
 </section>
 
 <p><code>dumps</code> 和 <code>loads</code> 处理字符串，<code>dump</code> 和 <code>load</code> 处理打开的文件对象。<code>ensure_ascii=False</code> 让生成的文本直接显示中文，<code>indent=2</code> 便于阅读。自定义对象通常要先挑出要保存的字段，组成可序列化的数据。读取后再根据这些字段恢复对象或供其他组件使用。<a href="https://docs.python.org/3.12/library/json.html">Python 官方文档的 json</a></p>
-<h2 id="section-4">8.4 用 CSV 交换表格数据</h2>
-<p>CSV 以记录表示行，以字段表示列。可以用 <code>csv.writer</code> 和 <code>csv.reader</code> 逐行处理，也可以用 <code>DictWriter</code> 和 <code>DictReader</code> 按列名组织数据。字段内有逗号、引号或换行时，模块会按规则处理转义和引用。</p>
+<h3>约定能保存什么，以及怎样恢复</h3>
+<p>JSON 主要保存数据关系。用元组表示的位置在 JSON 里会成为数组，读取后得到列表。如果应用还要求位置固定为两个数，就应校验长度，再按需要恢复成元组。对象的方法和内部状态的更新规则由 Python 中的定义提供。</p>
 
-<section class="playground" aria-label="Python 示例 3">
+<section class="playground" aria-label="Python 示例 7">
   <div class="editor-bar">
-    <span><i></i> Python 示例 3</span>
+    <span><i></i> Python 示例 7</span>
     <div><button class="quiet" data-reset hidden>重置</button>
     <button class="quiet" data-copy hidden>复制</button></div>
   </div>
-  <textarea aria-label="Python 示例 3 代码" rows="12"
+  <textarea aria-label="Python 示例 7 代码" rows="10"
+    spellcheck="false" autocapitalize="off" autocomplete="off">import json
+
+original = {&quot;position&quot;: (3, 4), &quot;visible&quot;: True, &quot;note&quot;: None}
+wire = json.dumps(original, ensure_ascii=False)
+restored = json.loads(wire)
+
+print(&quot;交换文字&quot;, wire)
+print(&quot;位置字段读为&quot;, type(restored[&quot;position&quot;]).__name__)
+position = tuple(restored[&quot;position&quot;])
+print(&quot;应用需要的坐标&quot;, position)</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<p>可读性选项控制输出的文字形式。<code>indent=2</code> 帮助查阅，紧凑表示更节省空间。程序应依据字段及其值来解析数据。读写前明确字段名称、类型、取值范围和相互关系，才能判断一份记录是否能恢复成可使用的对象。</p>
+<h2 id="section-6">8.6 用 CSV 交换表格数据</h2>
+<p>CSV 以记录表示行，以字段表示列。可以用 <code>csv.writer</code> 和 <code>csv.reader</code> 逐行处理，也可以用 <code>DictWriter</code> 和 <code>DictReader</code> 按列名组织数据。字段内有逗号、引号或换行时，模块会按规则处理转义和引用。</p>
+
+<section class="playground" aria-label="Python 示例 8">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 8</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 8 代码" rows="12"
     spellcheck="false" autocapitalize="off" autocomplete="off">import csv
 from io import StringIO
 
@@ -123,21 +276,147 @@ print(row[&quot;地点&quot;], int(row[&quot;读数&quot;]) + 1)</textarea>
 </section>
 
 <p><code>StringIO</code> 是内存中的文本流，可以像文件一样读写。写完后用 <code>seek(0)</code> 回到开头。上例中带逗号的地点保留在同一列，读数读取时仍是字符串，需要计算时再转换。用真实文件读写 CSV 时传入 <code>newline=&quot;&quot;</code>，由 <code>csv</code> 管理记录的换行。<a href="https://docs.python.org/3.12/library/csv.html">Python 官方文档的 csv</a></p>
-<h2 id="section-5">8.5 在资源边界验证数据和错误</h2>
-<p>能打开文件、能解析格式、数据符合应用约定，是三个要分别验证的条件。例如，JSON 能把 <code>{&quot;quantity&quot;: -1}</code> 解析为字典，使用库存数据的程序还需检查数量是否合法。</p>
-<div class="lesson-table"><table><thead><tr><th scope="col">情形</th><th scope="col">可能出现的异常</th><th scope="col">调用者如何使用这个信息</th></tr></thead><tbody><tr><td>路径没有对应的文件</td><td><code>FileNotFoundError</code></td><td>首次启动时可按约定建立初始状态</td></tr><tr><td>当前操作没有足够权限</td><td><code>PermissionError</code></td><td>报告哪个资源无法访问</td></tr><tr><td>字节无法按指定编码解读</td><td><code>UnicodeDecodeError</code></td><td>确认文件编码，保留原文件供检查</td></tr><tr><td>JSON 文本格式有误</td><td><code>json.JSONDecodeError</code></td><td>报告文件内容无法解析</td></tr><tr><td>数据类型或取值违反业务规则</td><td>校验函数报告的 <code>ValueError</code></td><td>报告具体字段或规则</td></tr></tbody></table></div>
-<p>保存已有状态时，可以先把完整内容写到同目录的临时文件，关闭后再替换目标。序列化失败时，原文件仍可读取。第 9 章用这一顺序实现文件存储，并用测试检查读取坏文件后的行为。</p>
-<p>同样的协作思路也适用于其他外部接口。先约定如何取得资源、结果是什么格式，再判断结果能否进入业务流程。例如，调用网络服务读取数据时，调用方需要处理超时，并校验响应所带的字段。</p>
-<h2 id="section-6">8.6 回到案例 保存、恢复并导出报名名单</h2>
-<p>JSON 使用 <code>title</code>、<code>capacity</code> 和 <code>students</code> 三个字段。名单保留原报名顺序。恢复时检查标题、容量及每个学号，确认没有重复且人数不超限。CSV 从恢复后的数据生成，列名为“活动名称”和“学号”。</p>
+<h3>表头、字段文字和类型转换</h3>
+<p>使用 <code>csv.DictReader</code> 时，第一行通常是表头，之后每一行按照列名交出字段。字段值默认是文字。数量要转换成数字，带前导零的编号则应保留原样。</p>
 
-<section class="playground" aria-label="Python 示例 4">
+<section class="playground" aria-label="Python 示例 9">
   <div class="editor-bar">
-    <span><i></i> Python 示例 4</span>
+    <span><i></i> Python 示例 9</span>
     <div><button class="quiet" data-reset hidden>重置</button>
     <button class="quiet" data-copy hidden>复制</button></div>
   </div>
-  <textarea aria-label="Python 示例 4 代码" rows="14"
+  <textarea aria-label="Python 示例 9 代码" rows="13"
+    spellcheck="false" autocapitalize="off" autocomplete="off">import csv
+from io import StringIO
+
+source = StringIO(&quot;编号,件数\n0007,2\n0009,0\n&quot;, newline=&quot;&quot;)
+reader = csv.DictReader(source)
+total = 0
+for row in reader:
+    code = row[&quot;编号&quot;]
+    count = int(row[&quot;件数&quot;])
+    print(&quot;编号和件数&quot;, code, count)
+    total += count
+
+print(&quot;总件数&quot;, total)</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<p>数据来自外部时，还要核对表头是否包含必需列，空字段能否解释，转换后的数量是否在允许范围。导入表格软件时，可以将编号列指定为文本，以保留前导零。需要保存嵌套结构时，可以用 JSON 保存完整记录，再从同一数据生成用于浏览的 CSV。</p>
+<h2 id="section-7">8.7 在边界区分缺失、格式错误与非法数据</h2>
+<p>能打开文件、能解析格式、数据符合应用约定，是三个要分别验证的条件。例如，JSON 能把 <code>{&quot;quantity&quot;: -1}</code> 解析为字典，使用库存数据的程序还需检查数量是否合法。</p>
+<div class="lesson-table"><table><thead><tr><th scope="col">情形</th><th scope="col">可能出现的异常</th><th scope="col">调用者如何使用这个信息</th></tr></thead><tbody><tr><td>路径没有对应的文件</td><td><code>FileNotFoundError</code></td><td>首次启动时可按约定建立初始状态</td></tr><tr><td>当前操作没有足够权限</td><td><code>PermissionError</code></td><td>报告哪个资源无法访问</td></tr><tr><td>字节无法按指定编码解读</td><td><code>UnicodeDecodeError</code></td><td>确认文件编码，保留原文件供检查</td></tr><tr><td>JSON 文本格式有误</td><td><code>json.JSONDecodeError</code></td><td>报告文件内容无法解析</td></tr><tr><td>数据类型或取值违反业务规则</td><td>校验函数报告的 <code>ValueError</code></td><td>报告具体字段或规则</td></tr></tbody></table></div>
+<h3>只有确实缺失时才启用初始数据</h3>
+<p>首次启动和已有数据损坏是两种不同的情况。可以在读文件这一小段操作上捕获 <code>FileNotFoundError</code>，用默认状态继续。成功取得文字后，再解析内容。格式错误应交给调用者报告。</p>
+
+<section class="playground" aria-label="Python 示例 10">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 10</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 10 代码" rows="14"
+    spellcheck="false" autocapitalize="off" autocomplete="off">import json
+from pathlib import Path
+from tempfile import TemporaryDirectory
+
+
+def load_readings(path):
+    try:
+        content = path.read_text(encoding=&quot;utf-8&quot;)
+    except FileNotFoundError:
+        return {&quot;values&quot;: []}
+    return json.loads(content)
+
+
+with TemporaryDirectory() as folder:
+    path = Path(folder) / &quot;readings.json&quot;
+    print(&quot;首次启动&quot;, load_readings(path))
+
+    path.write_text(&quot;{损坏&quot;, encoding=&quot;utf-8&quot;)
+    try:
+        print(load_readings(path))
+    except json.JSONDecodeError:
+        print(&quot;原文件需要检查&quot;, path.read_text(encoding=&quot;utf-8&quot;))</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<p>这一步只能保证得到可解析的数据。若返回值要参与计算，还应确认是字典、存在 <code>values</code> 字段、字段是列表、每项读数符合约定。比如 <code>{&quot;values&quot;: &quot;18&quot;}</code> 能成功解析，仍然无法按期望处理多条读数。</p>
+<h2 id="section-8">8.8 让保存失败保留可恢复的旧数据</h2>
+<h3>把写完和替换分成两个步骤</h3>
+<p>打开已有文件时选择 <code>&quot;w&quot;</code> 会立即截断文件。如果新内容写到一半出现异常，旧内容可能已经丢失。更新正式数据时，可以在同一个目录先写临时文件，完成序列化并关闭后再替换目标。失败时清理临时文件，把原来的错误交给调用者。</p>
+
+<section class="playground" aria-label="Python 示例 11">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 11</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 11 代码" rows="14"
+    spellcheck="false" autocapitalize="off" autocomplete="off">import json
+from pathlib import Path
+from tempfile import NamedTemporaryFile, TemporaryDirectory
+
+
+def write_snapshot(path, data):
+    pending = None
+    try:
+        with NamedTemporaryFile(
+            mode=&quot;w&quot;, encoding=&quot;utf-8&quot;, dir=path.parent, delete=False
+        ) as stream:
+            pending = Path(stream.name)
+            json.dump(data, stream, ensure_ascii=False)
+        pending.replace(path)
+    finally:
+        if pending is not None:
+            pending.unlink(missing_ok=True)
+
+
+with TemporaryDirectory() as folder:
+    path = Path(folder) / &quot;snapshot.json&quot;
+    write_snapshot(path, {&quot;values&quot;: [18]})
+    before = path.read_text(encoding=&quot;utf-8&quot;)
+    try:
+        write_snapshot(path, {&quot;values&quot;: {18, 20}})
+    except TypeError:
+        print(&quot;序列化失败，保留原内容&quot;, path.read_text(encoding=&quot;utf-8&quot;) == before)
+    write_snapshot(path, {&quot;values&quot;: [18, 20]})
+    print(&quot;完成后的内容&quot;, json.loads(path.read_text(encoding=&quot;utf-8&quot;)))</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<p>集合没有默认的 JSON 表示，第二次保存会在替换前失败。第三次改用列表，写完后才替换正式文件。这种写法把“构造完整新文件”和“把新文件作为当前数据”分开。第 9 章会将它用于保存活动状态。<a href="https://docs.python.org/3.12/library/tempfile.html#tempfile.NamedTemporaryFile">Python 官方文档的 tempfile</a></p>
+<h3>其他外部接口也需要说明交付条件</h3>
+<p>同样的协作思路也适用于其他外部接口。先约定如何取得资源、结果是什么格式，再判断结果能否进入业务流程。例如，调用网络服务读取数据时，调用方需要处理超时，并校验响应所带的字段。</p>
+<div class="lesson-table"><table><thead><tr><th scope="col">协作步骤</th><th scope="col">读取文件</th><th scope="col">向服务请求数据</th></tr></thead><tbody><tr><td>指定资源</td><td>文件路径</td><td>地址与查询条件</td></tr><tr><td>取得内容</td><td>文本或字节</td><td>响应状态和内容</td></tr><tr><td>解释数据</td><td>解码、解析 JSON 或 CSV</td><td>根据约定的格式解析响应</td></tr><tr><td>检查与使用</td><td>校验字段后恢复状态</td><td>校验字段后继续业务步骤</td></tr><tr><td>处理失败</td><td>区分缺失、权限和坏数据</td><td>区分超时、失败状态和坏数据</td></tr></tbody></table></div>
+<p>可以先用已知的样本文字验证解析，再接上外部读取。这会让测试依赖可控的输入，出错时也能区分是没有拿到内容，还是内容不符合约定。</p>
+<h2 id="section-9">8.9 回到案例 保存、恢复并导出报名名单</h2>
+<p>JSON 使用 <code>title</code>、<code>capacity</code> 和 <code>students</code> 三个字段。名单保留原报名顺序。恢复时检查标题、容量及每个学号，确认没有重复且人数不超限。CSV 从恢复后的数据生成，列名为“活动名称”和“学号”。</p>
+<div class="lesson-table"><table><thead><tr><th scope="col">处理步骤</th><th scope="col">接收的内容</th><th scope="col">交给下一步的结果</th></tr></thead><tbody><tr><td>保存</td><td>已校验的活动记录</td><td>一份 JSON 文件</td></tr><tr><td>恢复</td><td>JSON 文本</td><td>符合规则的活动数据</td></tr><tr><td>导出</td><td>恢复后的报名顺序</td><td>一份有表头的 CSV</td></tr><tr><td>核对</td><td>CSV 字段</td><td>与恢复名单相同的学号顺序</td></tr></tbody></table></div>
+<p>校验函数供写入和恢复两条路径使用。写入新文件前先验证原始数据，恢复时先解析再验证，避免把不合规则的内容交给导出功能。</p>
+
+<section class="playground" aria-label="Python 示例 12">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 12</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 12 代码" rows="14"
     spellcheck="false" autocapitalize="off" autocomplete="off">import csv
 import json
 from pathlib import Path
@@ -200,6 +479,10 @@ with TemporaryDirectory() as folder:
     export_roster(restored, csv_path)
     print(csv_path.read_text(encoding=&quot;utf-8&quot;).strip())
 
+    with csv_path.open(encoding=&quot;utf-8&quot;, newline=&quot;&quot;) as stream:
+        exported_ids = [row[&quot;学号&quot;] for row in csv.DictReader(stream)]
+    print(&quot;导出顺序与恢复结果一致&quot;, exported_ids == restored[&quot;students&quot;])
+
     invalid = dict(restored, students=[&quot;S01&quot;, &quot;S01&quot;])
     try:
         validate_event(invalid)
@@ -214,10 +497,13 @@ with TemporaryDirectory() as folder:
 </section>
 
 <p>运行后能看到恢复的两个学号、CSV 表头和两行数据，以及重复学号被拒绝的消息。示例在网页的一次运行里经历关闭文件和重新打开文件。临时目录会在运行结束时清理。</p>
-<h2 id="section-7">练习</h2>
-<p>给 CSV 增加“签到”列，默认填“未签到”。在临时目录块内用 <code>csv.DictReader</code> 读取第一条记录，检查学号和签到状态。然后把示例活动的容量改为 1，观察校验在哪一步拒绝写入。</p>
-<details class='answer'><summary>参考解答</summary><p>表头追加“签到”，数据行追加“未签到”。打开 CSV 时指定 encoding=&quot;utf-8&quot; 和 newline=&quot;&quot;，取 next(csv.DictReader(stream))，结果的“学号”是 S01，“签到”是未签到。</p><p>容量为 1 时，validate_event 会报告报名人数超过容量。此时程序尚未打开文件，JSON 文件还没有创建。</p></details>
-<h2 id="section-8">本章自测</h2>
+<h3>按约定核对读回的数据</h3>
+<p>CSV 文件中的表头和两行记录能供人查阅。程序还重新读出“学号”列，与 JSON 恢复的顺序比较。修改报名顺序时，两份输出都应反映同一份名单。若把容量改成 1，应在打开新文件前就发现两人超出名额。</p>
+<p>下一章会让活动对象维护规则，让不同的存储实现接管读取和保存。程序既可以先用内存验证流程，也可以换成文件实现来验证关闭后再打开的效果。<a href="chapter-09.html">第 9 章 综合项目 递归假设驱动的程序构造</a></p>
+<h2 id="section-10">练习</h2>
+<ul><li>给 CSV 增加“签到”列，默认填“未签到”。在临时目录块内用 <code>csv.DictReader</code> 读取第一条记录，检查两列的值。</li><li>把示例活动的容量改为 1，指出程序在哪一步拒绝写入。</li><li>把 <code>load_readings()</code> 示例写入的损坏文字换成合法的 <code>{&quot;values&quot;: &quot;18&quot;}</code>。预测能否解析，说明还缺哪项检查。</li><li>在临时文件替换示例中，改为让第二次写入也使用列表。预测最终文件与最初保存的内容是否相同。</li></ul>
+<details class='answer'><summary>参考解答</summary><p>表头追加“签到”，数据行追加“未签到”。打开 CSV 时指定 encoding=&quot;utf-8&quot; 和 newline=&quot;&quot;，取 next(csv.DictReader(stream))，结果的“学号”是 S01，“签到”是未签到。</p><p>容量为 1 时，validate_event 会报告报名人数超过容量。此时程序尚未打开文件，JSON 文件还没有创建。</p><p>JSON 可以解析出字典，但 values 对应的是字符串。需要检查字段是否为列表，再检查其中的每个读数。</p><p>第二次写入使用列表时可以完成序列化和替换。若继续运行第三次写入，最终文件仍保存 [18, 20]，与最初的 [18] 不同。</p></details>
+<h2 id="section-11">本章自测</h2>
 
 <form class="quiz" data-correct="1">
  <fieldset><legend>json.load 成功读取后，程序还需要做什么？</legend><label><input type="radio" name="choice" value="1" required> 检查必需字段、容量、学号和人数是否符合业务规则</label><label><input type="radio" name="choice" value="2" required> 把所有值转换成字符串</label><label><input type="radio" name="choice" value="3" required> 立即覆盖读取过的文件</label></fieldset>
@@ -229,7 +515,7 @@ with TemporaryDirectory() as folder:
   <button type="button" class="complete" data-mark="08" aria-pressed="false" hidden>标记本章完成</button>
   <nav class="adjacent" aria-label="前后章节"><a href="chapter-07.html"><small>← 上一节</small>对象协作的可靠性</a><a href="chapter-09.html"><small>下一节 →</small>综合项目 递归假设驱动的程序构造</a></nav>
  </main>
- <aside class="outline"><p>本节内容</p><nav aria-label="本节内容"><ol><li><a href="#section-1">8.1 关闭报名程序以后，名单在哪里</a></li><li><a href="#section-2">8.2 用路径定位资源，用文件对象读写内容</a></li><li><a href="#section-3">8.3 用 JSON 保存结构化数据</a></li><li><a href="#section-4">8.4 用 CSV 交换表格数据</a></li><li><a href="#section-5">8.5 在资源边界验证数据和错误</a></li><li><a href="#section-6">8.6 回到案例 保存、恢复并导出报名名单</a></li><li><a href="#section-7">练习</a></li><li><a href="#section-8">本章自测</a></li></ol></nav></aside>
+ <aside class="outline"><p>本页目录</p><nav aria-label="本页目录"><ol><li><a href="#section-1">8.1 关闭报名程序以后，名单在哪里</a></li><li><a href="#section-2">8.2 用路径定位外部资源</a></li><li><a href="#section-3">8.3 选择打开方式并管理文件对象</a></li><li><a href="#section-4">8.4 理解字符、字节和编码</a></li><li><a href="#section-5">8.5 用 JSON 保存结构化数据</a></li><li><a href="#section-6">8.6 用 CSV 交换表格数据</a></li><li><a href="#section-7">8.7 在边界区分缺失、格式错误与非法数据</a></li><li><a href="#section-8">8.8 让保存失败保留可恢复的旧数据</a></li><li><a href="#section-9">8.9 回到案例 保存、恢复并导出报名名单</a></li><li><a href="#section-10">练习</a></li><li><a href="#section-11">本章自测</a></li></ol></nav></aside>
 </div>
 <footer class="site-footer"><a href="index.html">Python 编程教材</a><a href="chapter-A.html">运行环境</a><a href="chapter-C.html">语言速查</a></footer>
 </body></html>

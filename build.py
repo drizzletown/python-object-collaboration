@@ -273,11 +273,14 @@ def chapter_page(chapters, index):
  <main id="main" class="lesson">
   <header class="lesson-head"><div class="crumb"><a href="index.html#catalog">教材目录</a> <span>›</span> {chapter.label}</div>
   <h1>{escape(chapter.title)}</h1><p>{inline(chapter.summary)}</p></header>
+  <details class="lesson-contents"><summary>本页目录</summary>
+   <nav aria-label="本页目录"><ol>{page_toc}</ol></nav>
+  </details>
   <article>{body}</article>
   {mark}
   <nav class="adjacent" aria-label="前后章节">{adjacent(prev_chapter, "← 上一节")}{adjacent(next_chapter, "下一节 →")}</nav>
  </main>
- <aside class="outline"><p>本节内容</p><nav aria-label="本节内容"><ol>{page_toc}</ol></nav></aside>
+ <aside class="outline"><p>本页目录</p><nav aria-label="本页目录"><ol>{page_toc}</ol></nav></aside>
 </div>""")
 
 
@@ -325,7 +328,7 @@ remaining = capacity - registered
 
 <strong>print</strong>(<em>f"剩余名额：{{remaining}}"</em>)</code></pre>
    <div class="terminal-output"><span>›</span> 剩余名额：1</div></div>
-   <a href="chapter-01.html#section-7">到第 1 章试一试 <span>↗</span></a>
+   <a href="chapter-01.html#section-10">到第 1 章试一试 <span>↗</span></a>
   </div>
  </div>
 </section>

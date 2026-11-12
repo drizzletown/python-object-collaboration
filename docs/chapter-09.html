@@ -6,7 +6,7 @@
 <meta name="color-scheme" content="light">
 <meta name="description" content="以对象协作和假设三部曲为主线的 Python 编程教材。">
 <title>综合项目 递归假设驱动的程序构造 · Python 编程</title>
-<link rel="stylesheet" href="assets/style.css?v=acff13e538d4">
+<link rel="stylesheet" href="assets/style.css?v=466d49260340">
 <script src="assets/site.js" defer></script>
 </head>
 <body class="">
@@ -23,10 +23,16 @@
  <main id="main" class="lesson">
   <header class="lesson-head"><div class="crumb"><a href="index.html#catalog">教材目录</a> <span>›</span> 第 9 章</div>
   <h1>综合项目 递归假设驱动的程序构造</h1><p>用假设三部曲构造校园活动报名系统，先验证主流程，再兑现文件存储与数据校验。</p></header>
+  <details class="lesson-contents"><summary>本页目录</summary>
+   <nav aria-label="本页目录"><ol><li><a href="#section-1">9.1 把报名程序交付给活动组织者</a></li><li><a href="#section-2">9.2 把假设写成可以调用的契约</a></li><li><a href="#section-3">9.3 选择假设的实现，并在层次之间验证</a></li><li><a href="#section-4">9.4 先让成功与失败路径可检验</a></li><li><a href="#section-5">9.5 回到案例 先兑现报名主流程</a></li><li><a href="#section-6">9.6 在子任务中兑现文件存储</a></li><li><a href="#section-7">9.7 运行项目并对照验收条件</a></li><li><a href="#section-8">练习</a></li><li><a href="#section-9">本章自测</a></li></ol></nav>
+  </details>
   <article><h2 id="section-1">9.1 把报名程序交付给活动组织者</h2>
 <p>组织者需要在开放报名时受理学号，关闭程序后还可以打开同一份名单。第一个版本管理一场容量为 2 的博物馆参观活动，由一个运行中的程序操作这份名单。入口需要支持提交学号和查看当前名单。</p>
-<div class="lesson-table"><table><thead><tr><th scope="col">验收场景</th><th scope="col">预期结果</th></tr></thead><tbody><tr><td>依次提交 <code> S01 </code>、空白、<code>S02</code>、<code>S03</code>、<code>S01</code></td><td>回执依次为“通过、空学号、通过、满员、重复”</td></tr><tr><td>处理完请求后重新打开名单</td><td>按报名顺序读出 <code>S01</code> 和 <code>S02</code></td></tr><tr><td>首次使用时只提交空白</td><td>给出“空学号”回执，尚未创建名单文件</td></tr><tr><td>打开一份记录超容量的旧文件</td><td>报告数据错误，保留文件原来的内容</td></tr></tbody></table></div>
+<div class="lesson-table"><table><thead><tr><th scope="col">验收场景</th><th scope="col">预期结果</th></tr></thead><tbody><tr><td>依次提交 <code> S01 </code>、空白、<code>S02</code>、<code>S03</code>、<code>S01</code></td><td>回执依次为“通过、空学号、通过、满员、重复”</td></tr><tr><td>处理完请求后重新打开名单</td><td>按报名顺序读出 <code>S01</code> 和 <code>S02</code></td></tr><tr><td>首次使用时只提交空白</td><td>给出“空学号”回执，尚未创建名单文件</td></tr><tr><td>打开损坏、重复或超容量的旧名单</td><td>报告数据错误，保留文件原来的内容</td></tr><tr><td>取到快照后只在内存中试算</td><td>已保存的名单仍是试算前的状态</td></tr></tbody></table></div>
 <p>要把前面几章的能力接起来，需要先确定主流程应从其他组件取得哪些结果。这样即使负责文件存储的组件还没实现，也可以先把主流程写出来并检验规则。</p>
+<h3>从验收结果反推要完成的工作</h3>
+<p>“能报名”包含了检查学号、更新名单、保存结果和报告回执。“下次打开能继续”则要求程序能把文件中的数据恢复成满足规则的活动对象。先分别写出这些结果如何验收，才容易判断一个步骤失败时应该由哪一层处理。</p>
+<p>可以先用同一份空名单设计五条请求。前三条检查清理学号、拒绝空白和按顺序登记，名单应依次加入 S01 和 S02。后两条用已经满员的状态检查优先级。需要重读的场景，则要使用新创建的存储对象读取原来的路径。这样才真正经过文件边界。</p>
 <h2 id="section-2">9.2 把假设写成可以调用的契约</h2>
 <p>假设三部曲中的“建立”要给出一项能力的输入和输出。“使用”要拿到假设承诺的结果，并说明结果推动了哪一步。“兑现”时可以自己实现、由合作者实现，或用现成的库完成。若某个实现又遇到难题，就把它当作子任务，在这个层次再次建立、使用和兑现假设。</p>
 <p>以一份气温摘要为例。先假设有一个读取函数能返回一组可用于计算的温度。摘要函数拿到数据，检查是否为空，再计算并呈现平均温度。早期用一组固定数据兑现读取约定，便可检验摘要。将来可交给另一个函数读取实际数据，并在读取函数中处理文件和校验。</p>
@@ -61,6 +67,9 @@ print(summarize(list))</textarea>
 </section>
 
 <p>第一次调用取得三条读数，继续计算得到 <code>21.0 ℃</code>。第二次调用把内置的 <code>list</code> 作为读取能力，无参数调用时得到空列表，由此可以检查没有数据时的处理。以后换用读取实际文件的函数，只要结果符合这个契约，摘要步骤就可以继续使用。</p>
+<h3>用交付物写假设</h3>
+<div class="lesson-table"><table><thead><tr><th scope="col">写出什么</th><th scope="col">气温摘要中的约定</th><th scope="col">可以怎样检查</th></tr></thead><tbody><tr><td>需要的输入</td><td>读取函数已经知道数据来源</td><td>用固定输入运行摘要</td></tr><tr><td>返回的对象</td><td>一组数值，缺少数据时交出空列表</td><td>分别提供三条读数和空列表</td></tr><tr><td>结果的用途</td><td>判断能否计算平均值，再决定显示内容</td><td>核对两种输出</td></tr><tr><td>失败应传到哪里</td><td>读取失败交由调用摘要的一方处理</td><td>用会抛异常的读取函数复现</td></tr></tbody></table></div>
+<p>把假设写成“系统可以读取数据”时，还无法据此计算或测试。说明会交出数值列表，下一步就能使用 <code>len()</code> 和 <code>sum()</code>。等到交接工作明确后，可以并行考虑真实的数据来源、错误报告与校验方式。</p>
 <h2 id="section-3">9.3 选择假设的实现，并在层次之间验证</h2>
 <h3>函数、对象和协议怎样承担契约</h3>
 <div class="lesson-table"><table><thead><tr><th scope="col">需要承诺的能力</th><th scope="col">Python 中的表达</th><th scope="col">可以怎样验证</th></tr></thead><tbody><tr><td>取得一个结果</td><td>约定函数参数、返回值及失败行为</td><td>用固定输入检查结果</td></tr><tr><td>维护一组相关状态</td><td>用对象和方法承诺更新规则</td><td>调用前后比较对象状态</td></tr><tr><td>换用多个具备相同操作的实现</td><td>用文档约定行为，可用 <code>Protocol</code> 标注方法的形状</td><td>用同一组场景检查不同实现</td></tr><tr><td>调用文件、编码等外部能力</td><td>通过独立函数或对象使用标准库</td><td>用临时文件或目录验证读写</td></tr></tbody></table></div>
@@ -68,7 +77,66 @@ print(summarize(list))</textarea>
 <h3>先验证主流程，再验证外部边界</h3>
 <p>负责业务规则的对象只关心允许哪些更新。负责存储的对象把持久化细节留在自己的方法里。主流程按约定取得快照、执行规则，再决定是否提交保存。快照让一次试算或尚未保存的修改与已保存状态分开。</p>
 <p>逐层验证可以从小到大推进。先用内存实现验证判断、更新和回执。再用真实的临时文件验证编码、校验和重新读取。最后通过入口观察一条请求怎样到达存储，以及出错时用户会看到什么。</p>
-<h2 id="section-4">9.4 回到案例 先兑现报名主流程</h2>
+<h3>区分规则、协调和资源</h3>
+<p>规则负责判定一项操作是否允许，例如数量是否能再增加。协调负责把几项能力串起来，例如先读、再算、最后决定是否保存。资源实现负责怎样取得原数据或写入新数据。可以沿主流程画出依赖方向。</p>
+<pre class="listing">入口取得一条请求
+    主流程请存储交出当前状态
+    主流程请业务对象处理请求
+    主流程根据结果决定是否要求保存
+入口取得回执并呈现</pre>
+<p>先通过契约连接这些层次。规则的输入可以来自内存，也可以来自已解析的文件。处理后要保存时，主流程可以通过同一种约定调用不同实现。这样能在更换外部资源时保留原有规则。</p>
+<h2 id="section-4">9.4 先让成功与失败路径可检验</h2>
+<h3>用一个小实现观察读、改、存的次序</h3>
+<p>以追加一条读数为例。假设读取能力会交出一份独立列表，保存能力能接收更新后的列表。主流程用读到的列表追加读数，保存后再返回新的条数。调用者可以提供一个故意失败的保存函数，观察是否留下了任何更新。</p>
+
+<section class="playground" aria-label="Python 示例 2">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 2</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 2 代码" rows="14"
+    spellcheck="false" autocapitalize="off" autocomplete="off">def record_reading(load, save, value):
+    readings = load()
+    readings.append(value)
+    save(readings)
+    return len(readings)
+
+
+current = [18]
+
+def load_snapshot():
+    return current.copy()
+
+
+def save_to_memory(readings):
+    current[:] = readings
+
+
+def reject_save(readings):
+    raise OSError(&quot;存储暂不可写&quot;)
+
+
+try:
+    print(&quot;已记录的条数&quot;, record_reading(load_snapshot, reject_save, 21))
+except OSError as error:
+    print(&quot;保存失败&quot;, error)
+print(&quot;保存失败后的记录&quot;, current)
+print(&quot;保存成功后的条数&quot;, record_reading(load_snapshot, save_to_memory, 21))
+print(&quot;现在的记录&quot;, current)</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<p>两次调用使用相同的更新逻辑。第一次在副本上追加后保存失败，调用处获得错误，原记录只有 18。第二次保存成功，调用处得到两条记录。若把读取函数改成直接交出 <code>current</code>，第一次追加就会修改原记录。这个试验验证了“独立快照”这个行为约定。</p>
+<h3>让每层的测试回答不同问题</h3>
+<div class="lesson-table"><table><thead><tr><th scope="col">验证层次</th><th scope="col">应回答的问题</th><th scope="col">常用办法</th></tr></thead><tbody><tr><td>业务规则</td><td>输入在边界时得到什么结果</td><td>直接构造对象，核对状态</td></tr><tr><td>主流程</td><td>何时读，何时保存，何时交回结果</td><td>传入可控的实现，记录实际行为</td></tr><tr><td>资源实现</td><td>内容怎样保存，能否重新取得</td><td>用真实临时文件做往返测试</td></tr><tr><td>入口</td><td>用户看见的结果是否清楚</td><td>运行完整示例，核对输出</td></tr></tbody></table></div>
+<p>开发时可以先完成其中最容易验证的一层。真实存储还在编写时，主流程依然能靠内存实现推进。等到文件存储兑现后，用同样的输入复查规则，再增加只有外部资源才会发生的测试。</p>
+<h2 id="section-5">9.5 回到案例 先兑现报名主流程</h2>
 <p>校园报名项目先约定一个存储对象能读取并保存活动。主流程先使用这一能力取到活动快照，再请活动判断登记，接着使用回执决定是否保存。</p>
 <pre class="listing">任务：受理报名并交出回执
     1. 输入
@@ -86,6 +154,10 @@ print(summarize(list))</textarea>
     5. 输出
         5.1 报名回执。若读取或保存失败，交由入口报告原因。</pre>
 <p><code>Activity.register</code> 处理规则并维护单场活动的名单。<code>Store</code> 约定 <code>load()</code> 返回独立的活动快照，<code>save(activity)</code> 保存成功后的状态。<code>MemoryStore</code> 用深复制保存和交出活动。即使调用者改变取出的快照，已保存的内存状态仍保持原样，直到调用 <code>save</code>。</p>
+<h3>约定两个存储操作</h3>
+<div class="lesson-table"><table><thead><tr><th scope="col">操作</th><th scope="col">给主流程的保证</th><th scope="col">对状态的影响</th></tr></thead><tbody><tr><td><code>load()</code></td><td>取得可修改的独立活动快照</td><td>读取当前保存状态</td></tr><tr><td><code>save(activity)</code></td><td>正常返回表示已保存，失败时抛出异常</td><td>更新保存状态</td></tr><tr><td><code>submit(store, raw_id)</code></td><td>返回规则给出的回执，通过时已完成保存</td><td>只在登记通过时请求写入</td></tr></tbody></table></div>
+<p>如果只有空白、重复或满员回执，主流程直接交回业务结果。第一次收到空白时，存储虽然能交出一份初始活动，主流程仍无需创建文件。快照是否独立可先在内存版本验证，例如读取活动并在副本中登记一人，再次读取时应得到此前保存的名单。</p>
+<h3>用模拟器看清状态变化</h3>
 <p>在模拟器中把五条请求依次填为 <code>S01</code>、空行、<code>S02</code>、<code>S03</code>、<code>S01</code>，然后逐条执行。观察第 4 步和第 5 步的回执，以及它们对名单和余量的影响。</p>
 
 <section class="simulator" aria-labelledby="sim-title" hidden>
@@ -109,22 +181,31 @@ S03</textarea>
  <tbody></tbody></table></div>
 </section>
 
-<h2 id="section-5">9.5 逐层兑现文件存储并验收</h2>
+<div class="lesson-table"><table><thead><tr><th scope="col">次序</th><th scope="col">请求</th><th scope="col">回执</th><th scope="col">已登记</th><th scope="col">余量</th></tr></thead><tbody><tr><td>1</td><td>S01</td><td>通过</td><td>S01</td><td>1</td></tr><tr><td>2</td><td>空白</td><td>空学号</td><td>S01</td><td>1</td></tr><tr><td>3</td><td>S02</td><td>通过</td><td>S01、S02</td><td>0</td></tr><tr><td>4</td><td>S03</td><td>满员</td><td>S01、S02</td><td>0</td></tr><tr><td>5</td><td>S01</td><td>重复</td><td>S01、S02</td><td>0</td></tr></tbody></table></div>
+<p>模拟器便于逐条核对回执和名额。完整 Python 项目还会经过 <code>load()</code> 和 <code>save()</code>，从而验证重新读取及坏文件处理。可以把上表当作两种实现都要通过的同一组场景。</p>
+<h2 id="section-6">9.6 在子任务中兑现文件存储</h2>
 <p>兑现文件存储时，读取和保存各自形成一个子任务。读取需要一个能从文件数据交出有效活动的能力，保存需要一个能用完整新文件替换正式文件的过程。主流程继续沿用相同的 <code>load</code> 和 <code>save</code>。</p>
 <h3>子任务一 从文件交出可用的活动</h3>
 <p>先约定 <code>activity_from_data</code> 接收解析后的数据并返回有效的 <code>Activity</code>。有了这个约定，<code>JsonStore.load</code> 就可以先读文本、解析 JSON，再把返回的活动交给报名主流程。兑现时，检查 <code>title</code>、<code>capacity</code>、<code>students</code>，并按活动规则逐个恢复学号。只在确实没有名单文件时构造初始活动。解析或校验失败时，错误传到调用者。</p>
+<p>可以把读取再分成三项动作。取得文本时，区分确实没有文件和其他访问错误。解析文本时，将 JSON 转成基础对象。恢复活动时，让字段满足活动的约定，最后才交出可用于登记的实例。写出这几个层次之后，主流程仍然只需要知道 <code>load()</code> 会交回什么。</p>
+<div class="lesson-table"><table><thead><tr><th scope="col">要校验的内容</th><th scope="col">恢复时的处理</th></tr></thead><tbody><tr><td>标题和容量</td><td>由 <code>Activity</code> 初始化检查，容量须为非负整数</td></tr><tr><td>学号字段的形状</td><td><code>students</code> 应是列表，各项应为已整理的字符串</td></tr><tr><td>空学号、重复、超容量</td><td>逐条交给 <code>register()</code>，必须每条都通过</td></tr><tr><td>原有顺序</td><td>按数组顺序调用登记，快照也按这个次序交付</td></tr></tbody></table></div>
+<p><code>activity_from_data()</code> 创建的是一份新的活动。遇到某一项失败时，可以丢弃这份尚未交给上层的对象。重新使用合法数据时，已有文件仍能被读取。</p>
 <h3>子任务二 完成保存后再交回执</h3>
 <p>先把活动状态转成三个字段组成的字典。用标准库在目标目录中创建临时文件，把完整 JSON 写入并关闭，再通过 <code>Path.replace</code> 替换正式文件。若序列化失败，程序还没开始替换，旧文件仍可读取。主流程在 <code>save</code> 正常返回后才交出“通过”。</p>
-<h3>运行项目并对照验收条件</h3>
+<h3>先确认哪些状态需要保存</h3>
+<p>保存的数据只包含标题、容量和学号列表。剩余名额可以从容量和名单算出，读取时根据恢复后的实际记录计算即可。<code>save()</code> 完成后，另一个 <code>JsonStore</code> 指向同一路径，就能读取刚保存的数据。</p>
+<p>保存动作本身若失败，错误从 <code>save()</code> 经过 <code>submit()</code> 到入口。这样用户得到的是保存失败的原因。若输入属于满员或重复，流程连写入临时文件这一步都不会进入。两个结果有清楚的发生位置。</p>
+<h2 id="section-7">9.7 运行项目并对照验收条件</h2>
 <p>先在代码里找到 <code>submit</code>，看它在哪一步使用活动、在哪一步使用存储。点击运行，浏览器先执行演示，再执行项目自测。</p>
+<div class="lesson-table"><table><thead><tr><th scope="col">在代码中查找</th><th scope="col">阅读时验证什么</th></tr></thead><tbody><tr><td><code>Activity.register</code></td><td>检查顺序、更新时机和名单约束</td></tr><tr><td><code>Store</code>、<code>MemoryStore</code></td><td>读取快照和保存后的行为</td></tr><tr><td><code>activity_from_data</code>、<code>JsonStore</code></td><td>外部数据怎样通过校验，写入什么时候生效</td></tr><tr><td><code>submit</code></td><td>回执如何决定是否保存</td></tr><tr><td><code>demo</code>、<code>self_test</code></td><td>演示给人看什么，自测实际核对什么</td></tr><tr><td><code>main</code></td><td>怎样接收操作和报告错误</td></tr></tbody></table></div>
 
-<section class="playground" aria-label="Python 示例 2">
+<section class="playground" aria-label="Python 示例 3">
   <div class="editor-bar">
-    <span><i></i> Python 示例 2</span>
+    <span><i></i> Python 示例 3</span>
     <div><a href="campus.py" download>下载 campus.py</a><button class="quiet" data-reset hidden>重置</button>
     <button class="quiet" data-copy hidden>复制</button></div>
   </div>
-  <textarea aria-label="Python 示例 2 代码" rows="18"
+  <textarea aria-label="Python 示例 3 代码" rows="18"
     spellcheck="false" autocapitalize="off" autocomplete="off">&quot;&quot;&quot;校园活动报名项目。执行 python campus.py --help 查看命令。&quot;&quot;&quot;
 import argparse
 from copy import deepcopy
@@ -259,6 +340,9 @@ def self_test() -&gt; None:
     requests = [&quot; S01 &quot;, &quot; &quot;, &quot;S02&quot;, &quot;S03&quot;, &quot;S01&quot;]
     expected = [&quot;通过&quot;, &quot;空学号&quot;, &quot;通过&quot;, &quot;满员&quot;, &quot;重复&quot;]
     memory = MemoryStore(Activity(&quot;博物馆参观&quot;, 2))
+    trial = memory.load()
+    assert trial.register(&quot;S01&quot;) == &quot;通过&quot;
+    assert memory.load().students == ()
     assert [submit(memory, student_id) for student_id in requests] == expected
     with TemporaryDirectory() as folder:
         path = Path(folder) / &quot;roster.json&quot;
@@ -267,14 +351,19 @@ def self_test() -&gt; None:
         assert not path.exists()
         assert [submit(disk, student_id) for student_id in requests] == expected
         assert JsonStore(path).load().students == (&quot;S01&quot;, &quot;S02&quot;)
-        invalid = &#x27;{&quot;title&quot;:&quot;博物馆&quot;,&quot;capacity&quot;:0,&quot;students&quot;:[&quot;S01&quot;]}&#x27;
-        path.write_text(invalid, encoding=&quot;utf-8&quot;)
-        try:
-            submit(disk, &quot;S02&quot;)
-        except ValueError:
-            assert path.read_text(encoding=&quot;utf-8&quot;) == invalid
-        else:
-            raise AssertionError(&quot;应拒绝非法名单文件&quot;)
+        invalid_contents = (
+            &quot;{损坏&quot;,
+            &#x27;{&quot;title&quot;:&quot;博物馆&quot;,&quot;capacity&quot;:2,&quot;students&quot;:[&quot;S01&quot;,&quot;S01&quot;]}&#x27;,
+            &#x27;{&quot;title&quot;:&quot;博物馆&quot;,&quot;capacity&quot;:0,&quot;students&quot;:[&quot;S01&quot;]}&#x27;,
+        )
+        for invalid in invalid_contents:
+            path.write_text(invalid, encoding=&quot;utf-8&quot;)
+            try:
+                submit(disk, &quot;S02&quot;)
+            except ValueError:
+                assert path.read_text(encoding=&quot;utf-8&quot;) == invalid
+            else:
+                raise AssertionError(&quot;应拒绝非法名单文件&quot;)
     print(&quot;项目验收通过&quot;)
 
 
@@ -326,10 +415,13 @@ if __name__ == &quot;__main__&quot;:
 
 <p>应看到内存版和文件版给出相同的五条回执。演示重新构造一个 <code>JsonStore</code> 读取同一路径，应读到 <code>(&quot;S01&quot;, &quot;S02&quot;)</code>。自测通过后会显示“项目验收通过”，其中还检查了首次空白请求和读取坏文件的情形。每次点击运行都会创建独立的练习环境，重新打开文件的过程在一次运行内完成。</p>
 <p>入口 <code>main</code> 负责组织 <code>enroll</code> 和 <code>list</code> 两个操作。它把存储异常转换成清楚的错误消息，规则与读写各自由对应的对象完成。接下来若要增加通知，只需沿着入口和回执的边界找到可以接入的地方。</p>
-<h2 id="section-6">练习</h2>
-<p>在项目自测里找到 <code>invalid</code>，把它改成容量为 2、名单含两个 <code>S01</code> 的合法 JSON 文本。运行验证程序会拒绝加载，且读取失败后文件原文保持一致。</p>
-<details class='answer'><summary>参考解答</summary><p>可以改为 &#x27;{&quot;title&quot;:&quot;博物馆&quot;,&quot;capacity&quot;:2,&quot;students&quot;:[&quot;S01&quot;,&quot;S01&quot;]}&#x27;。第一次恢复 S01 成功，第二次得到“重复”，校验函数因此抛出 ValueError。自测会检查读取失败且原文件未被覆盖，最后仍显示“项目验收通过”。</p></details>
-<h2 id="section-7">本章自测</h2>
+<h3>从输出判断是哪一层出了偏差</h3>
+<p>如果内存版和文件版都在第 5 步回执“满员”，先检查活动规则中的判断顺序。如果内存结果正常，重读文件后名单顺序发生变化，重点检查数据转换和存储。如果读到坏数据却生成了空名单，检查 <code>load()</code> 是否把格式错误也当成了首次运行。</p>
+<p>只看“项目验收通过”还可以追问它覆盖了什么。自测包含快照独立、首次空请求、五条回执、重读和坏文件保持原样。若将来增加取消或候补，需要为新操作定义回执、保存条件与旧文件恢复方式，再把新场景加入自测。<a href="chapter-10.html">第 10 章 对象协作系统的复用与演化</a></p>
+<h2 id="section-8">练习</h2>
+<ul><li>在项目自测中，找到用于检查坏文件的 JSON 文本，加入一份标题为空的记录。预测读取失败后自测要核对什么。</li><li>把独立读数示例的 <code>load_snapshot()</code> 改成直接返回 <code>current</code>。预测保存失败后和下一次成功后各有多少条记录。</li><li>在模拟器中把容量改为 1，依次输入 S01、S02、S01。说明两条失败回执为什么不同。</li><li>设想要增加“查看余量”操作。写出它需要从存储拿到什么、怎样得到结果，以及是否需要请求保存。</li></ul>
+<details class='answer'><summary>参考解答</summary><p>可加入 &#x27;{&quot;title&quot;:&quot;&quot;,&quot;capacity&quot;:2,&quot;students&quot;:[]}&#x27;。初始化会报告标题非法。自测应核对读取失败且文件原文没有被覆盖。</p><p>直接返回 current 会让失败前的追加也进入已保存列表。失败后列表有两条记录，第二次又追加 21，保存后共有三条。</p><p>回执是“通过、满员、重复”。第三条的学号已登记，先触发重复规则。</p><p>查看余量时用 load() 取得活动快照，再用容量减去当前人数，交给入口显示。查询只读取状态。</p></details>
+<h2 id="section-9">本章自测</h2>
 
 <form class="quiz" data-correct="2">
  <fieldset><legend>内存版已经验证报名流程。怎样兑现文件存储假设？</legend><label><input type="radio" name="choice" value="1" required> 让界面直接修改 JSON 文本</label><label><input type="radio" name="choice" value="2" required> 实现符合 load 和 save 契约的文件存储，用同样的回执规则和文件用例验收</label><label><input type="radio" name="choice" value="3" required> 遇到坏文件就用空名单覆盖</label></fieldset>
@@ -341,7 +433,7 @@ if __name__ == &quot;__main__&quot;:
   <button type="button" class="complete" data-mark="09" aria-pressed="false" hidden>标记本章完成</button>
   <nav class="adjacent" aria-label="前后章节"><a href="chapter-08.html"><small>← 上一节</small>对象与外部环境的协作</a><a href="chapter-10.html"><small>下一节 →</small>对象协作系统的复用与演化</a></nav>
  </main>
- <aside class="outline"><p>本节内容</p><nav aria-label="本节内容"><ol><li><a href="#section-1">9.1 把报名程序交付给活动组织者</a></li><li><a href="#section-2">9.2 把假设写成可以调用的契约</a></li><li><a href="#section-3">9.3 选择假设的实现，并在层次之间验证</a></li><li><a href="#section-4">9.4 回到案例 先兑现报名主流程</a></li><li><a href="#section-5">9.5 逐层兑现文件存储并验收</a></li><li><a href="#section-6">练习</a></li><li><a href="#section-7">本章自测</a></li></ol></nav></aside>
+ <aside class="outline"><p>本页目录</p><nav aria-label="本页目录"><ol><li><a href="#section-1">9.1 把报名程序交付给活动组织者</a></li><li><a href="#section-2">9.2 把假设写成可以调用的契约</a></li><li><a href="#section-3">9.3 选择假设的实现，并在层次之间验证</a></li><li><a href="#section-4">9.4 先让成功与失败路径可检验</a></li><li><a href="#section-5">9.5 回到案例 先兑现报名主流程</a></li><li><a href="#section-6">9.6 在子任务中兑现文件存储</a></li><li><a href="#section-7">9.7 运行项目并对照验收条件</a></li><li><a href="#section-8">练习</a></li><li><a href="#section-9">本章自测</a></li></ol></nav></aside>
 </div>
 <footer class="site-footer"><a href="index.html">Python 编程教材</a><a href="chapter-A.html">运行环境</a><a href="chapter-C.html">语言速查</a></footer>
 </body></html>

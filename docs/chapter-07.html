@@ -6,7 +6,7 @@
 <meta name="color-scheme" content="light">
 <meta name="description" content="以对象协作和假设三部曲为主线的 Python 编程教材。">
 <title>对象协作的可靠性 · Python 编程</title>
-<link rel="stylesheet" href="assets/style.css?v=acff13e538d4">
+<link rel="stylesheet" href="assets/style.css?v=466d49260340">
 <script src="assets/site.js" defer></script>
 </head>
 <body class="">
@@ -23,13 +23,23 @@
  <main id="main" class="lesson">
   <header class="lesson-head"><div class="crumb"><a href="index.html#catalog">教材目录</a> <span>›</span> 第 7 章</div>
   <h1>对象协作的可靠性</h1><p>用输入校验、异常和测试验证回执与名单，借助回溯和日志定位出错的步骤。</p></header>
+  <details class="lesson-contents"><summary>本页目录</summary>
+   <nav aria-label="本页目录"><ol><li><a href="#section-1">7.1 一次失败后，怎样知道名单是否正确</a></li><li><a href="#section-2">7.2 从症状区分几类失败</a></li><li><a href="#section-3">7.3 在边界校验并处理异常</a></li><li><a href="#section-4">7.4 让状态在成功和失败后都可解释</a></li><li><a href="#section-5">7.5 用断言和测试检查程序</a></li><li><a href="#section-6">7.6 用回溯、调试与日志定位</a></li><li><a href="#section-7">7.7 回到案例 为报名规则编写测试</a></li><li><a href="#section-8">练习</a></li><li><a href="#section-9">本章自测</a></li></ol></nav>
+  </details>
   <article><h2 id="section-1">7.1 一次失败后，怎样知道名单是否正确</h2>
 <p>报名服务已经能给出回执。组织者还要知道，收到空学号、重复请求或者满员请求时，原来的名单有没有被改动。如果创建活动时填错容量，程序也要说明问题出在哪里。</p>
 <div class="lesson-table"><table><thead><tr><th scope="col">待核对的情形</th><th scope="col">预期结果</th><th scope="col">预期状态</th></tr></thead><tbody><tr><td>容量为 1，收到第一个有效学号</td><td>通过</td><td>名单恰好有 1 人</td></tr><tr><td>活动已满，同一个学号再次提交</td><td>重复</td><td>名单保持原样</td></tr><tr><td>活动已满，收到另一个有效学号</td><td>满员</td><td>名单保持原样</td></tr><tr><td>收到空白学号</td><td>空学号</td><td>名单保持原样</td></tr><tr><td>创建活动时把容量填为“一个”</td><td>说明容量填写有误</td><td>活动未创建</td></tr></tbody></table></div>
 <p>前四种情形都可以按报名规则交出回执。第五种情形下，创建活动的约定无法完成，调用者需要获得错误原因。下面分别学习怎样表达错误、检查状态和定位偏差。</p>
-<h2 id="section-2">7.2 在输入边界校验，在合适的位置处理异常</h2>
+<h2 id="section-2">7.2 从症状区分几类失败</h2>
+<p>程序出现意外时，先确定它运行到了哪里。语法有误时，解释器在开始执行前就可能拒绝代码。运行时异常则说明执行到某一步时无法继续。还有一种情况，程序正常运行，却产生了不合规则的结果。</p>
+<div class="lesson-table"><table><thead><tr><th scope="col">现象</th><th scope="col">独立例子</th><th scope="col">如何定位</th></tr></thead><tbody><tr><td>语法有误</td><td>分支标题漏了冒号</td><td>阅读 <code>SyntaxError</code> 指示的位置，并检查前后代码</td></tr><tr><td>执行时无法完成操作</td><td>用 <code>int(&quot;三个&quot;)</code> 转换文字</td><td>查看异常类型、消息和调用回溯</td></tr><tr><td>结果不合规则</td><td>计价时把每件费用加到件数上</td><td>比较预期与实际，再追踪中间值</td></tr><tr><td>业务请求被拒绝</td><td>库存为零，无法领用</td><td>把“无库存”作为约定好的返回结果</td></tr></tbody></table></div>
+<p>业务规则可以允许请求被拒绝。拒绝结果仍能交给调用者继续处理，例如显示原因。输入连所需的类型或取值条件都不满足时，函数可以报告异常，交给知道如何应对的一方处理。</p>
+<h2 id="section-3">7.3 在边界校验并处理异常</h2>
 <h3>从数据到可用的对象</h3>
 <p>来自表单、文件或其他系统的数据，需要先检查能否转换为所需类型，再核对允许的取值。比如把页数文本转换成整数，再检查它是否大于零。转换完成与符合业务规则是两项独立的检查。函数或方法应在改动状态前完成它负责的检查。</p>
+<p>可以把校验分为几个问题。输入的形状和类型是否正确，能否转换为程序使用的值，取值是否符合范围，字段之间的关系是否一致。例如读到“24”时可以转换为整数，读到“0”时也能转换，但页数还需要大于零。</p>
+<div class="lesson-table"><table><thead><tr><th scope="col">边界检查</th><th scope="col">可能发现的问题</th><th scope="col">谁适合做这项检查</th></tr></thead><tbody><tr><td>类型或形状</td><td>文本位置收到列表</td><td>接收请求的入口</td></tr><tr><td>转换</td><td>“二十四”无法用 <code>int()</code> 按数字转换</td><td>解析输入的函数</td></tr><tr><td>取值</td><td>页数小于等于零</td><td>使用页数的对象或规则函数</td></tr><tr><td>状态关系</td><td>起始页超过总页数</td><td>维护页数和范围的对象</td></tr></tbody></table></div>
+<p>能在修改前完成的检查尽量提前。这样调用者可以用同一份原状态调整输入再试，也能通过测试核对失败发生在哪里。</p>
 <h3>用 try、except、else 和 finally 表达处理过程</h3>
 <p>当函数无法按约定交出结果时，可以用 <code>raise</code> 抛出异常。异常会沿调用链向外传播，直到遇到能处理它的 <code>except</code>。适合处理异常的位置通常知道下一步该怎么做，例如提示用户重新填写。</p>
 <div class="lesson-table"><table><thead><tr><th scope="col">部分</th><th scope="col">负责的工作</th></tr></thead><tbody><tr><td><code>try</code></td><td>放入可能发生预期异常的操作</td></tr><tr><td><code>except ValueError as error</code></td><td>处理指定类型的异常，并取得异常对象</td></tr><tr><td><code>else</code></td><td><code>try</code> 正常执行完毕后，继续使用结果</td></tr><tr><td><code>finally</code></td><td>在离开整个结构前执行收尾动作</td></tr></tbody></table></div>
@@ -69,11 +79,9 @@ for raw in [&quot; 24 &quot;, &quot;二十四&quot;, &quot;0&quot;]:
 </section>
 
 <p>转换失败时，<code>raise ... from error</code> 在提供更清楚的提示时保留原异常作为原因。把 <code>try</code> 限定为预期可能失败的操作，能明确哪一步的错误由这个 <code>except</code> 负责。超出它能处理的情况会继续向外传播。<a href="https://docs.python.org/3.12/tutorial/errors.html">Python 官方教程的异常处理</a></p>
-<h3>一个流程可以完成一部分工作</h3>
-<p>协作可能包含几项分别完成的操作。例如，先记录一笔领用，再发送提醒。如果第二步失败，第一步的记录仍然存在。调用者需要分别知道领用和提醒各自的结果，才能决定下一步是重新领用还是补发提醒。第 10 章会用测试验证这种情况。</p>
-<h2 id="section-3">7.3 用断言和测试检查程序</h2>
-<p>不变式是每次有效操作前后都应成立的关系。一个只允许 0 到 100 的百分比值，在构造与更新后都应满足范围约束。<code>assert</code> 可检查开发时预期成立的内部条件。解释器以优化模式执行时可以省略 <code>assert</code>，所以外部输入的校验应写成显式的 <code>if</code> 和 <code>raise</code>。</p>
-<p>用例从可重复的初始状态出发，提供输入，再比较实际结果和预期结果。状态可能发生变化时，还要检查对象是否按契约更新。选择用例时可以先列出正常情况，再查看边界值、非法输入和操作失败后的状态。</p>
+<h3>在边界保留异常的含义</h3>
+<p><code>except</code> 可以选择一种异常，也可以用元组处理几种需要同样应对的异常。要对一类更具体的异常单独处理时，应把它写在能捕获它的基类之前。比如，读取文件时可以先处理 <code>FileNotFoundError</code>，再考虑范围更广的 <code>OSError</code>。</p>
+<p>领域中有需要专门处理的失败，也可以定义自己的异常类。下面的查找函数把字典的缺键转换成更容易理解的“缺少读数”，同时保留底层原因。</p>
 
 <section class="playground" aria-label="Python 示例 2">
   <div class="editor-bar">
@@ -82,6 +90,84 @@ for raw in [&quot; 24 &quot;, &quot;二十四&quot;, &quot;0&quot;]:
     <button class="quiet" data-copy hidden>复制</button></div>
   </div>
   <textarea aria-label="Python 示例 2 代码" rows="14"
+    spellcheck="false" autocapitalize="off" autocomplete="off">class MissingReading(LookupError):
+    pass
+
+
+def require_reading(readings, station):
+    try:
+        return readings[station]
+    except KeyError as error:
+        raise MissingReading(f&quot;还没有 {station} 的读数&quot;) from error
+
+
+try:
+    value = require_reading({&quot;东站&quot;: 0}, &quot;西站&quot;)
+except MissingReading as error:
+    print(&quot;给调用者的说明&quot;, error)
+    print(&quot;底层异常的类型&quot;, type(error.__cause__).__name__)
+else:
+    print(&quot;可用于计算的读数&quot;, value)</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<p>上层能根据 <code>MissingReading</code> 决定是否提示补录，调试时仍可通过原因找到缺少的键。只记录一下错误后需要让它继续传播时，可以在 <code>except</code> 内写空的 <code>raise</code>。<code>finally</code> 适合做退出时必须完成的收尾，后续也可以用 <code>with</code> 管理常见资源。</p>
+<h2 id="section-4">7.4 让状态在成功和失败后都可解释</h2>
+<h3>先检查，再更新</h3>
+<p>状态约束应该在构造和更新后都成立。下面的计量对象只接收一定范围内的整数。尝试无效更新时先报告问题，随后读取对象，可以得到失败前的合法状态。</p>
+
+<section class="playground" aria-label="Python 示例 3">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 3</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 3 代码" rows="14"
+    spellcheck="false" autocapitalize="off" autocomplete="off">class Gauge:
+    def __init__(self, value):
+        self.update(value)
+
+    def update(self, value):
+        if type(value) is not int or not 0 &lt;= value &lt;= 100:
+            raise ValueError(&quot;读数须为 0 到 100 的整数&quot;)
+        self.value = value
+
+
+gauge = Gauge(40)
+try:
+    gauge.update(130)
+except ValueError as error:
+    print(&quot;更新失败&quot;, error)
+print(&quot;当前读数&quot;, gauge.value)</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<p>如果把赋值放到检查之前，报告失败时对象可能已经保存了非法值。测试要同时核对报告的异常和调用后的状态。</p>
+<h3>一个流程可以完成一部分工作</h3>
+<p>协作可能包含几项分别完成的操作。例如，先记录一笔领用，再发送提醒。如果第二步失败，第一步的记录仍然存在。调用者需要分别知道领用和提醒各自的结果，才能决定下一步是重新领用还是补发提醒。第 10 章会用测试验证这种情况。</p>
+<div class="lesson-table"><table><thead><tr><th scope="col">进展</th><th scope="col">可交出的结果</th><th scope="col">下一步能做什么</th></tr></thead><tbody><tr><td>领用记录未保存</td><td>说明保存失败</td><td>排查保存问题，之后再提交</td></tr><tr><td>记录已保存，提醒失败</td><td>领用完成，提醒待发</td><td>读取已有记录，单独补发提醒</td></tr><tr><td>两项工作都完成</td><td>领用完成，提醒已发</td><td>查阅记录和发送结果</td></tr></tbody></table></div>
+<p>画出状态在哪一步发生变化，再安排异常处理。这样可以准确说明失败影响的是哪一步，也能据此选择是否需要重试。</p>
+<h2 id="section-5">7.5 用断言和测试检查程序</h2>
+<p>不变式是每次有效操作前后都应成立的关系。一个只允许 0 到 100 的百分比值，在构造与更新后都应满足范围约束。<code>assert</code> 可检查开发时预期成立的内部条件。解释器以优化模式执行时可以省略 <code>assert</code>，所以外部输入的校验应写成显式的 <code>if</code> 和 <code>raise</code>。</p>
+<p>用例从可重复的初始状态出发，提供输入，再比较实际结果和预期结果。状态可能发生变化时，还要检查对象是否按契约更新。选择用例时可以先列出正常情况，再查看边界值、非法输入和操作失败后的状态。</p>
+
+<section class="playground" aria-label="Python 示例 4">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 4</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 4 代码" rows="14"
     spellcheck="false" autocapitalize="off" autocomplete="off">import unittest
 
 
@@ -112,17 +198,107 @@ unittest.TextTestRunner().run(suite)</textarea>
 </section>
 
 <p><code>TestCase</code> 是标准库提供的测试基类。括号里的类名表示继承，测试类可以使用基类的断言方法。示例的加载器收集以 <code>test_</code> 开头的方法，再交给运行器执行。<code>assertEqual</code> 负责比较结果，<code>assertRaises</code> 检查指定代码块是否产生约定的异常。<a href="https://docs.python.org/3.12/library/unittest.html">Python 官方文档的 unittest</a></p>
-<h2 id="section-4">7.4 从错误结果找到原因</h2>
-<p>先用尽可能小的输入重现问题。如果发生异常，从回溯末尾读取异常类型和消息，再查看属于自己程序的调用位置。如果测试只报告结果有偏差，可在关键分支前打印一次中间值，或用调试器暂停并检查当前对象和局部变量。确认原因后，用同一个测试验证修复。</p>
-<p>日志用来记录运行中的事件。应用入口可以设置格式和记录级别，各模块用 <code>logging.getLogger(__name__)</code> 取得日志器。<code>DEBUG</code> 用于诊断细节，<code>INFO</code> 记录正常进度，<code>WARNING</code> 提醒值得注意的情况，<code>ERROR</code> 记录无法完成的操作。</p>
+<h3>让每个用例得到自己的初始状态</h3>
+<p>测试可以把准备、执行和核对写成三个明确步骤。测试类中的 <code>setUp()</code> 在每个测试方法前执行，适合准备一份新对象。若同一个方法有几组相似输入，可以用 <code>subTest()</code> 标出当前输入，报告中会包含发生偏差的那一组。</p>
 
-<section class="playground" aria-label="Python 示例 3">
+<section class="playground" aria-label="Python 示例 5">
   <div class="editor-bar">
-    <span><i></i> Python 示例 3</span>
+    <span><i></i> Python 示例 5</span>
     <div><button class="quiet" data-reset hidden>重置</button>
     <button class="quiet" data-copy hidden>复制</button></div>
   </div>
-  <textarea aria-label="Python 示例 3 代码" rows="11"
+  <textarea aria-label="Python 示例 5 代码" rows="14"
+    spellcheck="false" autocapitalize="off" autocomplete="off">import unittest
+
+
+def reserve(available, requested):
+    if requested &lt;= 0:
+        raise ValueError(&quot;申请量须为正数&quot;)
+    if requested &gt; available:
+        return available, &quot;不足&quot;
+    return available - requested, &quot;已预留&quot;
+
+
+class ReserveTests(unittest.TestCase):
+    def setUp(self):
+        self.available = 2
+
+    def test_allowed_requests(self):
+        for requested, expected in [(1, (1, &quot;已预留&quot;)), (2, (0, &quot;已预留&quot;))]:
+            with self.subTest(requested=requested):
+                self.assertEqual(reserve(self.available, requested), expected)
+
+    def test_too_many(self):
+        self.assertEqual(reserve(self.available, 3), (2, &quot;不足&quot;))
+
+    def test_invalid_request(self):
+        with self.assertRaisesRegex(ValueError, &quot;正数&quot;):
+            reserve(self.available, 0)
+
+
+suite = unittest.defaultTestLoader.loadTestsFromTestCase(ReserveTests)
+unittest.TextTestRunner(verbosity=2).run(suite)</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<p>恰好用完、差一个就不够、请求量为零，分别检验三个决策边界。<code>assertRaisesRegex()</code> 同时核对异常类型和消息中的线索。状态变化的用例可以比较完整数据，而不仅比较数量，避免遗漏“人数相同但名单不同”这类偏差。</p>
+<h3>区分内部断言和调用者能依赖的行为</h3>
+<div class="lesson-table"><table><thead><tr><th scope="col">工具</th><th scope="col">用途</th><th scope="col">举例</th></tr></thead><tbody><tr><td>普通条件与 <code>raise</code></td><td>运行中的输入检查</td><td>收到负数时报告非法容量</td></tr><tr><td><code>assert</code></td><td>开发时检验内部假设</td><td>累计值和记录条数符合约定</td></tr><tr><td><code>assertEqual()</code></td><td>在测试中核对值</td><td>名单与预期元组相等</td></tr><tr><td><code>assertIs()</code>、<code>assertIsNone()</code></td><td>在测试中核对对象或缺失值</td><td>查找无结果时交出 <code>None</code></td></tr><tr><td><code>assertRaises()</code></td><td>在测试中核对失败方式</td><td>非法调用产生预期异常</td></tr></tbody></table></div>
+<p>修复一次问题时，可以先写一个能暴露它的测试，再调整程序。这个用例随后可以保留下来，每次修改后重复运行，检查曾经修好的行为是否再次出错。</p>
+<h2 id="section-6">7.6 用回溯、调试与日志定位</h2>
+<p>先用尽可能小的输入重现问题。如果发生异常，从回溯末尾读取异常类型和消息，再查看属于自己程序的调用位置。如果测试只报告结果有偏差，可在关键分支前打印一次中间值，或用调试器暂停并检查当前对象和局部变量。确认原因后，用同一个测试验证修复。</p>
+<h3>沿调用链找最早可解释的偏差</h3>
+<p>例如，汇总函数调用读数转换，转换时收到“待测”。可以先读回溯末尾的异常信息，再向上追踪哪一层传入了这段文字。下面把回溯中的函数名提取出来，在网页里观察调用顺序。</p>
+
+<section class="playground" aria-label="Python 示例 6">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 6</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 6 代码" rows="14"
+    spellcheck="false" autocapitalize="off" autocomplete="off">from traceback import extract_tb
+
+
+def parse_reading(text):
+    return int(text)
+
+
+def describe_reading(text):
+    reading = parse_reading(text)
+    return f&quot;读数 {reading}&quot;
+
+
+try:
+    print(describe_reading(&quot;待测&quot;))
+except ValueError as error:
+    print(&quot;异常类型&quot;, type(error).__name__)
+    print(&quot;错误说明&quot;, error)
+    print(&quot;回溯中的调用&quot;, [frame.name for frame in extract_tb(error.__traceback__)])</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<p>最后一个位置对应抛出异常的调用，前面是它经过的层次。调试时可以在 <code>parse_reading</code> 的入口观察收到的值，再回到 <code>describe_reading</code> 看它从哪里取得这个值。遇到逻辑错误时，也可以按照“最小输入、预期、实际、产生偏差的第一步”的顺序检查。</p>
+<h3>用日志保留有用的运行信息</h3>
+<p>日志用来记录运行中的事件。应用入口可以设置格式和记录级别，各模块用 <code>logging.getLogger(__name__)</code> 取得日志器。<code>DEBUG</code> 用于诊断细节，<code>INFO</code> 记录正常进度，<code>WARNING</code> 提醒值得注意的情况，<code>ERROR</code> 记录无法完成的操作。</p>
+
+<section class="playground" aria-label="Python 示例 7">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 7</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 7 代码" rows="11"
     spellcheck="false" autocapitalize="off" autocomplete="off">import logging
 
 logging.basicConfig(level=logging.INFO, format=&quot;%(levelname)s %(message)s&quot;)
@@ -143,16 +319,18 @@ if skipped:
 </section>
 
 <p>当前级别下会显示 <code>INFO</code> 和 <code>WARNING</code>。把级别改为 <code>logging.DEBUG</code> 再运行，观察多出的诊断记录。设计日志时，记录能定位问题的操作、结果和数量即可。<a href="https://docs.python.org/3.12/howto/logging.html">Python 官方日志指南</a></p>
-<h2 id="section-5">7.5 回到案例 为报名规则编写测试</h2>
+<p>输出给使用者的回执用于完成任务，诊断日志面向排查程序状态。可以在日志中记录操作、结果和数量。异常处理处需要记录回溯时，<code>logger.exception()</code> 可以附上正在处理的异常。日志可以帮助找到要重现的问题，修复后仍可用测试核对实际行为。</p>
+<h2 id="section-7">7.7 回到案例 为报名规则编写测试</h2>
 <p>把“容量文本能否转换为整数”留给创建活动的入口，把“容量是否非负”留给活动初始化。报名方法在收到有效文本后依次检查空白、重复和满员。每个测试使用独立的活动，验证回执以及报名方法对状态的影响。</p>
+<div class="lesson-table"><table><thead><tr><th scope="col">输入或情形</th><th scope="col">由谁检查</th><th scope="col">预期反馈</th></tr></thead><tbody><tr><td>容量是“一个”或负数</td><td>转换入口和活动初始化</td><td><code>ValueError</code></td></tr><tr><td>容量输入不是文本</td><td>转换入口</td><td><code>TypeError</code></td></tr><tr><td>学号不是字符串</td><td>登记方法</td><td><code>TypeError</code>，名单保持原样</td></tr><tr><td>学号为空白、重复或已满</td><td>登记方法</td><td>对应的业务回执，名单保持原样</td></tr><tr><td>两个活动收到同一学号</td><td>各活动维护自己的名单</td><td>两边可分别通过</td></tr></tbody></table></div>
 
-<section class="playground" aria-label="Python 示例 4">
+<section class="playground" aria-label="Python 示例 8">
   <div class="editor-bar">
-    <span><i></i> Python 示例 4</span>
+    <span><i></i> Python 示例 8</span>
     <div><button class="quiet" data-reset hidden>重置</button>
     <button class="quiet" data-copy hidden>复制</button></div>
   </div>
-  <textarea aria-label="Python 示例 4 代码" rows="14"
+  <textarea aria-label="Python 示例 8 代码" rows="14"
     spellcheck="false" autocapitalize="off" autocomplete="off">import unittest
 
 
@@ -212,6 +390,14 @@ class RegistrationTests(unittest.TestCase):
         self.assertEqual(activity.register(&quot;S01&quot;), &quot;满员&quot;)
         self.assertEqual(activity.student_ids(), ())
 
+    def test_activities_are_independent(self):
+        first = Activity(1)
+        second = Activity(1)
+        self.assertEqual(first.register(&quot;S01&quot;), &quot;通过&quot;)
+        self.assertEqual(second.student_ids(), ())
+        self.assertEqual(second.register(&quot;S01&quot;), &quot;通过&quot;)
+        self.assertEqual(first.student_ids(), (&quot;S01&quot;,))
+
     def test_invalid_input(self):
         with self.assertRaises(ValueError):
             create_activity(&quot;一个&quot;)
@@ -235,11 +421,12 @@ unittest.TextTestRunner(verbosity=2).run(suite)</textarea>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
 
-<p>运行结果应显示 4 个测试通过。<code>subTest</code> 给同一测试中的每条输入加上标记。若其中一条失败，可以从报告中看出是哪条请求触发的。前三个测试逐项核对回执和名单，最后一个测试核对调用无法完成时报告的异常。</p>
-<h2 id="section-6">练习</h2>
-<p>调换 <code>register</code> 中的重复与满员判断，运行测试。找出报告中给出的请求、预期回执与实际回执，再修复顺序并重新运行。</p>
-<details class='answer'><summary>参考解答</summary><p>已满活动收到 S01 的子用例会失败，实际为“满员”，预期为“重复”。将重复判断放回容量判断前，四个测试会重新通过。</p></details>
-<h2 id="section-7">本章自测</h2>
+<p>运行结果应显示 5 个测试通过。<code>subTest</code> 标出满员后分别收到的三个输入。读取报告时可以把用例名、输入和失败的断言连起来看。例如次序写错时，<code>test_rejections_leave_full_roster_unchanged</code> 会说明哪条请求的回执不对。</p>
+<p>把名单转成元组后再保存在 <code>before</code> 中，核对的是操作前的状态。如果只是把同一份可变字典绑定给两个名字，之后原地修改时两处都会看到变化，可能掩盖错误。这里用第 2 章的快照办法，让预期值独立于待检验的操作。报名数据要从文件恢复时，同样需要检查读取结果和失败后保留的状态。<a href="chapter-08.html">第 8 章 对象与外部环境的协作</a></p>
+<h2 id="section-8">练习</h2>
+<ul><li>调换 <code>register</code> 中的重复与满员判断，运行测试。找出报告中的输入、预期和实际回执，再恢复顺序。</li><li>在无效容量测试中增加 <code>create_activity(&quot;0&quot;)</code> 的检查。判断构造是否成功，再检查它收到新学号时的回执。</li><li>把 <code>Gauge.update()</code> 中的赋值移到检查之前。预测更新失败后打印的读数，再恢复先检查、后更新的顺序。</li><li>把日志示例的级别改成 <code>DEBUG</code> 和 <code>ERROR</code> 分别运行，比较显示的事件。</li></ul>
+<details class='answer'><summary>参考解答</summary><p>已满活动收到 S01 的子用例会失败，实际为“满员”，预期为“重复”。恢复顺序后，五个测试会重新通过。</p><p>文本 &quot;0&quot; 能转换成整数，非负校验通过，活动创建成功。新学号会得到“满员”，名单仍为空。</p><p>先赋值会使对象在异常后仍持有 130，暴露了部分更新。恢复顺序后，失败会保留 40。</p><p>DEBUG 显示诊断、正常进度和警告三条。ERROR 级别下，这组示例没有达到相应级别的事件。</p></details>
+<h2 id="section-9">本章自测</h2>
 
 <form class="quiz" data-correct="1">
  <fieldset><legend>表单文本必须表示非负整数。程序应怎样检查这个条件？</legend><label><input type="radio" name="choice" value="1" required> 先转换文本，再用显式条件检查范围并报告非法值</label><label><input type="radio" name="choice" value="2" required> 只写 assert，依靠优化模式检查范围</label><label><input type="radio" name="choice" value="3" required> 直接把文本当作整数使用</label></fieldset>
@@ -251,7 +438,7 @@ unittest.TextTestRunner(verbosity=2).run(suite)</textarea>
   <button type="button" class="complete" data-mark="07" aria-pressed="false" hidden>标记本章完成</button>
   <nav class="adjacent" aria-label="前后章节"><a href="chapter-06.html"><small>← 上一节</small>多对象协作与程序组织</a><a href="chapter-08.html"><small>下一节 →</small>对象与外部环境的协作</a></nav>
  </main>
- <aside class="outline"><p>本节内容</p><nav aria-label="本节内容"><ol><li><a href="#section-1">7.1 一次失败后，怎样知道名单是否正确</a></li><li><a href="#section-2">7.2 在输入边界校验，在合适的位置处理异常</a></li><li><a href="#section-3">7.3 用断言和测试检查程序</a></li><li><a href="#section-4">7.4 从错误结果找到原因</a></li><li><a href="#section-5">7.5 回到案例 为报名规则编写测试</a></li><li><a href="#section-6">练习</a></li><li><a href="#section-7">本章自测</a></li></ol></nav></aside>
+ <aside class="outline"><p>本页目录</p><nav aria-label="本页目录"><ol><li><a href="#section-1">7.1 一次失败后，怎样知道名单是否正确</a></li><li><a href="#section-2">7.2 从症状区分几类失败</a></li><li><a href="#section-3">7.3 在边界校验并处理异常</a></li><li><a href="#section-4">7.4 让状态在成功和失败后都可解释</a></li><li><a href="#section-5">7.5 用断言和测试检查程序</a></li><li><a href="#section-6">7.6 用回溯、调试与日志定位</a></li><li><a href="#section-7">7.7 回到案例 为报名规则编写测试</a></li><li><a href="#section-8">练习</a></li><li><a href="#section-9">本章自测</a></li></ol></nav></aside>
 </div>
 <footer class="site-footer"><a href="index.html">Python 编程教材</a><a href="chapter-A.html">运行环境</a><a href="chapter-C.html">语言速查</a></footer>
 </body></html>

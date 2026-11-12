@@ -6,7 +6,7 @@
 <meta name="color-scheme" content="light">
 <meta name="description" content="以对象协作和假设三部曲为主线的 Python 编程教材。">
 <title>第三视角 函数与协作封装 · Python 编程</title>
-<link rel="stylesheet" href="assets/style.css?v=acff13e538d4">
+<link rel="stylesheet" href="assets/style.css?v=466d49260340">
 <script src="assets/site.js" defer></script>
 </head>
 <body class="">
@@ -23,6 +23,9 @@
  <main id="main" class="lesson">
   <header class="lesson-head"><div class="crumb"><a href="index.html#catalog">教材目录</a> <span>›</span> 第 4 章</div>
   <h1>第三视角 函数与协作封装</h1><p>把资格判断、单次登记和批量处理组织为可分别调用的能力。</p></header>
+  <details class="lesson-contents"><summary>本页目录</summary>
+   <nav aria-label="本页目录"><ol><li><a href="#section-1">4.1 同一套报名规则要用在几个地方</a></li><li><a href="#section-2">4.2 从定义到调用</a></li><li><a href="#section-3">4.3 默认值、收集参数与展开实参</a></li><li><a href="#section-4">4.4 局部名字、外层名字与共享对象</a></li><li><a href="#section-5">4.5 用接口说明结果与影响</a></li><li><a href="#section-6">4.6 函数也能作为参数或结果</a></li><li><a href="#section-7">4.7 用递归函数处理嵌套结构</a></li><li><a href="#section-8">4.8 用生成器按需产生结果</a></li><li><a href="#section-9">4.9 回到案例 封装三个报名任务</a></li><li><a href="#section-10">练习</a></li><li><a href="#section-11">本章自测</a></li></ol></nav>
+  </details>
   <article><h2 id="section-1">4.1 同一套报名规则要用在几个地方</h2>
 <p>第 3 章用一个循环处理一批请求。现在组织者还希望受理临时到达的单条请求，并且能在不改动名单的情况下回答“这个学号现在能报名吗”。这三个入口需要遵守同一套报名规则。</p>
 <div class="lesson-table"><table><thead><tr><th scope="col">任务</th><th scope="col">接收的信息</th><th scope="col">交出的结果</th></tr></thead><tbody><tr><td>检查报名资格</td><td>整理过的学号、现有名单、容量</td><td>一条回执，名单保持原样</td></tr><tr><td>登记单条请求</td><td>原始学号、现有名单、容量</td><td>整理后的学号和回执，通过时更新名单</td></tr><tr><td>处理整批请求</td><td>按到达顺序排列的学号、现有名单、容量</td><td>按相同顺序排列的回执记录</td></tr></tbody></table></div>
@@ -57,6 +60,7 @@ print(f&quot;{minutes} 分 {seconds} 秒&quot;)</textarea>
 </section>
 
 <p><code>return minutes, seconds</code> 返回一个二元组。调用者可以把整个结果绑定到一个名字，也可以解包。这里由调用者负责显示，函数可以继续为其他调用者计算时长。</p>
+<p>读一次调用，可以顺着对象的去向跟踪。先计算实参 <code>125</code>，把它绑定给局部名字 <code>total</code>。函数体建立 <code>minutes</code> 和 <code>seconds</code>，最后交出元组。函数调用结束后，调用处通过 <code>result</code> 继续引用这个元组。下次调用会有自己的局部名字和计算结果。</p>
 <h3>参数怎样接收实参</h3>
 <div class="lesson-table"><table><thead><tr><th scope="col">形式</th><th scope="col">例子</th><th scope="col">调用方式</th></tr></thead><tbody><tr><td>位置或关键字参数</td><td><code>value</code></td><td>按位置提供，或写成 <code>value=20</code></td></tr><tr><td>带默认值的参数</td><td><code>unit=&quot;米&quot;</code></td><td>省略时使用定义时的默认值</td></tr><tr><td>仅关键字参数</td><td><code>*, digits=1</code></td><td>提供时写成 <code>digits=2</code></td></tr><tr><td>仅位置参数</td><td><code>value, /</code></td><td>调用时通过位置提供 <code>value</code></td></tr><tr><td>接收额外位置实参</td><td><code>*values</code></td><td>额外的位置实参收成元组</td></tr><tr><td>接收额外关键字实参</td><td><code>**options</code></td><td>额外的关键字实参收成字典</td></tr></tbody></table></div>
 <p>单独的 <code>*</code> 标记后面的形参只接收关键字，<code>/</code> 标记前面的形参只接收位置实参。编写普通函数时，可以先用固定参数表达契约，再根据调用场景决定是否需要其余形式。</p>
@@ -84,10 +88,12 @@ print(format_measurement(value=2.345, unit=&quot;秒&quot;, digits=0))</textarea
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
 
+<h3>按接口核对实际调用</h3>
+<div class="lesson-table"><table><thead><tr><th scope="col">调用形式</th><th scope="col">怎样绑定或为什么失败</th></tr></thead><tbody><tr><td><code>format_measurement(2.345)</code></td><td><code>value</code> 取第一个实参，其余使用默认值</td></tr><tr><td><code>format_measurement(2.345, digits=2)</code></td><td><code>digits</code> 明确按关键字提供</td></tr><tr><td><code>format_measurement(2.345, &quot;米&quot;, 2)</code></td><td>给了第三个位置实参，<code>digits</code> 只接受关键字</td></tr><tr><td><code>format_measurement(2.345, value=3)</code></td><td><code>value</code> 已通过位置提供，再用关键字提供会重复</td></tr><tr><td><code>format_measurement()</code></td><td>缺少必需的 <code>value</code></td></tr></tbody></table></div>
+<p>后三种调用在进入函数体前就会报告 <code>TypeError</code>。参数规则能帮助设计接口。例如要求调用者写 <code>capacity=2</code>，读调用代码时就能看出 2 表示容量。</p>
+<h2 id="section-3">4.3 默认值、收集参数与展开实参</h2>
 <p>参数默认值在执行函数定义时求值。如果用空列表作为默认值，每次省略该参数时会得到同一个列表。若每次调用都应获得新列表，可以让参数默认值为 <code>None</code>，在函数内部用 <code>is None</code> 检查并创建列表。<a href="https://docs.python.org/3.12/tutorial/controlflow.html#defining-functions">Python 官方教程的函数定义与参数</a></p>
-<h2 id="section-3">4.3 作用域与函数的影响范围</h2>
-<p>每次调用都会建立自己的局部名字。函数体中对名字赋值，通常建立或改变本次调用的局部绑定。读一个名字时，Python 会根据作用域查找，可能找到局部、外层函数、模块或内置名字。显式传入数据更容易看清函数依赖哪些对象。</p>
-<p>形参与实参可以引用同一个对象。修改可变对象的内容，调用者可以看到变化。把形参改绑到新对象，外面的名字仍引用原来的对象。</p>
+<h3>用两个调用观察默认对象</h3>
 
 <section class="playground" aria-label="Python 示例 3">
   <div class="editor-bar">
@@ -96,6 +102,105 @@ print(format_measurement(value=2.345, unit=&quot;秒&quot;, digits=0))</textarea
     <button class="quiet" data-copy hidden>复制</button></div>
   </div>
   <textarea aria-label="Python 示例 3 代码" rows="14"
+    spellcheck="false" autocapitalize="off" autocomplete="off">def collect_shared(value, values=[]):
+    values.append(value)
+    return values
+
+
+def collect_separately(value, values=None):
+    if values is None:
+        values = []
+    values.append(value)
+    return values
+
+
+first = collect_shared(&quot;甲&quot;)
+second = collect_shared(&quot;乙&quot;)
+print(&quot;共享默认列表&quot;, first, second, first is second)
+
+left = collect_separately(&quot;甲&quot;)
+right = collect_separately(&quot;乙&quot;)
+print(&quot;分别创建列表&quot;, left, right, left is right)</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<p>第一组调用中，两次都使用定义时创建的那份默认列表。第一次保存下来的 <code>first</code> 在第二次调用后也会看到“乙”。第二组调用在每次省略参数时新建列表。显式传入一个列表时，仍会在那一份列表中追加内容，这个行为应当写进函数的约定。</p>
+<h3>用星号把多个对象收集起来或展开</h3>
+<p>在定义中，<code>*counts</code> 收集多余的位置实参，<code>**details</code> 收集多余的关键字实参。在调用中，<code>*values</code> 把一组数据展开成位置实参，<code>**options</code> 则用字典中的键名提供关键字实参。可以用同一组值对比直接传入与展开传入的效果。</p>
+
+<section class="playground" aria-label="Python 示例 4">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 4</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 4 代码" rows="10"
+    spellcheck="false" autocapitalize="off" autocomplete="off">def format_counts(title, /, *counts, unit=&quot;项&quot;, **details):
+    number = sum(counts)
+    source = details.get(&quot;source&quot;, &quot;未标明来源&quot;)
+    return f&quot;{title}共 {number} {unit}（{source}）&quot;
+
+
+values = (3, 4)
+options = {&quot;unit&quot;: &quot;份&quot;, &quot;source&quot;: &quot;登记表&quot;}
+print(format_counts(&quot;资料&quot;, 3, 4, unit=&quot;份&quot;, source=&quot;登记表&quot;))
+print(format_counts(&quot;资料&quot;, *values, **options))</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<p>两次调用交出的内容相同。<code>unit</code> 在星号参数后，需要按关键字指定。<code>details</code> 里只收集未被其他形参接收的关键字，例如 <code>source</code>。固定参数已经能说明契约时，调用代码可以保持简洁。有不同长度的数据或需要转交一组参数时，再使用收集和展开。</p>
+<h2 id="section-4">4.4 局部名字、外层名字与共享对象</h2>
+<p>每次调用都会建立自己的局部名字。函数体中对名字赋值，通常建立或改变本次调用的局部绑定。读一个名字时，Python 会根据作用域查找，可能找到局部、外层函数、模块或内置名字。显式传入数据更容易看清函数依赖哪些对象。</p>
+<h3>名字在哪里可以找到</h3>
+<div class="lesson-table"><table><thead><tr><th scope="col">位置</th><th scope="col">例子</th><th scope="col">在哪里可访问</th></tr></thead><tbody><tr><td>局部</td><td>函数参数、函数内部赋值的名字</td><td>当前这次调用中</td></tr><tr><td>外层函数</td><td>包含当前函数的那次调用中的名字</td><td>内部函数可读取它</td></tr><tr><td>模块</td><td>在文件顶层绑定的名字</td><td>同一模块的函数可以访问</td></tr><tr><td>内置</td><td><code>len</code>、<code>print</code></td><td>没有被更近的同名绑定覆盖时可访问</td></tr></tbody></table></div>
+<p>在函数体里给名字赋值，通常使它成为局部名字。因此，同一个函数中若先读某个尚未赋值的局部名字，之后才给它赋值，可能看到 <code>UnboundLocalError</code>。下例用不同的参数显式给计算提供所需数据。</p>
+
+<section class="playground" aria-label="Python 示例 5">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 5</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 5 代码" rows="10"
+    spellcheck="false" autocapitalize="off" autocomplete="off">tax_rate = 0.05
+
+def total_with_tax(price, rate):
+    extra = price * rate
+    return price + extra
+
+
+print(&quot;采用模块提供的费率&quot;, total_with_tax(100, tax_rate))
+print(&quot;采用指定费率&quot;, total_with_tax(100, 0.08))
+print(&quot;模块中的费率&quot;, tax_rate)</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<p><code>global</code> 可以指定某个名字使用模块的绑定，<code>nonlocal</code> 可以指定使用最近的外层函数绑定。先从参数和返回值表达数据怎样流入流出，阅读函数时就能从调用处看出它依赖哪些值。后面会用闭包示例展示 <code>nonlocal</code> 的一种用途。<a href="https://docs.python.org/3.12/reference/executionmodel.html#resolution-of-names">Python 官方文档的作用域规则</a></p>
+<h3>改名字与改对象的影响范围</h3>
+<p>形参与实参可以引用同一个对象。修改可变对象的内容，调用者可以看到变化。把形参改绑到新对象，外面的名字仍引用原来的对象。</p>
+
+<section class="playground" aria-label="Python 示例 6">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 6</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 6 代码" rows="14"
     spellcheck="false" autocapitalize="off" autocomplete="off">def add_sample(values, reading):
     values.append(reading)
 
@@ -119,16 +224,48 @@ print(empty)</textarea>
 </section>
 
 <p><code>add_sample</code> 返回 <code>None</code> 并原地追加读数。<code>start_over</code> 返回一个新列表，<code>samples</code> 仍引用含有两项的旧列表。为函数写契约时，可以用一句话写明它会不会修改参数指向的对象。</p>
-<h2 id="section-4">4.4 函数也能作为参数或结果</h2>
-<p>一个函数可以交给另一个函数调用。传递 <code>abs</code> 是交出函数对象，写 <code>abs(-4)</code> 则立即调用并取得结果。接受函数作为参数，可以让调用者选择规则，组织步骤的函数只负责在合适时机使用它。</p>
+<h2 id="section-5">4.5 用接口说明结果与影响</h2>
+<p>同一个功能可以用打印提示或返回数据来实现，两种做法给后续步骤的能力不同。调用者需要继续计算时，应取得可使用的值。显示用的函数可以单独接收结果，决定显示成什么格式。</p>
 
-<section class="playground" aria-label="Python 示例 4">
+<section class="playground" aria-label="Python 示例 7">
   <div class="editor-bar">
-    <span><i></i> Python 示例 4</span>
+    <span><i></i> Python 示例 7</span>
     <div><button class="quiet" data-reset hidden>重置</button>
     <button class="quiet" data-copy hidden>复制</button></div>
   </div>
-  <textarea aria-label="Python 示例 4 代码" rows="14"
+  <textarea aria-label="Python 示例 7 代码" rows="12"
+    spellcheck="false" autocapitalize="off" autocomplete="off">def calculate_area(width, height):
+    return width * height
+
+
+def display_area(area):
+    print(f&quot;面积 {area} 平方米&quot;)
+
+
+area = calculate_area(3, 4)
+print(&quot;两块相同区域的总面积&quot;, area * 2)
+printed = display_area(area)
+print(&quot;显示函数的返回值&quot;, printed)</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<p><code>calculate_area()</code> 交出数值，<code>display_area()</code> 输出文字并返回 <code>None</code>。把两项能力分开后，其他地方可以只使用面积，也可以换一种方式显示面积。</p>
+<p>一个可检验的函数契约可以写在文档字符串中，说明接收什么、满足哪些条件、交出什么，以及会不会改变外部对象。还应根据任务说明失败时交出什么。比如一项计算只接受正的宽和高，调用者需要知道是否应先验证取值。对于修改列表的函数，最好明确修改哪一份列表以及成功和失败时有何差别。</p>
+<h2 id="section-6">4.6 函数也能作为参数或结果</h2>
+<p>一个函数可以交给另一个函数调用。传递 <code>abs</code> 是交出函数对象，写 <code>abs(-4)</code> 则立即调用并取得结果。接受函数作为参数，可以让调用者选择规则，组织步骤的函数只负责在合适时机使用它。</p>
+
+<section class="playground" aria-label="Python 示例 8">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 8</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 8 代码" rows="14"
     spellcheck="false" autocapitalize="off" autocomplete="off">def convert_all(values, convert):
     return [convert(value) for value in values]
 
@@ -154,17 +291,50 @@ print(sorted([&quot;铅笔&quot;, &quot;三角板&quot;, &quot;尺&quot;], key=l
 </section>
 
 <p><code>make_multiplier</code> 返回的内部函数仍能访问创建它时外层调用中的 <code>factor</code> 绑定。这种函数称为闭包。分别调用 <code>make_multiplier(2)</code> 和 <code>make_multiplier(3)</code> 会得到使用不同倍数的函数。<code>lambda</code> 用一个表达式创建小函数，示例把它交给 <code>sorted</code>，以文字长度作为排序依据。</p>
-<h2 id="section-5">4.5 两种按结构组织处理的方式</h2>
-<h3>用递归函数处理嵌套结构</h3>
-<p>递归函数直接或间接调用自己。先确定可以直接回答的情形，再确保每次调用解决更小的问题。例如，统计一份零件清单时，遇到名称就计一个，遇到分组就分别统计组内各项。</p>
+<h3>闭包也可以保存一份会变化的状态</h3>
+<p>内部函数读取外层名字时使用的是绑定。若要重新绑定外层函数里的名字，可以声明 <code>nonlocal</code>。下面每次调用 <code>make_counter</code> 都创建自己的起始值，返回的函数以后还能读取并增加这份计数。</p>
 
-<section class="playground" aria-label="Python 示例 5">
+<section class="playground" aria-label="Python 示例 9">
   <div class="editor-bar">
-    <span><i></i> Python 示例 5</span>
+    <span><i></i> Python 示例 9</span>
     <div><button class="quiet" data-reset hidden>重置</button>
     <button class="quiet" data-copy hidden>复制</button></div>
   </div>
-  <textarea aria-label="Python 示例 5 代码" rows="12"
+  <textarea aria-label="Python 示例 9 代码" rows="14"
+    spellcheck="false" autocapitalize="off" autocomplete="off">def make_counter(start):
+    value = start
+
+    def count():
+        nonlocal value
+        value += 1
+        return value
+
+    return count
+
+
+count_a = make_counter(0)
+count_b = make_counter(10)
+print(count_a(), count_a())
+print(count_b(), count_a())</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<p>输出依次展示 A 的 1、2，B 的 11，以及 A 的 3。两个函数共享同一种行为，各自保留创建时的一份状态。若只需要配置一个固定倍数，可以像前面的 <code>make_multiplier</code> 那样读取外层值。</p>
+<h2 id="section-7">4.7 用递归函数处理嵌套结构</h2>
+<p>递归函数直接或间接调用自己。先确定可以直接回答的情形，再确保每次调用解决更小的问题。例如，统计一份零件清单时，遇到名称就计一个，遇到分组就分别统计组内各项。</p>
+
+<section class="playground" aria-label="Python 示例 10">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 10</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 10 代码" rows="12"
     spellcheck="false" autocapitalize="off" autocomplete="off">def count_parts(group):
     if isinstance(group, str):
         return 1
@@ -186,16 +356,19 @@ print(count_parts(parts))</textarea>
 </section>
 
 <p><code>isinstance(group, str)</code> 判断对象是否为字符串。对本例的有限嵌套列表，每次递归都进入更小的分组或具体零件。导论中的递归使用假设三部曲是一种设计方法，每次兑现遇到新难题就形成子任务。子任务可以用函数、对象或现成的库来完成。</p>
-<h3>用生成器按需产生结果</h3>
+<h3>跟着调用结果逐层返回</h3>
+<div class="lesson-table"><table><thead><tr><th scope="col">调用拿到的对象</th><th scope="col">做什么</th><th scope="col">交回结果</th></tr></thead><tbody><tr><td><code>&quot;电池&quot;</code></td><td>直接计一项</td><td>1</td></tr><tr><td><code>[&quot;螺钉&quot;, &quot;垫片&quot;]</code></td><td>分别求两项的数量，再相加</td><td>2</td></tr><tr><td><code>&quot;外壳&quot;</code></td><td>直接计一项</td><td>1</td></tr><tr><td>最外层清单</td><td>使用以上三项结果</td><td>4</td></tr></tbody></table></div>
+<p>递归调用返回后，上一层继续执行自己的累加语句。清单为空时，循环执行零次，返回初始值 0。这个任务约定清单有限，且子组的引用最终会到达具体零件或空组。设计递归时，可以先为最小问题写出结果，再检查每个子问题是否比原问题更接近停止条件。</p>
+<h2 id="section-8">4.8 用生成器按需产生结果</h2>
 <p>含有 <code>yield</code> 的函数被调用时会返回生成器。每次取下一项才推进函数体，执行到 <code>yield</code> 就交出一个值并暂停。调用者可以先消费一部分结果，其余结果留到需要时再产生。</p>
 
-<section class="playground" aria-label="Python 示例 6">
+<section class="playground" aria-label="Python 示例 11">
   <div class="editor-bar">
-    <span><i></i> Python 示例 6</span>
+    <span><i></i> Python 示例 11</span>
     <div><button class="quiet" data-reset hidden>重置</button>
     <button class="quiet" data-copy hidden>复制</button></div>
   </div>
-  <textarea aria-label="Python 示例 6 代码" rows="11"
+  <textarea aria-label="Python 示例 11 代码" rows="11"
     spellcheck="false" autocapitalize="off" autocomplete="off">def nonempty_lines(lines):
     for line in lines:
         text = line.strip()
@@ -216,16 +389,52 @@ print(list(lines))</textarea>
 </section>
 
 <p>第一次 <code>next</code> 得到“第一行”。第一次转为列表会取得余下的“第二行”，第二次转为列表时生成器已耗尽。一次性需要全部结果时，返回列表便于重复访问。按需处理很多数据时，可用生成器减少一次性保存的结果。<a href="https://docs.python.org/3.12/tutorial/classes.html#generators">Python 官方教程的生成器</a></p>
-<h2 id="section-6">4.6 回到案例 封装三个报名任务</h2>
-<p>先约定资格检查会给出一条回执。单次登记拿到回执后，据此决定是否写入名单，并交出整理后的学号和回执。批量处理对每条请求调用单次登记，把收到的结果累积起来。显示代码接收整批记录并负责输出。</p>
+<h3>观察暂停的位置和剩余结果</h3>
 
-<section class="playground" aria-label="Python 示例 7">
+<section class="playground" aria-label="Python 示例 12">
   <div class="editor-bar">
-    <span><i></i> Python 示例 7</span>
+    <span><i></i> Python 示例 12</span>
     <div><button class="quiet" data-reset hidden>重置</button>
     <button class="quiet" data-copy hidden>复制</button></div>
   </div>
-  <textarea aria-label="Python 示例 7 代码" rows="14"
+  <textarea aria-label="Python 示例 12 代码" rows="10"
+    spellcheck="false" autocapitalize="off" autocomplete="off">def convert_readings(values):
+    for value in values:
+        print(&quot;正在转换&quot;, value)
+        yield value * 100
+
+
+converted = convert_readings([1, 2, 3])
+print(&quot;已取得生成器&quot;)
+print(&quot;先要一项&quot;, next(converted))
+print(&quot;继续取得剩余项&quot;, list(converted))</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<p>“已取得生成器”先显示，说明调用生成器函数时还没有开始转换。<code>next()</code> 只运行到第一次 <code>yield</code>。之后 <code>list()</code> 继续读取，直到生成器结束。将结果保存为列表会一次收集所有剩余项。如果只需要前几项，可以逐项请求并在达到目的时停止。</p>
+<h2 id="section-9">4.9 回到案例 封装三个报名任务</h2>
+<p>先约定资格检查会给出一条回执。单次登记拿到回执后，据此决定是否写入名单，并交出整理后的学号和回执。批量处理对每条请求调用单次登记，把收到的结果累积起来。显示代码接收整批记录并负责输出。</p>
+<p>可以先按这个约定写出上层的批量处理，再兑现每次登记所需的判断。用步骤描述函数之间怎样交接结果。</p>
+<pre class="listing">任务：批量登记并交回逐条结果
+    1. 输入：原始请求、现有名单、活动容量。
+    2. 处理：逐条调用单次登记。
+        2.1 单次登记整理学号，调用资格检查，取得回执。
+        2.2 回执为“通过”时，单次登记更新名单。
+        2.3 批量处理取得整理后的学号和回执，将它们加入结果。
+    3. 输出：交出整批结果，由调用处负责呈现。</pre>
+
+<section class="playground" aria-label="Python 示例 13">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 13</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 13 代码" rows="14"
     spellcheck="false" autocapitalize="off" autocomplete="off">def check_eligibility(student_id, roster, *, capacity):
     &quot;&quot;&quot;接收已去掉首尾空白的学号，返回回执。&quot;&quot;&quot;
     if not student_id:
@@ -270,10 +479,13 @@ print(&quot;最终名单&quot;, list(roster))</textarea>
 </section>
 
 <p>前两行输出表明，资格检查返回“通过”时名单仍为空。单次登记后，批量处理的四条回执依次是“空学号、通过、满员、重复”。最终名单为 <code>[&quot;S01&quot;, &quot;S02&quot;]</code>。三个入口都沿用同一处资格规则。</p>
-<h2 id="section-7">练习</h2>
-<p>对一份新的空名单分别调用 <code>process([], roster)</code> 和 <code>process([&quot;S01&quot;, &quot;S01&quot;], roster)</code>，先预测返回列表和调用后的名单。再把第二次调用改为 <code>capacity=1</code>，检查回执顺序。</p>
-<details class='answer'><summary>参考解答</summary><p>空批次返回空列表，名单不变。第二个批次返回 [(&quot;S01&quot;, &quot;通过&quot;), (&quot;S01&quot;, &quot;重复&quot;)]，名单只含 S01。</p><p>在新的空名单上以容量 1 运行这个批次，回执保持相同。第二次请求先命中重复规则。</p></details>
-<h2 id="section-8">本章自测</h2>
+<h3>单独验证各项契约</h3>
+<div class="lesson-table"><table><thead><tr><th scope="col">验证目标</th><th scope="col">初始状态和输入</th><th scope="col">要核对的结果</th></tr></thead><tbody><tr><td>资格检查的影响</td><td>空名单，查看 S01 是否可报名</td><td>回执为通过，名单仍为空</td></tr><tr><td>登记的输入和结果</td><td>原始学号带有首尾空格</td><td>返回整理后的学号，通过时按该学号写入</td></tr><tr><td>批量的次序</td><td>先满员，再收到旧学号</td><td>回执顺序与输入相同，重复优先于满员</td></tr><tr><td>批量为空</td><td>给出已有名单和空请求列表</td><td>交出空列表，保留已有名单</td></tr></tbody></table></div>
+<p>用不同的名单调用同一组函数，就能复用这套规则。每次登记都要一起传入当前名单和容量。下章会把两项状态交给同一个活动对象维护。<a href="chapter-05.html">第 5 章 第一视角 自定义对象与类</a></p>
+<h2 id="section-10">练习</h2>
+<ul><li>对一份新的空名单分别调用 <code>process([], roster)</code> 和 <code>process([&quot;S01&quot;, &quot;S01&quot;], roster)</code>，预测返回列表和名单。再用容量 1 运行第二组请求，检查回执顺序。</li><li>给 <code>format_measurement</code> 提供值 1.25、单位“千米”和两位小数。分别写出一个正确调用和一个把 <code>digits</code> 放到位置上的错误调用，解释区别。</li><li>将零件清单改成 <code>[&quot;电池&quot;, [], [&quot;外壳&quot;, [&quot;垫片&quot;, &quot;螺钉&quot;]]]</code>。画出每个子组交回的数量，再运行验证。</li><li>在生成器的示例中去掉 <code>next(converted)</code> 那行，预测哪些转换会改为在 <code>list()</code> 中完成。</li></ul>
+<details class='answer'><summary>参考解答</summary><p>空批次返回空列表，名单不变。第二个批次返回 [(&quot;S01&quot;, &quot;通过&quot;), (&quot;S01&quot;, &quot;重复&quot;)]，名单只含 S01。</p><p>在新的空名单上以容量 1 运行这个批次，回执保持相同。第二次请求先命中重复规则。</p><p>正确写法是 <code>format_measurement(1.25, &quot;千米&quot;, digits=2)</code>。把第三个值直接写成 2 会违反仅关键字参数的约定。</p><p>空组交回 0，含两个小零件的内层组交回 2，外壳所在组交回 3，最外层结果为 4。</p><p>生成器在 list() 之前尚未消费，因此 list() 会依次触发三次转换，得到 [100, 200, 300]。</p></details>
+<h2 id="section-11">本章自测</h2>
 
 <form class="quiz" data-correct="1">
  <fieldset><legend>函数收到一个字典 roster，并执行 roster[&quot;S01&quot;] = &quot;已报名&quot;。调用方能观察到什么？</legend><label><input type="radio" name="choice" value="1" required> 原名单中新增 S01</label><label><input type="radio" name="choice" value="2" required> 只在函数内部新增 S01</label><label><input type="radio" name="choice" value="3" required> 名单在函数返回时恢复</label></fieldset>
@@ -285,7 +497,7 @@ print(&quot;最终名单&quot;, list(roster))</textarea>
   <button type="button" class="complete" data-mark="04" aria-pressed="false" hidden>标记本章完成</button>
   <nav class="adjacent" aria-label="前后章节"><a href="chapter-03.html"><small>← 上一节</small>对象协作的流程控制</a><a href="chapter-05.html"><small>下一节 →</small>第一视角 自定义对象与类</a></nav>
  </main>
- <aside class="outline"><p>本节内容</p><nav aria-label="本节内容"><ol><li><a href="#section-1">4.1 同一套报名规则要用在几个地方</a></li><li><a href="#section-2">4.2 从定义到调用</a></li><li><a href="#section-3">4.3 作用域与函数的影响范围</a></li><li><a href="#section-4">4.4 函数也能作为参数或结果</a></li><li><a href="#section-5">4.5 两种按结构组织处理的方式</a></li><li><a href="#section-6">4.6 回到案例 封装三个报名任务</a></li><li><a href="#section-7">练习</a></li><li><a href="#section-8">本章自测</a></li></ol></nav></aside>
+ <aside class="outline"><p>本页目录</p><nav aria-label="本页目录"><ol><li><a href="#section-1">4.1 同一套报名规则要用在几个地方</a></li><li><a href="#section-2">4.2 从定义到调用</a></li><li><a href="#section-3">4.3 默认值、收集参数与展开实参</a></li><li><a href="#section-4">4.4 局部名字、外层名字与共享对象</a></li><li><a href="#section-5">4.5 用接口说明结果与影响</a></li><li><a href="#section-6">4.6 函数也能作为参数或结果</a></li><li><a href="#section-7">4.7 用递归函数处理嵌套结构</a></li><li><a href="#section-8">4.8 用生成器按需产生结果</a></li><li><a href="#section-9">4.9 回到案例 封装三个报名任务</a></li><li><a href="#section-10">练习</a></li><li><a href="#section-11">本章自测</a></li></ol></nav></aside>
 </div>
 <footer class="site-footer"><a href="index.html">Python 编程教材</a><a href="chapter-A.html">运行环境</a><a href="chapter-C.html">语言速查</a></footer>
 </body></html>

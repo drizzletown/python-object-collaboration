@@ -132,6 +132,9 @@ def self_test() -> None:
     requests = [" S01 ", " ", "S02", "S03", "S01"]
     expected = ["通过", "空学号", "通过", "满员", "重复"]
     memory = MemoryStore(Activity("博物馆参观", 2))
+    trial = memory.load()
+    assert trial.register("S01") == "通过"
+    assert memory.load().students == ()
     assert [submit(memory, student_id) for student_id in requests] == expected
     with TemporaryDirectory() as folder:
         path = Path(folder) / "roster.json"
@@ -140,14 +143,19 @@ def self_test() -> None:
         assert not path.exists()
         assert [submit(disk, student_id) for student_id in requests] == expected
         assert JsonStore(path).load().students == ("S01", "S02")
-        invalid = '{"title":"博物馆","capacity":0,"students":["S01"]}'
-        path.write_text(invalid, encoding="utf-8")
-        try:
-            submit(disk, "S02")
-        except ValueError:
-            assert path.read_text(encoding="utf-8") == invalid
-        else:
-            raise AssertionError("应拒绝非法名单文件")
+        invalid_contents = (
+            "{损坏",
+            '{"title":"博物馆","capacity":2,"students":["S01","S01"]}',
+            '{"title":"博物馆","capacity":0,"students":["S01"]}',
+        )
+        for invalid in invalid_contents:
+            path.write_text(invalid, encoding="utf-8")
+            try:
+                submit(disk, "S02")
+            except ValueError:
+                assert path.read_text(encoding="utf-8") == invalid
+            else:
+                raise AssertionError("应拒绝非法名单文件")
     print("项目验收通过")
 
 

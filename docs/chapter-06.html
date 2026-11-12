@@ -6,7 +6,7 @@
 <meta name="color-scheme" content="light">
 <meta name="description" content="以对象协作和假设三部曲为主线的 Python 编程教材。">
 <title>多对象协作与程序组织 · Python 编程</title>
-<link rel="stylesheet" href="assets/style.css?v=acff13e538d4">
+<link rel="stylesheet" href="assets/style.css?v=466d49260340">
 <script src="assets/site.js" defer></script>
 </head>
 <body class="">
@@ -23,10 +23,14 @@
  <main id="main" class="lesson">
   <header class="lesson-head"><div class="crumb"><a href="index.html#catalog">教材目录</a> <span>›</span> 第 6 章</div>
   <h1>多对象协作与程序组织</h1><p>组织活动查询与报名服务，用接口、类型标注和模块说明各角色怎样协作。</p></header>
+  <details class="lesson-contents"><summary>本页目录</summary>
+   <nav aria-label="本页目录"><ol><li><a href="#section-1">6.1 收到活动编号后，谁负责找到对象</a></li><li><a href="#section-2">6.2 组合对象与约定接口</a></li><li><a href="#section-3">6.3 用类型标注和记录对象传递信息</a></li><li><a href="#section-4">6.4 模块、导入与入口</a></li><li><a href="#section-5">6.5 用包和依赖方向组织程序</a></li><li><a href="#section-6">6.6 回到案例 组织多活动报名</a></li><li><a href="#section-7">练习</a></li><li><a href="#section-8">本章自测</a></li></ol></nav>
+  </details>
   <article><h2 id="section-1">6.1 收到活动编号后，谁负责找到对象</h2>
 <p>第 5 章可以直接拿着 <code>museum</code> 或 <code>lab</code> 对象办理报名。真正收到的请求通常只有活动编号和学号，例如 <code>(&quot;museum&quot;, &quot;S01&quot;)</code>。程序要先把编号对应到活动，再请该活动决定是否接受请求。</p>
 <ul><li>输入是若干已开放的活动，以及包含活动编号和学号的报名请求。</li><li>找到活动时，沿用活动自己的空学号、重复和容量规则。找不到活动时，返回“活动不存在”。</li><li>输出是每次请求的回执。查询未知编号后，已有活动的名单应保持原样。</li></ul>
 <p>从接收请求到给出回执，中间有查找、更新状态和呈现结果几项工作。把这些工作分给不同角色，才能独立调整查询方式或展示方式。</p>
+<p>这项任务还有两种不同的变化。活动规则可能增加一个资格条件，查找方式则可能从字典换成别的来源。先分清哪些结果需要跨过职责边界，再决定由谁持有数据、由谁组织调用。</p>
 <h2 id="section-2">6.2 组合对象与约定接口</h2>
 <p>当一个对象持有另一个对象并通过其公开操作完成一部分工作，就形成了对象组合。例如，一个补货检查器接收库存查询对象。它只需知道查询操作的名字、需要提供的参数、会交出的结果。创建检查器时把所需对象传进去，就可以让调用者选择它使用哪一份库存数据。</p>
 
@@ -72,12 +76,11 @@ for code in [&quot;P1&quot;, &quot;P2&quot;, &quot;P3&quot;]:
 
 <p><code>quantity</code> 的接口约定是接收货品编号，返回非负整数，找不到时返回 <code>None</code>。检查器拿到 0 时会继续判断是否补货，拿到 <code>None</code> 时直接返回“无此货品”。使用接口时，除了记住方法名，还要明确如何解释返回值、调用是否改变状态、什么情况需要报告失败。</p>
 <p>依赖方向可以沿着调用关系看出。检查器请求库存对象提供数量，库存对象可以独立使用。测试时可以构造一份只有一两项的库存，覆盖零库存、正常库存和未知编号。</p>
-<h2 id="section-3">6.3 用类型标注和记录对象传递信息</h2>
-<h3>读懂接口上的类型标注</h3>
-<div class="lesson-table"><table><thead><tr><th scope="col">标注</th><th scope="col">表达的约定</th><th scope="col">使用位置</th></tr></thead><tbody><tr><td><code>code: str</code></td><td>参数应为字符串</td><td>根据编号查找</td></tr><tr><td><code>dict[str, int]</code></td><td>字典的键是字符串，值是整数</td><td>记录各项库存</td></tr><tr><td><code>int | None</code></td><td>结果是整数或缺失值</td><td>查找可能没有结果</td></tr><tr><td><code>-&gt; str</code></td><td>函数交出字符串</td><td>生成一条检查结论</td></tr><tr><td><code>-&gt; None</code></td><td>函数没有需要调用者使用的返回值</td><td>更新状态或发送输出</td></tr></tbody></table></div>
-<p>类型标注帮助读代码的人、编辑器和静态检查工具理解接口。普通调用不会因为写了标注就自动检查或转换实参。诸如整数必须非负、字符串必须非空，仍要通过校验和文档表达。<a href="https://docs.python.org/3.12/library/typing.html">Python 官方文档的类型标注</a></p>
-<h3>把相关参数组成一条记录</h3>
-<p>一组字段经常一起传递时，可以定义记录类。<code>dataclasses.dataclass</code> 根据字段生成初始化、相等比较和便于查看的表示等方法。<code>frozen=True</code> 限制常规的字段重新赋值。例中的字段本身都是不可变对象，构造后可在不同组件间传递。</p>
+<h3>先定职责，再定交接方式</h3>
+<div class="lesson-table"><table><thead><tr><th scope="col">要明确的内容</th><th scope="col">用库存查找举例</th></tr></thead><tbody><tr><td>谁持有原始数据</td><td>库存对象持有编号和数量的映射</td></tr><tr><td>谁发出请求</td><td>补货检查器传入一个编号</td></tr><tr><td>成功时交出什么</td><td>一个非负整数，可能为零</td></tr><tr><td>找不到时怎样表示</td><td>交出 <code>None</code></td></tr><tr><td>调用有没有影响</td><td>查询只读，补货决定由检查器计算</td></tr></tbody></table></div>
+<p>若让检查器直接读库存对象的内部字典，字典字段一改，检查器就得跟着改。经由 <code>quantity()</code> 交接时，双方只依赖数量和缺失值的含义。库存对象也可以由多个检查器共享，每个检查器保留自己的补货阈值。</p>
+<h3>构造时提供需要的对象</h3>
+<p>下面用很小的数据演示同一个控制器怎样换用不同的计数对象。两个控制器由调用处分别构造，所以可以验证不同初始状态。以后同一个计数器也可以用于其他任务。</p>
 
 <section class="playground" aria-label="Python 示例 2">
   <div class="editor-bar">
@@ -86,6 +89,84 @@ for code in [&quot;P1&quot;, &quot;P2&quot;, &quot;P3&quot;]:
     <button class="quiet" data-copy hidden>复制</button></div>
   </div>
   <textarea aria-label="Python 示例 2 代码" rows="14"
+    spellcheck="false" autocapitalize="off" autocomplete="off">class Meter:
+    def __init__(self, total):
+        self.total = total
+
+    def read(self):
+        return self.total
+
+
+class ThresholdAlert:
+    def __init__(self, meter, threshold):
+        self._meter = meter
+        self._threshold = threshold
+
+    def exceeded(self):
+        return self._meter.read() &gt;= self._threshold
+
+
+normal = ThresholdAlert(Meter(3), 5)
+at_boundary = ThresholdAlert(Meter(5), 5)
+print(&quot;低于阈值&quot;, normal.exceeded())
+print(&quot;刚好到阈值&quot;, at_boundary.exceeded())</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<p>可以沿着“控制器调用计数器”画出依赖方向。计数器不需要知道谁在读取它。把所需对象在构造时传入，读代码的人就能找到它的来源，测试也能准备特定状态。</p>
+<h2 id="section-3">6.3 用类型标注和记录对象传递信息</h2>
+<h3>读懂接口上的类型标注</h3>
+<div class="lesson-table"><table><thead><tr><th scope="col">标注</th><th scope="col">表达的约定</th><th scope="col">使用位置</th></tr></thead><tbody><tr><td><code>code: str</code></td><td>参数应为字符串</td><td>根据编号查找</td></tr><tr><td><code>dict[str, int]</code></td><td>字典的键是字符串，值是整数</td><td>记录各项库存</td></tr><tr><td><code>int | None</code></td><td>结果是整数或缺失值</td><td>查找可能没有结果</td></tr><tr><td><code>-&gt; str</code></td><td>函数交出字符串</td><td>生成一条检查结论</td></tr><tr><td><code>-&gt; None</code></td><td>函数没有需要调用者使用的返回值</td><td>更新状态或发送输出</td></tr></tbody></table></div>
+<p>类型标注帮助读代码的人、编辑器和静态检查工具理解接口。普通调用不会因为写了标注就自动检查或转换实参。诸如整数必须非负、字符串必须非空，仍要通过校验和文档表达。<a href="https://docs.python.org/3.12/library/typing.html">Python 官方文档的类型标注</a></p>
+<h3>标注描述类型，行为还要另外约定</h3>
+<p><code>list[str]</code> 表示列表中的每项应为字符串。<code>tuple[str, ...]</code> 表示长度可变的字符串元组。<code>A | B</code> 表示对象可以属于两种类型之一，常用于表示找到对象或交回 <code>None</code>。如果还要说明状态只能取几个指定文字，可以在文档里列出允许的值，也可以用 <code>typing.Literal</code> 表达给类型检查工具。</p>
+
+<section class="playground" aria-label="Python 示例 3">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 3</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 3 代码" rows="14"
+    spellcheck="false" autocapitalize="off" autocomplete="off">from typing import Literal
+
+StockState = Literal[&quot;缺失&quot;, &quot;用完&quot;, &quot;可用&quot;]
+
+def describe(count: int | None) -&gt; StockState:
+    if count is None:
+        return &quot;缺失&quot;
+    if count == 0:
+        return &quot;用完&quot;
+    return &quot;可用&quot;
+
+
+print(describe(None))
+print(describe(0))
+print(describe(2))</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<p>标注让调用者知道返回值属于一组预定的文字。三个结果的实际含义仍由函数体决定。这里假定现有数量是非负数。若外部可能提供负值，入口还需检查这个约定。</p>
+<h3>把相关参数组成一条记录</h3>
+<p>一组字段经常一起传递时，可以定义记录类。<code>dataclasses.dataclass</code> 根据字段生成初始化、相等比较和便于查看的表示等方法。<code>frozen=True</code> 限制常规的字段重新赋值。例中的字段本身都是不可变对象，构造后可在不同组件间传递。</p>
+
+<section class="playground" aria-label="Python 示例 4">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 4</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 4 代码" rows="14"
     spellcheck="false" autocapitalize="off" autocomplete="off">from dataclasses import dataclass
 
 
@@ -111,17 +192,50 @@ print(reading == Measurement(&quot;东站&quot;, 21.5))</textarea>
 </section>
 
 <p>两个 <code>Measurement</code> 实例的字段值相同，生成的相等比较返回 <code>True</code>。如果字段是列表等可变对象，<code>frozen=True</code> 仍允许该列表的内容通过引用被修改。<a href="https://docs.python.org/3.12/library/dataclasses.html">Python 官方文档的 dataclasses</a></p>
-<h2 id="section-4">6.4 从一个文件到模块与包</h2>
-<h3>导入能力并管理名字</h3>
-<p>通常一个 <code>.py</code> 文件可以作为模块。每个模块有自己的名字空间，导入可将其中的能力引入当前模块。<code>import math</code> 引入模块名，调用时写 <code>math.sqrt(9)</code>。<code>from statistics import mean</code> 直接引入指定的函数名。</p>
+<h3>可变字段需要分别初始化</h3>
+<p>记录类还可以维护可变字段。使用 <code>field(default_factory=list)</code> 可以让每个实例在没有收到列表时取得一份新列表，和第 5 章在 <code>__init__</code> 中分别建立状态的原理相同。</p>
 
-<section class="playground" aria-label="Python 示例 3">
+<section class="playground" aria-label="Python 示例 5">
   <div class="editor-bar">
-    <span><i></i> Python 示例 3</span>
+    <span><i></i> Python 示例 5</span>
     <div><button class="quiet" data-reset hidden>重置</button>
     <button class="quiet" data-copy hidden>复制</button></div>
   </div>
-  <textarea aria-label="Python 示例 3 代码" rows="5"
+  <textarea aria-label="Python 示例 5 代码" rows="14"
+    spellcheck="false" autocapitalize="off" autocomplete="off">from dataclasses import dataclass, field
+
+
+@dataclass
+class Draft:
+    title: str
+    notes: list[str] = field(default_factory=list)
+
+
+first = Draft(&quot;上午记录&quot;)
+second = Draft(&quot;下午记录&quot;)
+first.notes.append(&quot;核对温度&quot;)
+print(first)
+print(second)</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<p><code>default_factory</code> 接收可调用对象 <code>list</code>，创建实例时再调用它。若每个实例要保留不同的修改历史，使用工厂可以让这种独立性在定义中直接表达。</p>
+<h2 id="section-4">6.4 模块、导入与入口</h2>
+<h3>导入能力并管理名字</h3>
+<p>通常一个 <code>.py</code> 文件可以作为模块。每个模块有自己的名字空间，导入可将其中的能力引入当前模块。<code>import math</code> 引入模块名，调用时写 <code>math.sqrt(9)</code>。<code>from statistics import mean</code> 直接引入指定的函数名。</p>
+
+<section class="playground" aria-label="Python 示例 6">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 6</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 6 代码" rows="5"
     spellcheck="false" autocapitalize="off" autocomplete="off">import math
 from statistics import mean
 
@@ -136,6 +250,61 @@ print(mean([18, 21, 24]))</textarea>
 </section>
 
 <p>模块首次导入时会执行顶层语句。把演示或交互步骤放在 <code>main()</code>，再用 <code>if __name__ == &quot;__main__&quot;:</code> 判断是否启动入口。这样其他模块可以导入其中定义的对象，入口代码在模块作为程序执行时才运行。</p>
+<h3>每种导入写法在当前模块建立什么名字</h3>
+<div class="lesson-table"><table><thead><tr><th scope="col">写法</th><th scope="col">本模块可用的名字</th><th scope="col">典型用法</th></tr></thead><tbody><tr><td><code>import statistics</code></td><td><code>statistics</code></td><td>用模块名标明能力的来源</td></tr><tr><td><code>import statistics as stats</code></td><td><code>stats</code></td><td>使用更短且明确的模块别名</td></tr><tr><td><code>from statistics import mean</code></td><td><code>mean</code></td><td>直接使用模块中的某个对象</td></tr><tr><td><code>from .readings import Measurement</code></td><td><code>Measurement</code></td><td>在包内从同包模块导入记录类</td></tr></tbody></table></div>
+
+<section class="playground" aria-label="Python 示例 7">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 7</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 7 代码" rows="7"
+    spellcheck="false" autocapitalize="off" autocomplete="off">import statistics
+import statistics as stats
+from math import sqrt as root
+
+print(&quot;两处引用同一个模块&quot;, statistics is stats)
+print(&quot;模块名&quot;, stats.__name__)
+print(&quot;计算均值和平方根&quot;, stats.mean([3, 6, 9]), root(16))</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<p>普通的重复导入会使用已加载的模块对象。若模块顶层立刻运行大量工作，第一次导入时就会触发这些行为。把构造、读文件或显示结果放进入口函数，可以先只导入定义来测试。</p>
+<h3>使用入口判断区分两种运行方式</h3>
+
+<section class="playground" aria-label="Python 示例 8">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 8</span>
+    <div><button class="quiet" data-reset hidden>重置</button>
+    <button class="quiet" data-copy hidden>复制</button></div>
+  </div>
+  <textarea aria-label="Python 示例 8 代码" rows="10"
+    spellcheck="false" autocapitalize="off" autocomplete="off">def make_message(label):
+    return f&quot;准备处理 {label}&quot;
+
+
+def main():
+    print(make_message(&quot;测量表&quot;))
+
+
+if __name__ == &quot;__main__&quot;:
+    main()</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" data-run>▶ 运行代码</button>
+    <button class="quiet" data-stop hidden>停止</button>
+    <span>Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<p>在网页示例中代码作为入口执行，<code>__name__</code> 为 <code>&quot;__main__&quot;</code>，于是调用 <code>main()</code>。如果这段定义位于 <code>report.py</code>，另一个模块导入 <code>report</code> 时，<code>__name__</code> 是模块名。调用者取得 <code>report.make_message</code> 后可以自己决定何时使用它。</p>
+<h2 id="section-5">6.5 用包和依赖方向组织程序</h2>
 <h3>按职责划分模块</h3>
 <p>相关模块可以组成包。普通包包含 <code>__init__.py</code>，其中可以安排包的初始化或对外入口。包内可以用 <code>from .readings import Measurement</code> 导入同包的模块，也可以使用从包名开始的绝对导入。示意目录中的 <code>report.py</code> 需要了解记录的格式，记录类则可以独立存在。</p>
 <pre class="listing">weather/
@@ -144,17 +313,39 @@ print(mean([18, 21, 24]))</textarea>
     report.py      导入 Measurement，组织报告
     __main__.py    构造数据并调用报告功能</pre>
 <p>从包含 <code>weather</code> 的目录启动包时，<code>python -m weather</code> 会执行 <code>weather/__main__.py</code>。当两个模块出现相互导入时，可以沿着职责检查哪一方真正需要另一方的能力，或把共同使用的记录类型放在双方都能导入的位置。<a href="https://docs.python.org/3.12/tutorial/modules.html">Python 官方教程的模块与包</a></p>
-<h2 id="section-5">6.5 回到案例 组织多活动报名</h2>
+<h3>从实际调用推导模块之间的关系</h3>
+<p>给出一个目录结构后，还要解释每个文件需要谁。下面的报告程序从入口取得示例数据，由报告模块组织输出。记录模块只负责表达数据，可以独立导入。</p>
+<pre class="listing">weather/__main__.py
+    导入 readings 里的 Measurement。
+    导入 report 里的 summarize。
+    构造读数，再交给 summarize。
+
+weather/report.py
+    使用 from .readings import Measurement。
+    接收读数，交回摘要文字。
+
+weather/readings.py
+    定义 Measurement 的字段和含义。</pre>
+<p>从文件的依赖来看，<code>report</code> 需要认识 <code>Measurement</code>，而 <code>readings</code> 无需导入 <code>report</code>。如果发现两边互相导入，可以先检查其中一个模块是否包办了两项职责。若双方只共享一个记录类型，把记录放在独立模块中，两个模块都可以沿同一方向导入它。</p>
+<h3>在模块边界保留可以测试的能力</h3>
+<p>模块的职责和对象的职责是不同层面。一个模块可以包含几个紧密配合的类和函数。先把接口设计清楚，再按照变化原因划分文件。例如调整摘要格式时，主要修改报告模块。增加一种读数来源时，可以在入口换用另一组对象。只要摘要收到的记录仍符合约定，已有的摘要测试仍可复用。</p>
+<h2 id="section-6">6.6 回到案例 组织多活动报名</h2>
 <div class="lesson-table"><table><thead><tr><th scope="col">角色</th><th scope="col">提供的能力</th><th scope="col">被谁使用</th></tr></thead><tbody><tr><td><code>Request</code></td><td>用两个字段记录活动编号与学号</td><td>入口和报名服务</td></tr><tr><td><code>Activity</code></td><td>按自己的规则登记，交出名单快照</td><td>报名服务和查询者</td></tr><tr><td><code>ActivityCatalog</code></td><td>按编号找到活动，缺失时交出 <code>None</code></td><td>报名服务</td></tr><tr><td><code>EnrollmentService</code></td><td>取得活动对象后请求登记，返回回执</td><td>入口和测试</td></tr><tr><td><code>main</code></td><td>构造对象、提交请求和呈现结果</td><td>程序入口</td></tr></tbody></table></div>
 <p>先假设目录会按编号交出活动对象。服务用查找的结果决定下一步，找到时调用活动的方法，未找到时返回相应回执。用字典实现目录后，服务可以直接使用这份实现。以下程序把各部分放在同一个示例中，便于在网页运行。</p>
+<pre class="listing">任务：受理多场活动的报名
+    1. 输入：一条包含活动编号和学号的请求。
+    2. 处理：用编号向目录查找活动。
+        2.1 找到活动时，把学号交给该对象办理登记。
+        2.2 查不到时，生成“活动不存在”的回执。
+    3. 输出：交回回执，由入口呈现。</pre>
 
-<section class="playground" aria-label="Python 示例 4">
+<section class="playground" aria-label="Python 示例 9">
   <div class="editor-bar">
-    <span><i></i> Python 示例 4</span>
+    <span><i></i> Python 示例 9</span>
     <div><button class="quiet" data-reset hidden>重置</button>
     <button class="quiet" data-copy hidden>复制</button></div>
   </div>
-  <textarea aria-label="Python 示例 4 代码" rows="14"
+  <textarea aria-label="Python 示例 9 代码" rows="14"
     spellcheck="false" autocapitalize="off" autocomplete="off">from dataclasses import dataclass
 
 
@@ -240,10 +431,16 @@ if __name__ == &quot;__main__&quot;:
 
 <p>回执依次是“通过、通过、满员、活动不存在、重复”。两场活动最终都只有 <code>S01</code>。目录复制了编号到活动的映射，映射里的值仍引用原来的活动实例，所以入口可以用 <code>museum.student_ids()</code> 看到服务完成的登记。服务用 <code>is None</code> 检查查找是否失败，长度为零的活动也会接收到它的第一条请求。</p>
 <p>程序增长后，可以把 <code>Activity</code> 放在 <code>activity.py</code>，把目录放在 <code>catalog.py</code>，把请求和服务放在 <code>service.py</code>，把构造与显示放在 <code>__main__.py</code>。入口导入前三者，服务导入目录，目录导入活动。沿这条方向，活动类始终可以独立用于另一个程序。</p>
-<h2 id="section-6">练习</h2>
-<p>把 <code>main</code> 中的目录换成只包含 <code>lab</code> 的目录，保留原请求。预测第一条、第二条回执以及两场活动的名单，再运行核对。</p>
-<details class='answer'><summary>参考解答</summary><p>第一条回执变为“活动不存在”。第二条仍然“通过”。博物馆实例仍存在，目录无法按 museum 找到它，因此名单为空。实验室的名单为 (&quot;S01&quot;,)。</p></details>
-<h2 id="section-7">本章自测</h2>
+<h3>跟踪请求并验证职责边界</h3>
+<div class="lesson-table"><table><thead><tr><th scope="col">请求</th><th scope="col">目录交出的结果</th><th scope="col">服务交出的回执</th><th scope="col">哪个活动会改变</th></tr></thead><tbody><tr><td>museum / S01</td><td>空的博物馆活动</td><td>通过</td><td>博物馆</td></tr><tr><td>lab / S01</td><td>空的实验室活动</td><td>通过</td><td>实验室</td></tr><tr><td>lab / S02</td><td>已满的实验室活动</td><td>满员</td><td>无</td></tr><tr><td>unknown / S03</td><td><code>None</code></td><td>活动不存在</td><td>无</td></tr><tr><td>lab / S01</td><td>已满的实验室活动</td><td>重复</td><td>无</td></tr></tbody></table></div>
+<p>这个例子里，查到一个长度为零的活动是正常结果。判断 <code>activity is None</code> 可以让空活动收到第一条请求。如果改用 <code>if not activity</code>，活动长度为零时也会进入“活动不存在”的分支，可以试着改动这一行并观察结果。</p>
+<h3>从网页中的单文件拆出包</h3>
+<div class="lesson-table"><table><thead><tr><th scope="col">文件</th><th scope="col">放入的定义</th><th scope="col">需要导入的能力</th></tr></thead><tbody><tr><td><code>activity.py</code></td><td><code>Activity</code></td><td>活动规则在本模块内处理</td></tr><tr><td><code>catalog.py</code></td><td><code>ActivityCatalog</code></td><td><code>from .activity import Activity</code></td></tr><tr><td><code>service.py</code></td><td><code>Request</code>、<code>EnrollmentService</code></td><td><code>dataclass</code> 和同包的 <code>ActivityCatalog</code></td></tr><tr><td><code>__main__.py</code></td><td><code>main</code> 和入口调用</td><td>从前三个模块取得类，构造并连接它们</td></tr></tbody></table></div>
+<p>单文件示例可以先验证角色之间的约定。把类按上表分开时，类内的业务判断可以保持原样，入口仍用同一批请求核对回执和名单。第 7 章会把这些预期写进可重复执行的测试。<a href="chapter-07.html">第 7 章 对象协作的可靠性</a></p>
+<h2 id="section-7">练习</h2>
+<ul><li>把 <code>main</code> 中的目录换成只包含 <code>lab</code> 的目录，保留原请求。预测前两条回执和两场活动的名单。</li><li>将 <code>activity is None</code> 改成 <code>not activity</code>，观察最初的空活动能否接受第一条请求，再恢复原判断。</li><li>为 <code>Draft</code> 创建第三个实例，给它增加一条备注。预测另外两个实例的备注。</li><li>如果要把回执改成另一种显示格式，指出应改动哪个角色。若要按另一套编号查找活动，再指出应改动哪个角色。</li></ul>
+<details class='answer'><summary>参考解答</summary><p>第一条回执变为“活动不存在”。第二条仍然“通过”。博物馆实例仍存在，目录无法按 museum 找到它，因此名单为空。实验室的名单为 (&quot;S01&quot;,)。</p><p><code>not activity</code> 会把长度为零的活动判为假。首次登记无法发生，两场活动都保持为空。</p><p>第三个 Draft 用工厂取得新列表。第一份仍有“核对温度”，第二份仍为空。</p><p>显示格式由入口或专门的显示组件处理。查找规则由目录处理，服务仍通过 find 取得活动。</p></details>
+<h2 id="section-8">本章自测</h2>
 
 <form class="quiz" data-correct="1">
  <fieldset><legend>目录找到了一个还没有任何报名的 Activity。服务怎样判断查询是否成功？</legend><label><input type="radio" name="choice" value="1" required> 使用 activity is None 区分缺失和找到</label><label><input type="radio" name="choice" value="2" required> 用 if not activity 判断查找失败</label><label><input type="radio" name="choice" value="3" required> 用活动人数是否为零判断查找失败</label></fieldset>
@@ -255,7 +452,7 @@ if __name__ == &quot;__main__&quot;:
   <button type="button" class="complete" data-mark="06" aria-pressed="false" hidden>标记本章完成</button>
   <nav class="adjacent" aria-label="前后章节"><a href="chapter-05.html"><small>← 上一节</small>第一视角 自定义对象与类</a><a href="chapter-07.html"><small>下一节 →</small>对象协作的可靠性</a></nav>
  </main>
- <aside class="outline"><p>本节内容</p><nav aria-label="本节内容"><ol><li><a href="#section-1">6.1 收到活动编号后，谁负责找到对象</a></li><li><a href="#section-2">6.2 组合对象与约定接口</a></li><li><a href="#section-3">6.3 用类型标注和记录对象传递信息</a></li><li><a href="#section-4">6.4 从一个文件到模块与包</a></li><li><a href="#section-5">6.5 回到案例 组织多活动报名</a></li><li><a href="#section-6">练习</a></li><li><a href="#section-7">本章自测</a></li></ol></nav></aside>
+ <aside class="outline"><p>本页目录</p><nav aria-label="本页目录"><ol><li><a href="#section-1">6.1 收到活动编号后，谁负责找到对象</a></li><li><a href="#section-2">6.2 组合对象与约定接口</a></li><li><a href="#section-3">6.3 用类型标注和记录对象传递信息</a></li><li><a href="#section-4">6.4 模块、导入与入口</a></li><li><a href="#section-5">6.5 用包和依赖方向组织程序</a></li><li><a href="#section-6">6.6 回到案例 组织多活动报名</a></li><li><a href="#section-7">练习</a></li><li><a href="#section-8">本章自测</a></li></ol></nav></aside>
 </div>
 <footer class="site-footer"><a href="index.html">Python 编程教材</a><a href="chapter-A.html">运行环境</a><a href="chapter-C.html">语言速查</a></footer>
 </body></html>
