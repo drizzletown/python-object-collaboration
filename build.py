@@ -409,7 +409,7 @@ registered = <b>28</b>
     <h3>对象协作编程</h3>
     <p>解决问题就是找到合适的对象，让它们沟通协作，发挥各自的能力。</p>
     <p>对象协作编程就是描述解决问题所需的对象，以及对象之间的沟通协作过程。</p>
-    <p class="method-formula">程序 = 对象 + 对象协作过程</p>
+    <p class="method-formula">程序 = 描述对象 + 描述对象协作过程</p>
     <a class="method-link" href="chapter-00.html#section-2">读导论中的对象协作编程 <span aria-hidden="true">→</span></a>
    </article>
    <article class="method-card method-card-assumptions" id="assumption-trilogy">
