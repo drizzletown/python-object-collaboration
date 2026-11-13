@@ -6,8 +6,8 @@
 <meta name="color-scheme" content="light">
 <meta name="description" content="以对象协作和假设三部曲为主线的 Python 编程教材。">
 <title>第一视角 自定义对象与类 · Python 编程</title>
-<link rel="stylesheet" href="assets/style.css?v=c4cfd570a0ea">
-<script src="assets/site.js" defer></script>
+<link rel="stylesheet" href="assets/style.css?v=271b14c33aec">
+<script src="assets/site.js?v=3370553bec6f" defer></script>
 </head>
 <body class="">
 <a class="skip" href="#main">跳到正文</a>
@@ -34,14 +34,15 @@
 <h2 id="section-2">5.2 从类到实例</h2>
 <p>类描述一种对象可以保存什么、能做什么。执行 <code>class</code> 定义后，类名绑定到一个类对象。调用这个类会创建实例，<code>__init__</code> 通常负责设置新实例的初始属性。一个类可以创建多个身份各异的实例。</p>
 
-<section class="playground" aria-label="Python 示例 1">
+<section class="playground" aria-label="Python 示例 1" data-draft="example-1-e79a1e0c1121">
   <div class="editor-bar">
     <span><i></i> Python 示例 1</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 1 代码" rows="14"
-    spellcheck="false" autocapitalize="off" autocomplete="off">class StepCounter:
+  <textarea aria-label="Python 示例 1 代码" rows="14" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">class StepCounter:
     unit = &quot;步&quot;
 
     def __init__(self, label):
@@ -59,9 +60,10 @@ print(type(morning).__name__, morning is evening)
 print(morning.label, morning.record(120), morning.unit)
 print(evening.label, evening.total, evening.unit)</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -74,14 +76,15 @@ print(evening.label, evening.total, evening.unit)</textarea>
 <h3>区分实例状态和类上的公共信息</h3>
 <p>普通实例属性可由 <code>self.name = value</code> 建立。读取普通属性时，实例上有自己的值就读取它，否则可以从类上找到公共值。下面让一个标签使用特殊单位，再修改类上的公共单位，观察两个实例读取的是哪里。</p>
 
-<section class="playground" aria-label="Python 示例 2">
+<section class="playground" aria-label="Python 示例 2" data-draft="example-2-691d1a03b3d9">
   <div class="editor-bar">
     <span><i></i> Python 示例 2</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 2 代码" rows="14"
-    spellcheck="false" autocapitalize="off" autocomplete="off">class Label:
+  <textarea aria-label="Python 示例 2 代码" rows="14" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">class Label:
     unit = &quot;厘米&quot;
 
     def __init__(self, name):
@@ -97,9 +100,10 @@ print(&quot;类的单位&quot;, Label.unit)
 print(left.name, left.unit)
 print(right.name, right.unit)</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -108,14 +112,15 @@ print(right.name, right.unit)</textarea>
 <h3>每个实例应拥有独立的可变状态</h3>
 <p>若把一个列表设在类上，多个实例可能通过属性找到同一份列表。对其中一个引用做原地追加，会影响其他实例看到的内容。要让每个对象保存自己的操作记录，应在 <code>__init__</code> 中分别创建列表。</p>
 
-<section class="playground" aria-label="Python 示例 3">
+<section class="playground" aria-label="Python 示例 3" data-draft="example-3-e9aabe8316a2">
   <div class="editor-bar">
     <span><i></i> Python 示例 3</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 3 代码" rows="14"
-    spellcheck="false" autocapitalize="off" autocomplete="off">class SharedNotebook:
+  <textarea aria-label="Python 示例 3 代码" rows="14" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">class SharedNotebook:
     lines = []
 
 
@@ -134,9 +139,10 @@ second = Notebook()
 first.lines.append(&quot;甲的第一条&quot;)
 print(&quot;独立的记录&quot;, second.lines, first.lines is second.lines)</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -149,14 +155,15 @@ print(&quot;独立的记录&quot;, second.lines, first.lines is second.lines)</t
 <h3>可以保存绑定后的方法</h3>
 <p><code>counter.add</code> 在读取时就与当前计数器绑定。以后调用这个方法，仍会把那个对象作为 <code>self</code>。通过类取得普通函数时，可以显式提供实例。这两种调用方式有助于看清方法的参数从哪里来。</p>
 
-<section class="playground" aria-label="Python 示例 4">
+<section class="playground" aria-label="Python 示例 4" data-draft="example-4-357c4ef49cd6">
   <div class="editor-bar">
     <span><i></i> Python 示例 4</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 4 代码" rows="14"
-    spellcheck="false" autocapitalize="off" autocomplete="off">class Counter:
+  <textarea aria-label="Python 示例 4 代码" rows="14" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">class Counter:
     def __init__(self):
         self.total = 0
 
@@ -171,9 +178,10 @@ print(&quot;调用保存的方法&quot;, add_to_counter(2))
 print(&quot;从类取得函数并提供实例&quot;, Counter.add(counter, 3))
 print(&quot;计数结果&quot;, counter.total)</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -182,14 +190,15 @@ print(&quot;计数结果&quot;, counter.total)</textarea>
 <h3>实例方法、类方法和静态方法</h3>
 <div class="lesson-table"><table><thead><tr><th scope="col">方法形式</th><th scope="col">由 Python 自动提供</th><th scope="col">常见职责</th></tr></thead><tbody><tr><td><code>def method(self, ...)</code></td><td>当前实例</td><td>读取或修改该实例的状态</td></tr><tr><td><code>@classmethod</code></td><td>当前类，惯例写作 <code>cls</code></td><td>从另一种输入格式构造实例，或使用类级别配置</td></tr><tr><td><code>@staticmethod</code></td><td>没有自动提供的实例或类</td><td>定义和这个类型相关、只依赖实参的操作</td></tr></tbody></table></div>
 
-<section class="playground" aria-label="Python 示例 5">
+<section class="playground" aria-label="Python 示例 5" data-draft="example-5-b088dc06e36f">
   <div class="editor-bar">
     <span><i></i> Python 示例 5</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 5 代码" rows="14"
-    spellcheck="false" autocapitalize="off" autocomplete="off">class Length:
+  <textarea aria-label="Python 示例 5 代码" rows="14" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">class Length:
     def __init__(self, centimeters):
         if not self.is_valid(centimeters):
             raise ValueError(&quot;长度须为非负整数厘米&quot;)
@@ -210,9 +219,10 @@ length = Length.from_meters(1.25)
 print(&quot;厘米数&quot;, length.centimeters)
 print(&quot;负数是有效长度&quot;, Length.is_valid(-2))</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -221,14 +231,15 @@ print(&quot;负数是有效长度&quot;, Length.is_valid(-2))</textarea>
 <h2 id="section-5">5.5 用公开操作维护状态</h2>
 <p>对象的状态可能有需要始终成立的条件。例如，音量必须处在 0 到 100 之间。可以把直接保存的值视为内部实现，将读值和改值作为公开操作。方法先检查新值是否合规，再执行修改。</p>
 
-<section class="playground" aria-label="Python 示例 6">
+<section class="playground" aria-label="Python 示例 6" data-draft="example-6-aef7e97e7e78">
   <div class="editor-bar">
     <span><i></i> Python 示例 6</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 6 代码" rows="14"
-    spellcheck="false" autocapitalize="off" autocomplete="off">class Volume:
+  <textarea aria-label="Python 示例 6 代码" rows="14" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">class Volume:
     def __init__(self, level):
         self.set_level(level)
 
@@ -246,9 +257,10 @@ speaker = Volume(30)
 speaker.set_level(45)
 print(speaker.level)</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -258,14 +270,15 @@ print(speaker.level)</textarea>
 <h3>属性可以计算，也可以检查赋值</h3>
 <p>一个属性可以由已有状态计算出来。例如摄氏温度和华氏温度之间可以转换。只保存摄氏值，读取华氏值时再计算，可以避免同时维护两个容易失去一致性的数值。若希望支持赋值写法，可以用 <code>@name.setter</code> 把赋值交给指定的方法。</p>
 
-<section class="playground" aria-label="Python 示例 7">
+<section class="playground" aria-label="Python 示例 7" data-draft="example-7-98a0400c9f65">
   <div class="editor-bar">
     <span><i></i> Python 示例 7</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 7 代码" rows="14"
-    spellcheck="false" autocapitalize="off" autocomplete="off">from math import isfinite
+  <textarea aria-label="Python 示例 7 代码" rows="14" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">from math import isfinite
 
 
 class Temperature:
@@ -292,9 +305,10 @@ print(&quot;摄氏与华氏&quot;, temperature.celsius, temperature.fahrenheit)
 temperature.celsius = 20
 print(&quot;更新后&quot;, temperature.celsius, temperature.fahrenheit)</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -303,14 +317,15 @@ print(&quot;更新后&quot;, temperature.celsius, temperature.fahrenheit)</texta
 <h3>容器怎样进入和离开对象</h3>
 <p>对象接受外部列表时，要决定保留共享引用还是独立保存数据。查询时也要决定交出内部列表、外层副本，还是由不可变元素组成的快照。下面的路线只需要记住创建时的站点顺序。</p>
 
-<section class="playground" aria-label="Python 示例 8">
+<section class="playground" aria-label="Python 示例 8" data-draft="example-8-6bdda7aabc13">
   <div class="editor-bar">
     <span><i></i> Python 示例 8</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 8 代码" rows="13"
-    spellcheck="false" autocapitalize="off" autocomplete="off">class Route:
+  <textarea aria-label="Python 示例 8 代码" rows="13" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">class Route:
     def __init__(self, stops):
         self._stops = tuple(stops)
 
@@ -324,9 +339,10 @@ planned.append(&quot;西站&quot;)
 print(&quot;原计划列表&quot;, planned)
 print(&quot;路线对象的站点&quot;, route.stops())</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -336,14 +352,15 @@ print(&quot;路线对象的站点&quot;, route.stops())</textarea>
 <p><code>__init__</code> 是一种特殊方法。类似的双下划线方法也可为 <code>len(obj)</code>、<code>repr(obj)</code> 等通用操作定义行为。方法需要遵守相应约定，例如 <code>__len__</code> 返回非负整数，<code>__repr__</code> 返回便于查看的字符串。</p>
 <div class="lesson-table"><table><thead><tr><th scope="col">公开操作</th><th scope="col">对应的特殊方法</th><th scope="col">约定</th></tr></thead><tbody><tr><td><code>len(obj)</code></td><td><code>__len__</code></td><td>交出非负整数</td></tr><tr><td><code>bool(obj)</code></td><td><code>__bool__</code>，也可依据 <code>__len__</code></td><td>表示在真假判断中的意义</td></tr><tr><td><code>repr(obj)</code></td><td><code>__repr__</code></td><td>交出用于查看对象的字符串</td></tr><tr><td><code>str(obj)</code>、<code>print(obj)</code></td><td><code>__str__</code></td><td>交出面向读者的显示文字</td></tr><tr><td><code>item in obj</code></td><td>可通过 <code>__contains__</code> 实现</td><td>判断成员关系</td></tr><tr><td><code>left == right</code></td><td>可通过 <code>__eq__</code> 实现</td><td>按领域约定比较值</td></tr></tbody></table></div>
 
-<section class="playground" aria-label="Python 示例 9">
+<section class="playground" aria-label="Python 示例 9" data-draft="example-9-0ee510393642">
   <div class="editor-bar">
     <span><i></i> Python 示例 9</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 9 代码" rows="14"
-    spellcheck="false" autocapitalize="off" autocomplete="off">class WordList:
+  <textarea aria-label="Python 示例 9 代码" rows="14" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">class WordList:
     def __init__(self, words):
         self._words = list(words)
 
@@ -367,9 +384,10 @@ print(&quot;给读者看的文字&quot;, words)
 print(&quot;包含绿&quot;, &quot;绿&quot; in words)
 print(&quot;空对象的真值&quot;, bool(WordList([])))</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -378,14 +396,15 @@ print(&quot;空对象的真值&quot;, bool(WordList([])))</textarea>
 <h3>什么时候适合按值比较</h3>
 <p>一对坐标可按横、纵坐标比较。同一坐标的两个对象可以有相同的值和不同的标识。对两个活动对象，则可能需要按活动编号或对象身份区分，标题相同也可能是两场不同的活动。</p>
 
-<section class="playground" aria-label="Python 示例 10">
+<section class="playground" aria-label="Python 示例 10" data-draft="example-10-485af2c4e1f7">
   <div class="editor-bar">
     <span><i></i> Python 示例 10</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 10 代码" rows="14"
-    spellcheck="false" autocapitalize="off" autocomplete="off">class Point:
+  <textarea aria-label="Python 示例 10 代码" rows="14" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">class Point:
     def __init__(self, x, y):
         self.x = x
         self.y = y
@@ -401,9 +420,10 @@ right = Point(3, 4)
 print(&quot;坐标相等&quot;, left == right)
 print(&quot;是同一对象&quot;, left is right)</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -414,14 +434,15 @@ print(&quot;是同一对象&quot;, left is right)</textarea>
 <div class="lesson-table"><table><thead><tr><th scope="col">活动对外提供的操作</th><th scope="col">结果</th><th scope="col">对状态的影响</th></tr></thead><tbody><tr><td><code>register(raw_id)</code></td><td>通过、空学号、重复或满员</td><td>通过时新增一人</td></tr><tr><td><code>cancel(raw_id)</code></td><td>已取消、空学号或未报名</td><td>已取消时移除一人</td></tr><tr><td><code>student_ids()</code></td><td>按登记次序保存学号的元组</td><td>查询</td></tr><tr><td><code>remaining()</code>、<code>len(activity)</code></td><td>剩余名额或人数</td><td>查询</td></tr></tbody></table></div>
 <p>名额和名单共同决定两条不变式，人数不能超过容量，学号在同一活动中只出现一次。构造时创建空名单。登记先检查，再写入。取消从当前实例的名单移除指定记录，也就能在下一次登记时重新利用这个名额。</p>
 
-<section class="playground" aria-label="Python 示例 11">
+<section class="playground" aria-label="Python 示例 11" data-draft="example-11-deec304538ae">
   <div class="editor-bar">
     <span><i></i> Python 示例 11</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 11 代码" rows="14"
-    spellcheck="false" autocapitalize="off" autocomplete="off">class Activity:
+  <textarea aria-label="Python 示例 11 代码" rows="14" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">class Activity:
     def __init__(self, title, capacity):
         if type(capacity) is not int or capacity &lt; 0:
             raise ValueError(&quot;容量须为非负整数&quot;)
@@ -476,9 +497,10 @@ print(&quot;实验室重新接收 S02&quot;, lab.register(&quot;S02&quot;))
 show_status(museum)
 show_status(lab)</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -487,6 +509,7 @@ show_status(lab)</textarea>
 <h3>对比对象内部和外部的职责</h3>
 <div class="lesson-table"><table><thead><tr><th scope="col">执行后</th><th scope="col">博物馆名单</th><th scope="col">实验室名单</th></tr></thead><tbody><tr><td>S01 分别报名</td><td>S01</td><td>S01</td></tr><tr><td>实验室重复登记 S01，再收 S02</td><td>S01</td><td>S01</td></tr><tr><td>实验室取消 S01</td><td>S01</td><td>空</td></tr><tr><td>实验室再收 S02</td><td>S01</td><td>S02</td></tr></tbody></table></div>
 <p><code>register</code> 和 <code>cancel</code> 使用 <code>self</code> 维护各自的状态，体现第一视角。<code>show_status</code> 从第三视角使用对象公开的查询能力。它既能读取博物馆的状态，也能读取实验室的状态。后面如果收到的只有活动编号，就要在调用之前由另一个角色把编号对应到对象。<a href="chapter-06.html">第 6 章 多对象协作与程序组织</a></p>
+<p>在上面的例子中，于取消实验室的报名之前保存 <code>before = lab.student_ids()</code>，再在两次 <code>show_status()</code> 之后打印 <code>before</code>。先写下取消前、取消后和再登记后的实验室名单，并核对博物馆名单。第 6 章会保留这些对象各自的职责，让服务根据编号选择应该调用哪一个活动。<a href="chapter-06.html#workspace-enrollment">进入多文件报名练习</a></p>
 <h2 id="section-8">练习</h2>
 <ul><li>在取消实验室的 <code>S01</code> 前，保存 <code>before = lab.student_ids()</code>。登记 <code>S02</code> 后对比 <code>before</code>、<code>lab.student_ids()</code> 和 <code>museum.student_ids()</code>。</li><li>把实验室容量改为 0，预测两次登记 S01、取消 S01 和再次登记 S02 的结果。解释实例为什么仍然有效。</li><li>运行类属性示例后，在 <code>right</code> 上执行 <code>del right.unit</code>，预测接下来两个实例各自读取到的单位。</li><li>仿照 <code>Length.from_meters()</code>，为 <code>Length</code> 增加一个接收整数毫米的类方法。检查长度非负，再用 <code>round()</code> 取最接近的整数厘米。</li></ul>
 <details class='answer'><summary>参考解答</summary><p>before 仍是 (&quot;S01&quot;,)，它记录取消之前的实验室名单。当前实验室名单为 (&quot;S02&quot;,)，博物馆名单为 (&quot;S01&quot;,)。两个活动的名单在初始化时分别创建。</p><p>容量为 0 时，新建活动的空名单符合约定。实验室的登记都回执“满员”，取消回执“未报名”，名单仍为空。</p><p>删除右侧实例自己绑定的 unit 后，两个实例都从 Label.unit 读取“米”。</p><p>定义接收 cls 和 millimeters 的类方法，检查 millimeters 非负后返回 cls(round(millimeters / 10))。例如 1250 毫米换算为 125 厘米。</p></details>

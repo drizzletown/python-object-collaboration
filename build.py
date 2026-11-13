@@ -10,6 +10,9 @@ ROOT = Path(__file__).resolve().parent
 DOCS = ROOT / "docs"
 ASSETS = ROOT / "assets"
 STYLE_VERSION = sha256((ASSETS / "style.css").read_bytes()).hexdigest()[:12]
+SCRIPT_VERSION = sha256(
+    (ASSETS / "site.js").read_bytes() + (ASSETS / "python-worker.js").read_bytes()
+).hexdigest()[:12]
 PROJECT = ROOT / "projects" / "campus.py"
 CHAPTER_IDS = ["00", *(f"{n:02}" for n in range(1, 11)), "A", "B", "C"]
 
@@ -40,7 +43,7 @@ def read_chapter(key):
 
 
 def inline(text):
-    target = r"https://[^)]+|(?:0[0-9]|10|[A-C])\.md"
+    target = r"https://[^)]+|(?:0[0-9]|10|[A-C])\.md(?:#[a-z0-9-]+)?"
     fragments = re.split(rf"(\x60[^\x60]+\x60|\[[^\]]+\]\((?:{target})\))", text)
     result = []
     for fragment in fragments:
@@ -48,7 +51,8 @@ def inline(text):
         if match:
             label, href = match.groups()
             if not href.startswith("https://"):
-                href = f"chapter-{href.removesuffix('.md')}.html"
+                path, separator, anchor = href.partition("#")
+                href = f"chapter-{path.removesuffix('.md')}.html{separator}{anchor}"
             result.append(f'<a href="{escape(href, quote=True)}">{escape(label)}</a>')
         elif fragment.startswith("\x60") and fragment.endswith("\x60"):
             result.append(f"<code>{escape(fragment[1:-1])}</code>")
@@ -57,27 +61,65 @@ def inline(text):
     return "".join(result)
 
 
-def playground(source, number, *, project=False):
-    source = source.rstrip()
-    rows = min(18 if project else 14, max(5, len(source.splitlines())))
+def playground(files, number, *, anchor=None, module=None, campus=False, project=False):
+    label = f"Python 示例 {number}"
+    fingerprint = sha256(repr(files).encode("utf-8")).hexdigest()[:12]
+    draft = anchor or f"example-{number}-{fingerprint}"
+    identity = f' id="{anchor}"' if anchor else ""
+    support = ' data-campus' if campus else ""
+    module_attr = f' data-module="{module}"' if module else ""
     download = '<a href="campus.py" download>下载 campus.py</a>' if project else ""
+    reset_label = "重置当前文件" if module else "重置"
+    run_label = "运行项目" if module else "运行代码"
+    picker = ""
+    if module:
+        options = "".join(f'<option value="{name}">{name}</option>' for name in files)
+        picker = f'  <label class="file-picker" hidden>编辑文件 <select data-file>{options}</select></label>\n'
+
+    editors = []
+    for name, source in files.items():
+        source = source.rstrip()
+        rows = min(18 if project else 14, max(3, len(source.splitlines())))
+        editor_label = f"{name} 代码" if name else f"{label} 代码"
+        editors.append(f"""<textarea aria-label="{editor_label}" rows="{rows}" wrap="off"
+    data-code-file="{name}" spellcheck="false" autocapitalize="off" autocomplete="off">{escape(source)}</textarea>""")
+    editors_html = "\n  ".join(editors)
+
     return f"""
-<section class="playground" aria-label="Python 示例 {number}">
+<section class="playground" aria-label="{label}" data-draft="{draft}"{identity}{module_attr}{support}>
   <div class="editor-bar">
-    <span><i></i> Python 示例 {number}</span>
-    <div>{download}<button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <span><i></i> {label}</span>
+    <div>{download}<button class="quiet" type="button" data-reset hidden>{reset_label}</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 {number} 代码" rows="{rows}"
-    spellcheck="false" autocapitalize="off" autocomplete="off">{escape(source)}</textarea>
+{picker}  {editors_html}
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ {run_label}</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
 """
+
+
+def workspace_files(lines):
+    files = {}
+    cursor = 0
+    while cursor < len(lines):
+        line = lines[cursor].strip()
+        cursor += 1
+        if not line:
+            continue
+        match = re.fullmatch(r"```python ([a-z_]\w*(?:/[a-z_]\w*)*\.py)", line, flags=re.ASCII)
+        if not match or match[1] in files:
+            raise ValueError(f"Invalid workspace file: {line}")
+        end = lines.index("```", cursor)
+        files[match[1]] = "\n".join(lines[cursor:end])
+        cursor = end + 1
+    return files
 
 
 def quiz_html(lines):
@@ -128,10 +170,11 @@ SIMULATOR = """
  <form>
   <label>活动容量 <input name="capacity" type="number" value="2" min="0" max="99" required></label>
   <label>报名顺序（每行一个学号，空行视作空学号）
-   <textarea name="requests" rows="4">S01
+   <textarea name="requests" rows="5">S01
+
 S02
-S01
-S03</textarea>
+S03
+S01</textarea>
   </label>
   <div class="sim-actions">
    <button class="primary small" type="submit">执行下一条</button>
@@ -174,25 +217,46 @@ def render_body(lines):
                 rows.append(row)
                 cursor += 1
             parts.append(table_html(rows))
-        elif line in {"```python", "```text"}:
+        elif line == "```text" or line.startswith("```python"):
             end = lines.index("```", cursor)
             code = "\n".join(lines[cursor:end])
-            if line == "```python":
-                example += 1
-                parts.append(playground(code, example))
-            else:
+            if line == "```text":
                 parts.append(f'<pre class="listing">{escape(code)}</pre>')
+            else:
+                match = re.fullmatch(r"```python(?: ([a-z][a-z0-9-]*)(?: (campus))?(?: (solution))?)?", line)
+                if not match:
+                    raise ValueError(f"Invalid Python example: {line}")
+                anchor, campus, solution = match.groups()
+                example += 1
+                editor = playground({"": code}, example, anchor=anchor, campus=bool(campus))
+                if solution:
+                    editor = f'<details class="answer project-source"><summary>查看完整实现</summary>{editor}</details>'
+                parts.append(editor)
+            cursor = end + 1
+        elif line.startswith(":::workspace "):
+            module = line.removeprefix(":::workspace ")
+            if not re.fullmatch(r"[a-z_][a-z0-9_]*", module):
+                raise ValueError(f"Invalid workspace module: {module}")
+            end = lines.index(":::", cursor)
+            files = workspace_files(lines[cursor:end])
+            if f"{module}/__main__.py" not in files:
+                raise ValueError(f"Missing entry point for workspace: {module}")
+            example += 1
+            parts.append(playground(files, example, anchor=f"workspace-{module}", module=module))
             cursor = end + 1
         elif line == ":::project":
             example += 1
-            parts.append(playground(PROJECT.read_text(encoding="utf-8"), example, project=True))
+            editor = playground({"campus.py": PROJECT.read_text(encoding="utf-8")}, example,
+                                anchor="campus-source", project=True)
+            parts.append(f'<details class="answer project-source"><summary>展开完整项目源码</summary>{editor}</details>')
         elif line == ":::sim":
             parts.append(SIMULATOR)
-        elif line in {":::answer", ":::quiz"}:
+        elif line in {":::answer", ":::check", ":::quiz"}:
             end = lines.index(":::", cursor)
             content = lines[cursor:end]
-            if line == ":::quiz":
-                section("本章自测")
+            if line in {":::check", ":::quiz"}:
+                if line == ":::quiz":
+                    section("本章自测")
                 parts.append(quiz_html(content))
             else:
                 paragraphs = "".join(f"<p>{inline(text)}</p>" for text in content if text)
@@ -222,7 +286,7 @@ def frame(title, content, *, page_class=""):
 <meta name="description" content="以对象协作和假设三部曲为主线的 Python 编程教材。">
 <title>{escape(title)}</title>
 <link rel="stylesheet" href="assets/style.css?v={STYLE_VERSION}">
-<script src="assets/site.js" defer></script>
+<script src="assets/site.js?v={SCRIPT_VERSION}" defer></script>
 </head>
 <body class="{page_class}">
 <a class="skip" href="#main">跳到正文</a>
@@ -330,12 +394,10 @@ def home(chapters):
    <div class="terminal-bar"><span class="lights" aria-hidden="true"><i></i><i></i><i></i></span><span>enrollment.py</span><span>PYTHON</span></div>
    <div class="terminal-code"><pre><code><span class="code-comment"># 检查博物馆活动的剩余名额</span>
 capacity = <b>30</b>
-registered = <b>29</b>
-remaining = capacity - registered
-
-<strong>print</strong>(<em>f"剩余名额：{{remaining}}"</em>)</code></pre>
-   <div class="terminal-output"><span>›</span> 剩余名额：1</div></div>
-   <a href="chapter-01.html#section-10">到第 1 章试一试 <span>↗</span></a>
+registered = <b>28</b>
+<strong>print</strong>(capacity - registered)</code></pre>
+   <div class="terminal-output"><span>›</span> 2</div></div>
+   <a href="chapter-01.html#first-run">到第 1 章试一试 <span>↗</span></a>
   </div>
  </div>
 </section>

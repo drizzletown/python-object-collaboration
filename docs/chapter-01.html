@@ -6,8 +6,8 @@
 <meta name="color-scheme" content="light">
 <meta name="description" content="以对象协作和假设三部曲为主线的 Python 编程教材。">
 <title>基础数据对象与信息处理 · Python 编程</title>
-<link rel="stylesheet" href="assets/style.css?v=c4cfd570a0ea">
-<script src="assets/site.js" defer></script>
+<link rel="stylesheet" href="assets/style.css?v=271b14c33aec">
+<script src="assets/site.js?v=3370553bec6f" defer></script>
 </head>
 <body class="">
 <a class="skip" href="#main">跳到正文</a>
@@ -38,27 +38,53 @@
     3. 输出
         3.1 博物馆参观：剩余 2 个名额，门票合计 350.00 元。</pre>
 <p>“28 人”和“学号 0028”看起来都有数字，却要做不同的工作。前者要参与计算，后者要保留原来的文字。票价要按分算清楚，输出时还要保留两位小数。把这些要求写清楚，才能为每项信息选择合适的对象和运算。</p>
+<h3>先改一行，算出剩余名额</h3>
+<p>点击「运行代码」，核对剩余名额是否为 2。再把第二行的 28 改成 30，预测结果并运行。</p>
+
+<section class="playground" aria-label="Python 示例 1" data-draft="first-run" id="first-run">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 1</span>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
+  </div>
+  <textarea aria-label="Python 示例 1 代码" rows="3" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">capacity = 30
+registered = 28
+print(capacity - registered)</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<p>前两行给容量和已报名人数起了名字。第三行相减，<code>print(...)</code> 把结果显示在代码框下方。改成 30 后，输出应为 0。接下来再看这些名字怎样指向对象，以及数字和文字各能做什么。</p>
 <h2 id="section-2">1.2 对象有值、类型和标识</h2>
 <h3>三个问题分别问什么</h3>
 <p>Python 用对象表示程序中的数据。整数、字符串和布尔值都是对象。理解一个对象，可以分别问它的值是什么、属于什么类型、与另一处引用是否指向同一个对象。</p>
 <div class="lesson-table"><table><thead><tr><th scope="col">要问的问题</th><th scope="col">Python 中的观察方法</th><th scope="col">例子</th></tr></thead><tbody><tr><td>它表示什么值</td><td>显示或比较值</td><td><code>42 == 42.0</code> 为真</td></tr><tr><td>它是什么类型</td><td><code>type(value)</code></td><td><code>42</code> 是整数，<code>&quot;42&quot;</code> 是字符串</td></tr><tr><td>两处是否指向同一个对象</td><td><code>a is b</code>，也可观察 <code>id()</code></td><td><code>second = first</code> 后两处引用同一个对象</td></tr></tbody></table></div>
 <p><code>type()</code> 返回实际类型对象。<code>isinstance()</code> 可以判断某对象是否属于一个类型或该类型的子类。<code>True</code> 的实际类型是 <code>bool</code>。由于 <code>bool</code> 是 <code>int</code> 的子类，<code>isinstance(True, int)</code> 也为真。选择数据时仍可根据含义把真假和数量分开表达。</p>
 
-<section class="playground" aria-label="Python 示例 1">
+<section class="playground" aria-label="Python 示例 2" data-draft="example-2-fda0109e3cda">
   <div class="editor-bar">
-    <span><i></i> Python 示例 1</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <span><i></i> Python 示例 2</span>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 1 代码" rows="5"
-    spellcheck="false" autocapitalize="off" autocomplete="off">print(type(42).__name__, type(&quot;42&quot;).__name__)
+  <textarea aria-label="Python 示例 2 代码" rows="4" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">print(type(42).__name__, type(&quot;42&quot;).__name__)
 print(type(1.5).__name__, type(True).__name__, type(None).__name__)
 print(&quot;True 属于布尔类型&quot;, isinstance(True, bool))
 print(&quot;True 也满足整数类型检查&quot;, isinstance(True, int))</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -66,14 +92,15 @@ print(&quot;True 也满足整数类型检查&quot;, isinstance(True, int))</text
 <h3>标识和相等的关系</h3>
 <p><code>id(obj)</code> 返回表示对象标识的整数。对象存续时标识保持稳定，同时存在的不同对象有不同标识。对象的存续结束后，标识可能被复用。用 <code>is</code> 直接判断标识关系，用 <code>==</code> 比较值。</p>
 
-<section class="playground" aria-label="Python 示例 2">
+<section class="playground" aria-label="Python 示例 3" data-draft="example-3-18e37ebb058c">
   <div class="editor-bar">
-    <span><i></i> Python 示例 2</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <span><i></i> Python 示例 3</span>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 2 代码" rows="8"
-    spellcheck="false" autocapitalize="off" autocomplete="off">whole = 42
+  <textarea aria-label="Python 示例 3 代码" rows="8" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">whole = 42
 approximate = 42.0
 same_reference = whole
 
@@ -82,9 +109,10 @@ print(&quot;整数和浮点数是同一对象&quot;, whole is approximate)
 print(&quot;两处引用同一整数&quot;, whole is same_reference)
 print(&quot;三个标识&quot;, id(whole), id(approximate), id(same_reference))</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -95,14 +123,15 @@ print(&quot;三个标识&quot;, id(whole), id(approximate), id(same_reference))<
 <div class="lesson-table"><table><thead><tr><th scope="col">类型</th><th scope="col">写法</th><th scope="col">典型任务</th></tr></thead><tbody><tr><td>整数 <code>int</code></td><td><code>42</code>、<code>-7</code>、<code>1_000</code></td><td>计数、序号、以分或厘米为单位的量</td></tr><tr><td>浮点数 <code>float</code></td><td><code>1.5</code>、<code>2.5e3</code></td><td>测量、比例、允许近似的小数</td></tr><tr><td>复数 <code>complex</code></td><td><code>2 + 3j</code></td><td>同时包含实部和虚部的计算</td></tr><tr><td>布尔值 <code>bool</code></td><td><code>True</code>、<code>False</code></td><td>记录一项条件是否成立</td></tr><tr><td>字符串 <code>str</code></td><td><code>&quot;Python&quot;</code>、<code>&quot;0042&quot;</code></td><td>文字和需要保留原样的编码</td></tr><tr><td>字节序列 <code>bytes</code></td><td><code>b&quot;OK&quot;</code></td><td>文件和通信中的原始字节</td></tr><tr><td>空值类型 <code>NoneType</code></td><td><code>None</code></td><td>结果尚未取得、某项数据缺失</td></tr></tbody></table></div>
 <p>整数可以写成十进制，也可以用 <code>0b</code>、<code>0o</code>、<code>0x</code> 开头写成二进制、八进制和十六进制。下划线可以分隔数字，方便阅读。<code>2.5e3</code> 表示 <code>2.5</code> 乘以 10 的三次方，写法中有小数点或指数时，这里得到的是浮点数。</p>
 
-<section class="playground" aria-label="Python 示例 3">
+<section class="playground" aria-label="Python 示例 4" data-draft="example-4-35a7be956208">
   <div class="editor-bar">
-    <span><i></i> Python 示例 3</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <span><i></i> Python 示例 4</span>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 3 代码" rows="8"
-    spellcheck="false" autocapitalize="off" autocomplete="off">print(&quot;四种写法表示相同的整数&quot;, 42, 0b101010, 0o52, 0x2A)
+  <textarea aria-label="Python 示例 4 代码" rows="8" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">print(&quot;四种写法表示相同的整数&quot;, 42, 0b101010, 0o52, 0x2A)
 print(&quot;大数按位分组&quot;, 1_000_000)
 print(&quot;科学计数法&quot;, 2.5e3, 1.25e-2)
 
@@ -111,9 +140,10 @@ print(&quot;实部和虚部&quot;, z.real, z.imag)
 print(&quot;与共轭复数相乘&quot;, z * (3 - 4j))
 print(&quot;复数的模&quot;, abs(z))</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -122,14 +152,15 @@ print(&quot;复数的模&quot;, abs(z))</textarea>
 <h3>浮点数为何出现微小误差</h3>
 <p>许多十进制小数在二进制浮点数中只能近似表示。近似值相加后，显示结果也可能与十进制心算不同。测量题可以事先确定允许的误差，用标准库的 <code>math.isclose()</code> 比较近似值。固定精度的金额或长度可以统一换成整数单位，再做加减乘除。</p>
 
-<section class="playground" aria-label="Python 示例 4">
+<section class="playground" aria-label="Python 示例 5" data-draft="example-5-8aa8400ea7f8">
   <div class="editor-bar">
-    <span><i></i> Python 示例 4</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <span><i></i> Python 示例 5</span>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 4 代码" rows="7"
-    spellcheck="false" autocapitalize="off" autocomplete="off">from math import isclose
+  <textarea aria-label="Python 示例 5 代码" rows="7" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">from math import isclose
 
 result = 0.1 + 0.2
 print(&quot;浮点结果&quot;, result)
@@ -137,9 +168,10 @@ print(&quot;直接判等&quot;, result == 0.3)
 print(&quot;按误差判断&quot;, isclose(result, 0.3))
 print(&quot;以厘米计算&quot;, 10 + 20)</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -148,14 +180,15 @@ print(&quot;以厘米计算&quot;, 10 + 20)</textarea>
 <h3>真假、零和缺失分别表示什么</h3>
 <p>数值零、空字符串和 <code>None</code> 都可以在真假判断中被当作假，含义仍然不同。零可以是一条已取得的读数，空字符串可能是用户交来的空文本，<code>None</code> 可以表示还没有取得读数。字符串 <code>&quot;False&quot;</code> 和 <code>&quot;0&quot;</code> 含有字符，用 <code>bool()</code> 检查都为真。</p>
 
-<section class="playground" aria-label="Python 示例 5">
+<section class="playground" aria-label="Python 示例 6" data-draft="example-6-949d9b5ec6a9">
   <div class="editor-bar">
-    <span><i></i> Python 示例 5</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <span><i></i> Python 示例 6</span>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 5 代码" rows="7"
-    spellcheck="false" autocapitalize="off" autocomplete="off">reading = 0
+  <textarea aria-label="Python 示例 6 代码" rows="7" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">reading = 0
 unmeasured = None
 
 print(&quot;零与缺失的真值&quot;, bool(reading), bool(unmeasured))
@@ -163,9 +196,10 @@ print(&quot;零是否缺失&quot;, reading is None)
 print(&quot;未测量是否缺失&quot;, unmeasured is None)
 print(&quot;文字是否为空&quot;, bool(&quot;&quot;), bool(&quot;0&quot;), bool(&quot;False&quot;))</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -175,14 +209,15 @@ print(&quot;文字是否为空&quot;, bool(&quot;&quot;), bool(&quot;0&quot;), b
 <h3>用字符串表示文字</h3>
 <p>单引号和双引号都能写字符串。可以用一种引号包住含有另一种引号的文字，用反斜线写换行 <code>\n</code>、制表 <code>\t</code>、反斜线 <code>\\</code> 等字符。字符串有顺序，支持 <code>len()</code>、下标、切片和成员判断。</p>
 
-<section class="playground" aria-label="Python 示例 6">
+<section class="playground" aria-label="Python 示例 7" data-draft="example-7-a8a8a92a2f45">
   <div class="editor-bar">
-    <span><i></i> Python 示例 6</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <span><i></i> Python 示例 7</span>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 6 代码" rows="10"
-    spellcheck="false" autocapitalize="off" autocomplete="off">label = &quot;站点：东站&quot;
+  <textarea aria-label="Python 示例 7 代码" rows="10" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">label = &quot;站点：东站&quot;
 note = &#x27;他说：&quot;已完成。&quot;&#x27;
 lines = &quot;第一行\n第二行&quot;
 
@@ -193,9 +228,10 @@ print(&quot;包含站名&quot;, &quot;东站&quot; in label)
 print(note)
 print(lines)</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -204,23 +240,25 @@ print(lines)</textarea>
 <h3>字节和文字通过编码转换</h3>
 <p><code>str</code> 处理文字，<code>bytes</code> 处理字节。把文字编码为字节时，要指定编码。接收字节后，用相同的编码解读，才有可能还原原来的文字。<code>b&quot;OK&quot;</code> 可以直接写出常见 ASCII 字节，汉字通常用 <code>encode()</code> 得到字节序列。</p>
 
-<section class="playground" aria-label="Python 示例 7">
+<section class="playground" aria-label="Python 示例 8" data-draft="example-8-690d9ca8c046">
   <div class="editor-bar">
-    <span><i></i> Python 示例 7</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <span><i></i> Python 示例 8</span>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 7 代码" rows="6"
-    spellcheck="false" autocapitalize="off" autocomplete="off">text = &quot;东站&quot;
+  <textarea aria-label="Python 示例 8 代码" rows="6" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">text = &quot;东站&quot;
 data = text.encode(&quot;utf-8&quot;)
 print(&quot;文字的长度&quot;, len(text))
 print(&quot;UTF-8 的字节数&quot;, len(data))
 print(&quot;首字节的整数值&quot;, data[0])
 print(&quot;还原文字&quot;, data.decode(&quot;utf-8&quot;))</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -230,14 +268,15 @@ print(&quot;还原文字&quot;, data.decode(&quot;utf-8&quot;))</textarea>
 <h3>先求右边，再绑定左边</h3>
 <p>执行 <code>number = 7</code> 时，Python 先取得右边表示的对象，再让左边的名字引用它。<code>previous = number</code> 让两个名字暂时引用同一个对象。执行 <code>number = number + 1</code> 时，先用旧值求和，再把 <code>number</code> 重新绑定到结果。</p>
 
-<section class="playground" aria-label="Python 示例 8">
+<section class="playground" aria-label="Python 示例 9" data-draft="example-9-dbe36f627511">
   <div class="editor-bar">
-    <span><i></i> Python 示例 8</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <span><i></i> Python 示例 9</span>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 8 代码" rows="8"
-    spellcheck="false" autocapitalize="off" autocomplete="off">number = 7
+  <textarea aria-label="Python 示例 9 代码" rows="8" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">number = 7
 previous = number
 print(&quot;初始时共享引用&quot;, number is previous)
 
@@ -246,9 +285,10 @@ print(&quot;原来的值&quot;, previous)
 print(&quot;当前的值&quot;, number)
 print(&quot;现在共享引用&quot;, number is previous)</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -257,23 +297,25 @@ print(&quot;现在共享引用&quot;, number is previous)</textarea>
 <h3>名字应表达用途和单位</h3>
 <p>名字可以由字母、数字和下划线等合法字符组成，首字符不能是数字。大小写有区别，<code>Count</code> 和 <code>count</code> 是两个名字。<code>if</code>、<code>for</code> 等关键字有固定的语言用途。平时可以用小写单词和下划线连接，<code>distance_cm</code> 表示以厘米为单位的距离，<code>has_reading</code> 表示是否取得读数。</p>
 
-<section class="playground" aria-label="Python 示例 9">
+<section class="playground" aria-label="Python 示例 10" data-draft="example-10-48b623221c08">
   <div class="editor-bar">
-    <span><i></i> Python 示例 9</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <span><i></i> Python 示例 10</span>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 9 代码" rows="6"
-    spellcheck="false" autocapitalize="off" autocomplete="off">distance_cm = 125
+  <textarea aria-label="Python 示例 10 代码" rows="6" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">distance_cm = 125
 distance_m = distance_cm / 100
 raw_code = &quot;0042&quot;
 
 print(&quot;数值和单位&quot;, distance_cm, distance_m)
 print(&quot;编号保留原样&quot;, raw_code)</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -285,22 +327,24 @@ print(&quot;编号保留原样&quot;, raw_code)</textarea>
 <div class="lesson-table"><table><thead><tr><th scope="col">运算</th><th scope="col">写法</th><th scope="col">结果或用途</th></tr></thead><tbody><tr><td>加减乘</td><td><code>7 + 2</code>、<code>7 - 2</code>、<code>7 * 2</code></td><td>两个整数得到整数</td></tr><tr><td>真除法</td><td><code>7 / 2</code></td><td>整数相除也得到浮点数 <code>3.5</code></td></tr><tr><td>向下取整除法</td><td><code>7 // 2</code></td><td>取不大于商的整数，这里为 <code>3</code></td></tr><tr><td>余数</td><td><code>7 % 2</code></td><td>与整除配对，这里为 <code>1</code></td></tr><tr><td>乘方</td><td><code>2 ** 3</code></td><td>求 2 的三次方</td></tr><tr><td>一元符号</td><td><code>-value</code></td><td>取得相反数</td></tr></tbody></table></div>
 <p>对于整数 <code>a</code> 和非零整数 <code>b</code>，有 <code>a == (a // b) * b + a % b</code>。所以 <code>-7 // 2</code> 为 <code>-4</code>，余数是 <code>1</code>。这与把 <code>-3.5</code> 直接转成整数时向零截断不同。<code>divmod(a, b)</code> 可以同时取得商和余数。</p>
 
-<section class="playground" aria-label="Python 示例 10">
+<section class="playground" aria-label="Python 示例 11" data-draft="example-11-d2bb8dc989f5">
   <div class="editor-bar">
-    <span><i></i> Python 示例 10</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <span><i></i> Python 示例 11</span>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 10 代码" rows="5"
-    spellcheck="false" autocapitalize="off" autocomplete="off">print(&quot;普通除法、整除、取余&quot;, 7 / 2, 7 // 2, 7 % 2)
+  <textarea aria-label="Python 示例 11 代码" rows="5" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">print(&quot;普通除法、整除、取余&quot;, 7 / 2, 7 // 2, 7 % 2)
 print(&quot;负数的整除和取余&quot;, -7 // 2, -7 % 2)
 print(&quot;同时取得商和余数&quot;, divmod(-7, 2))
 print(&quot;向零截断&quot;, int(-3.5))
 print(&quot;整数与浮点数相加&quot;, 2 + 1.5)</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -309,21 +353,23 @@ print(&quot;整数与浮点数相加&quot;, 2 + 1.5)</textarea>
 <h3>用优先级和括号说明分组</h3>
 <p>乘除、整除和取余优先于加减，乘方比乘除更早结合。连续乘方从右边结合。<code>-2 ** 2</code> 会先计算乘方，再取相反数。需要对负数底数乘方时写 <code>(-2) ** 2</code>。</p>
 
-<section class="playground" aria-label="Python 示例 11">
+<section class="playground" aria-label="Python 示例 12" data-draft="example-12-b0d596360a88">
   <div class="editor-bar">
-    <span><i></i> Python 示例 11</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <span><i></i> Python 示例 12</span>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 11 代码" rows="5"
-    spellcheck="false" autocapitalize="off" autocomplete="off">print(&quot;先乘后加&quot;, 2 + 3 * 4)
+  <textarea aria-label="Python 示例 12 代码" rows="4" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">print(&quot;先乘后加&quot;, 2 + 3 * 4)
 print(&quot;改变分组&quot;, (2 + 3) * 4)
 print(&quot;连续乘方&quot;, 2 ** 3 ** 2)
 print(&quot;符号的位置&quot;, -2 ** 2, (-2) ** 2)</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -332,14 +378,15 @@ print(&quot;符号的位置&quot;, -2 ** 2, (-2) ** 2)</textarea>
 <h3>用整数的位保存标志</h3>
 <p>整数还支持按位运算。<code>&amp;</code> 在对应位都为 1 时保留 1，<code>|</code> 在至少一位为 1 时保留 1，<code>^</code> 在两位不同时保留 1。<code>&lt;&lt;</code>、<code>&gt;&gt;</code> 移动二进制位，<code>~</code> 按位取反。比如用第一个二进制位表示可读，用第三个位表示可导出，可以在一个整数中同时记录两项权限。</p>
 
-<section class="playground" aria-label="Python 示例 12">
+<section class="playground" aria-label="Python 示例 13" data-draft="example-13-6ad866c01623">
   <div class="editor-bar">
-    <span><i></i> Python 示例 12</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <span><i></i> Python 示例 13</span>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 12 代码" rows="9"
-    spellcheck="false" autocapitalize="off" autocomplete="off">can_read = 0b001
+  <textarea aria-label="Python 示例 13 代码" rows="9" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">can_read = 0b001
 can_edit = 0b010
 can_export = 0b100
 
@@ -349,9 +396,10 @@ print(&quot;可读&quot;, (permissions &amp; can_read) != 0)
 print(&quot;可编辑&quot;, (permissions &amp; can_edit) != 0)
 print(&quot;去掉可导出标志后的位&quot;, bin(permissions ^ can_export))</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -362,23 +410,25 @@ print(&quot;去掉可导出标志后的位&quot;, bin(permissions ^ can_export))
 <div class="lesson-table"><table><thead><tr><th scope="col">需要判断</th><th scope="col">写法举例</th><th scope="col">结果</th></tr></thead><tbody><tr><td>值是否相等</td><td><code>amount == 42</code>、<code>amount != 42</code></td><td>按对象支持的相等规则比较</td></tr><tr><td>是否在范围内</td><td><code>0 &lt;= score &lt;= 100</code></td><td>同时满足两边的比较</td></tr><tr><td>是否是同一个对象</td><td><code>result is None</code>、<code>result is not None</code></td><td>比较标识</td></tr><tr><td>是否包含一段文字</td><td><code>&quot;东站&quot; in title</code></td><td>查找子串</td></tr><tr><td>多个条件怎样结合</td><td><code>ready and score &gt;= 60</code></td><td>先检查左侧，再决定是否检查右侧</td></tr></tbody></table></div>
 <p>整数和浮点数可以按数值比较。文字和数字比较相等时按各自的类型规则处理，<code>&quot;42&quot; == 42</code> 为假。字符串之间按字符顺序逐项比较，因此 <code>&quot;100&quot; &lt; &quot;20&quot;</code> 为真。若要按数值比较，从文本取得的数据需要先转换。</p>
 
-<section class="playground" aria-label="Python 示例 13">
+<section class="playground" aria-label="Python 示例 14" data-draft="example-14-772e949d82df">
   <div class="editor-bar">
-    <span><i></i> Python 示例 13</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <span><i></i> Python 示例 14</span>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 13 代码" rows="6"
-    spellcheck="false" autocapitalize="off" autocomplete="off">score = 85
+  <textarea aria-label="Python 示例 14 代码" rows="6" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">score = 85
 
 print(&quot;分数在范围内&quot;, 0 &lt;= score &lt;= 100)
 print(&quot;是否合格&quot;, score &gt;= 60)
 print(&quot;按字符比较&quot;, &quot;100&quot; &lt; &quot;20&quot;)
 print(&quot;按数值比较&quot;, int(&quot;100&quot;) &lt; int(&quot;20&quot;))</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -386,14 +436,15 @@ print(&quot;按数值比较&quot;, int(&quot;100&quot;) &lt; int(&quot;20&quot;)
 <h3>and、or 和 not 怎样求值</h3>
 <p><code>not x</code> 把 <code>x</code> 的真值反过来，得到布尔对象。<code>a and b</code> 在 <code>a</code> 为假时直接交出 <code>a</code>，否则求出并交出 <code>b</code>。<code>a or b</code> 在 <code>a</code> 为真时直接交出 <code>a</code>，否则求出并交出 <code>b</code>。能从左侧决定结果时，右侧就不再求值，这叫短路。</p>
 
-<section class="playground" aria-label="Python 示例 14">
+<section class="playground" aria-label="Python 示例 15" data-draft="example-15-d135f49456af">
   <div class="editor-bar">
-    <span><i></i> Python 示例 14</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <span><i></i> Python 示例 15</span>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 14 代码" rows="7"
-    spellcheck="false" autocapitalize="off" autocomplete="off">reading = None
+  <textarea aria-label="Python 示例 15 代码" rows="7" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">reading = None
 print(&quot;取得正数读数&quot;, reading is not None and reading &gt; 0)
 
 label = &quot;&quot;
@@ -401,9 +452,10 @@ print(&quot;空标题使用默认文字&quot;, label or &quot;未命名&quot;)
 print(&quot;零也会触发 or 的右侧&quot;, 0 or 100)
 print(&quot;空标题的取反&quot;, not label)</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -414,14 +466,15 @@ print(&quot;空标题的取反&quot;, not label)</textarea>
 <p>文本即使看起来像数字，仍然是字符串。先确认下一步需要哪种对象，再用相应的转换。整数转换要有整数字符串，带小数点的文本可以先用 <code>float()</code> 读成浮点数。对浮点数用 <code>int()</code> 会截去小数部分，是否允许丢掉小数要由任务决定。</p>
 <div class="lesson-table"><table><thead><tr><th scope="col">操作</th><th scope="col">结果</th><th scope="col">常见边界</th></tr></thead><tbody><tr><td><code>int(&quot;42&quot;)</code></td><td>整数 <code>42</code></td><td><code>int(&quot;4.2&quot;)</code> 报 <code>ValueError</code></td></tr><tr><td><code>int(-4.2)</code></td><td>整数 <code>-4</code></td><td>向零截断</td></tr><tr><td><code>float(&quot;4.2&quot;)</code></td><td>浮点数 <code>4.2</code></td><td><code>float(&quot;四点二&quot;)</code> 报 <code>ValueError</code></td></tr><tr><td><code>str(42)</code></td><td>字符串 <code>&quot;42&quot;</code></td><td>结果用于显示和拼接</td></tr><tr><td><code>bool(&quot;False&quot;)</code></td><td><code>True</code></td><td>非空文字为真</td></tr><tr><td><code>int(&quot;2A&quot;, 16)</code></td><td>整数 <code>42</code></td><td>第二个参数指定进制</td></tr></tbody></table></div>
 
-<section class="playground" aria-label="Python 示例 15">
+<section class="playground" aria-label="Python 示例 16" data-draft="example-16-4c37d79bb650">
   <div class="editor-bar">
-    <span><i></i> Python 示例 15</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <span><i></i> Python 示例 16</span>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 15 代码" rows="8"
-    spellcheck="false" autocapitalize="off" autocomplete="off">raw_text = &quot; 0042 &quot;
+  <textarea aria-label="Python 示例 16 代码" rows="8" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">raw_text = &quot; 0042 &quot;
 cleaned = raw_text.strip()
 number = int(cleaned)
 
@@ -430,9 +483,10 @@ print(&quot;用文字拼接&quot;, cleaned + &quot;1&quot;)
 print(&quot;作为整数计算&quot;, number + 1)
 print(&quot;把结果变回文字&quot;, str(number + 1) + &quot; 个&quot;)</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -441,14 +495,15 @@ print(&quot;把结果变回文字&quot;, str(number + 1) + &quot; 个&quot;)</te
 <h3>清理、查找和替换文字</h3>
 <div class="lesson-table"><table><thead><tr><th scope="col">常用操作</th><th scope="col">用途</th></tr></thead><tbody><tr><td><code>text.strip()</code></td><td>取得去掉首尾空白的文字</td></tr><tr><td><code>text.lower()</code>、<code>text.upper()</code></td><td>取得相应大小写的文字</td></tr><tr><td><code>text.startswith(prefix)</code>、<code>text.endswith(suffix)</code></td><td>检查开头或结尾</td></tr><tr><td><code>text.replace(old, new)</code></td><td>取得替换后的文字</td></tr><tr><td><code>text.split(separator)</code></td><td>按分隔符拆成几段</td></tr><tr><td><code>separator.join(parts)</code></td><td>用分隔符连接几段文字</td></tr></tbody></table></div>
 
-<section class="playground" aria-label="Python 示例 16">
+<section class="playground" aria-label="Python 示例 17" data-draft="example-17-09fe197e065a">
   <div class="editor-bar">
-    <span><i></i> Python 示例 16</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <span><i></i> Python 示例 17</span>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 16 代码" rows="10"
-    spellcheck="false" autocapitalize="off" autocomplete="off">raw = &quot;  East-03  &quot;
+  <textarea aria-label="Python 示例 17 代码" rows="10" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">raw = &quot;  East-03  &quot;
 cleaned = raw.strip()
 updated = cleaned.lower().replace(&quot;-&quot;, &quot;/&quot;)
 parts = updated.split(&quot;/&quot;)
@@ -459,9 +514,10 @@ print(&quot;是否以 east 开头&quot;, updated.startswith(&quot;east&quot;))
 print(&quot;拆分后的各段&quot;, parts)
 print(&quot;换一种分隔&quot;, &quot; · &quot;.join(parts))</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -471,14 +527,15 @@ print(&quot;换一种分隔&quot;, &quot; · &quot;.join(parts))</textarea>
 <h3>print 接收对象，负责写出文字</h3>
 <p><code>print()</code> 会把对象转换成文字，默认写入标准输出。在本网站，运行结果显示在代码框下方。多个对象默认用空格分隔，每次输出默认以换行结束。用 <code>sep</code> 选择分隔文字，用 <code>end</code> 选择末尾内容。</p>
 
-<section class="playground" aria-label="Python 示例 17">
+<section class="playground" aria-label="Python 示例 18" data-draft="example-18-edec6a733488">
   <div class="editor-bar">
-    <span><i></i> Python 示例 17</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <span><i></i> Python 示例 18</span>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 17 代码" rows="10"
-    spellcheck="false" autocapitalize="off" autocomplete="off">name = &quot;东站&quot;
+  <textarea aria-label="Python 示例 18 代码" rows="10" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">name = &quot;东站&quot;
 score = 85
 
 print(name, score, sep=&quot;：&quot;)
@@ -489,9 +546,10 @@ text = &quot;甲\n乙&quot;
 print(str(text))
 print(repr(text))</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -501,14 +559,15 @@ print(repr(text))</textarea>
 <p>引号前写 <code>f</code>，花括号中的表达式会求值。冒号后可以写格式，指定进制、补零、位数或对齐。得到的结果是字符串，可以先保存，之后再决定何时输出。</p>
 <div class="lesson-table"><table><thead><tr><th scope="col">写法</th><th scope="col">显示结果</th><th scope="col">用途</th></tr></thead><tbody><tr><td><code>f&quot;{5:02d}&quot;</code></td><td><code>&quot;05&quot;</code></td><td>整数不足两位时补零</td></tr><tr><td><code>f&quot;{2.5:.2f}&quot;</code></td><td><code>&quot;2.50&quot;</code></td><td>显示两位小数</td></tr><tr><td><code>f&quot;{12500:,}&quot;</code></td><td><code>&quot;12,500&quot;</code></td><td>对长数字分组</td></tr><tr><td><code>f&quot;{0.375:.1%}&quot;</code></td><td><code>&quot;37.5%&quot;</code></td><td>显示比例</td></tr><tr><td><code>f&quot;{value!r}&quot;</code></td><td>采用 <code>repr(value)</code></td><td>检查输入原样</td></tr></tbody></table></div>
 
-<section class="playground" aria-label="Python 示例 18">
+<section class="playground" aria-label="Python 示例 19" data-draft="example-19-1b5b617ef3f8">
   <div class="editor-bar">
-    <span><i></i> Python 示例 18</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <span><i></i> Python 示例 19</span>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 18 代码" rows="7"
-    spellcheck="false" autocapitalize="off" autocomplete="off">measured = 2.3456
+  <textarea aria-label="Python 示例 19 代码" rows="7" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">measured = 2.3456
 quantity = 5
 line = f&quot;第 {quantity:02d} 条 · {measured:.2f} 米&quot;
 
@@ -516,9 +575,10 @@ print(line)
 print(&quot;仍可用原值计算&quot;, measured * 2)
 print(f&quot;合格比例 {3 / 8:.1%}&quot;)</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -529,14 +589,15 @@ print(f&quot;合格比例 {3 / 8:.1%}&quot;)</textarea>
 <div class="lesson-table"><table><thead><tr><th scope="col">信息或中间结果</th><th scope="col">类型和单位</th><th scope="col">这样选择的原因</th></tr></thead><tbody><tr><td>活动名称</td><td>字符串</td><td>需要直接出现在通知里</td></tr><tr><td>容量、已报名、剩余</td><td>整数，单位为人</td><td>计数及相减</td></tr><tr><td>票价、门票合计</td><td>整数，单位为分</td><td>精确计算到分</td></tr><tr><td>提示中的金额与整条消息</td><td>字符串</td><td>金额需要两位小数，通知需要带单位</td></tr></tbody></table></div>
 <p>先约定收到的数量已经核对，报名人数在零到容量之间，票价为非负整数分。每人 12.50 元写成 1250 分，先用人数乘票价得到合计分数，再将 100 分换算为 1 元。算出来的元数和剩余分数一起组成金额文字。</p>
 
-<section class="playground" aria-label="Python 示例 19">
+<section class="playground" aria-label="Python 示例 20" data-draft="example-20-43bfebbf7c56">
   <div class="editor-bar">
-    <span><i></i> Python 示例 19</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <span><i></i> Python 示例 20</span>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 19 代码" rows="13"
-    spellcheck="false" autocapitalize="off" autocomplete="off">activity = &quot;博物馆参观&quot;
+  <textarea aria-label="Python 示例 20 代码" rows="13" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">activity = &quot;博物馆参观&quot;
 capacity = 30
 registered = 28
 ticket_cents = 1250
@@ -550,9 +611,10 @@ amount = f&quot;{yuan}.{cents:02d}&quot;
 message = f&quot;{activity}：剩余 {remaining} 个名额，门票合计 {amount} 元。&quot;
 print(message)</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>

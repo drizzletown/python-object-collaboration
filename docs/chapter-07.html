@@ -6,8 +6,8 @@
 <meta name="color-scheme" content="light">
 <meta name="description" content="以对象协作和假设三部曲为主线的 Python 编程教材。">
 <title>对象协作的可靠性 · Python 编程</title>
-<link rel="stylesheet" href="assets/style.css?v=c4cfd570a0ea">
-<script src="assets/site.js" defer></script>
+<link rel="stylesheet" href="assets/style.css?v=271b14c33aec">
+<script src="assets/site.js?v=3370553bec6f" defer></script>
 </head>
 <body class="">
 <a class="skip" href="#main">跳到正文</a>
@@ -44,14 +44,15 @@
 <p>当函数无法按约定交出结果时，可以用 <code>raise</code> 抛出异常。异常会沿调用链向外传播，直到遇到能处理它的 <code>except</code>。适合处理异常的位置通常知道下一步该怎么做，例如提示用户重新填写。</p>
 <div class="lesson-table"><table><thead><tr><th scope="col">部分</th><th scope="col">负责的工作</th></tr></thead><tbody><tr><td><code>try</code></td><td>放入可能发生预期异常的操作</td></tr><tr><td><code>except ValueError as error</code></td><td>处理指定类型的异常，并取得异常对象</td></tr><tr><td><code>else</code></td><td><code>try</code> 正常执行完毕后，继续使用结果</td></tr><tr><td><code>finally</code></td><td>在离开整个结构前执行收尾动作</td></tr></tbody></table></div>
 
-<section class="playground" aria-label="Python 示例 1">
+<section class="playground" aria-label="Python 示例 1" data-draft="example-1-4ce1f2fa17d2">
   <div class="editor-bar">
     <span><i></i> Python 示例 1</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 1 代码" rows="14"
-    spellcheck="false" autocapitalize="off" autocomplete="off">def parse_pages(text):
+  <textarea aria-label="Python 示例 1 代码" rows="14" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">def parse_pages(text):
     try:
         pages = int(text)
     except ValueError as error:
@@ -71,9 +72,10 @@ for raw in [&quot; 24 &quot;, &quot;二十四&quot;, &quot;0&quot;]:
     finally:
         print(&quot;本次检查结束&quot;)</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -83,14 +85,15 @@ for raw in [&quot; 24 &quot;, &quot;二十四&quot;, &quot;0&quot;]:
 <p><code>except</code> 可以选择一种异常，也可以用元组处理几种需要同样应对的异常。要对一类更具体的异常单独处理时，应把它写在能捕获它的基类之前。比如，读取文件时可以先处理 <code>FileNotFoundError</code>，再考虑范围更广的 <code>OSError</code>。</p>
 <p>领域中有需要专门处理的失败，也可以定义自己的异常类。下面的查找函数把字典的缺键转换成更容易理解的“缺少读数”，同时保留底层原因。</p>
 
-<section class="playground" aria-label="Python 示例 2">
+<section class="playground" aria-label="Python 示例 2" data-draft="example-2-a5409dc3aa29">
   <div class="editor-bar">
     <span><i></i> Python 示例 2</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 2 代码" rows="14"
-    spellcheck="false" autocapitalize="off" autocomplete="off">class MissingReading(LookupError):
+  <textarea aria-label="Python 示例 2 代码" rows="14" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">class MissingReading(LookupError):
     pass
 
 
@@ -109,9 +112,10 @@ except MissingReading as error:
 else:
     print(&quot;可用于计算的读数&quot;, value)</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -121,14 +125,15 @@ else:
 <h3>先检查，再更新</h3>
 <p>状态约束应该在构造和更新后都成立。下面的计量对象只接收一定范围内的整数。尝试无效更新时先报告问题，随后读取对象，可以得到失败前的合法状态。</p>
 
-<section class="playground" aria-label="Python 示例 3">
+<section class="playground" aria-label="Python 示例 3" data-draft="example-3-1c6db1d5a332">
   <div class="editor-bar">
     <span><i></i> Python 示例 3</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 3 代码" rows="14"
-    spellcheck="false" autocapitalize="off" autocomplete="off">class Gauge:
+  <textarea aria-label="Python 示例 3 代码" rows="14" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">class Gauge:
     def __init__(self, value):
         self.update(value)
 
@@ -145,9 +150,10 @@ except ValueError as error:
     print(&quot;更新失败&quot;, error)
 print(&quot;当前读数&quot;, gauge.value)</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -161,14 +167,15 @@ print(&quot;当前读数&quot;, gauge.value)</textarea>
 <p>不变式是每次有效操作前后都应成立的关系。一个只允许 0 到 100 的百分比值，在构造与更新后都应满足范围约束。<code>assert</code> 可检查开发时预期成立的内部条件。解释器以优化模式执行时可以省略 <code>assert</code>，所以外部输入的校验应写成显式的 <code>if</code> 和 <code>raise</code>。</p>
 <p>用例从可重复的初始状态出发，提供输入，再比较实际结果和预期结果。状态可能发生变化时，还要检查对象是否按契约更新。选择用例时可以先列出正常情况，再查看边界值、非法输入和操作失败后的状态。</p>
 
-<section class="playground" aria-label="Python 示例 4">
+<section class="playground" aria-label="Python 示例 4" data-draft="example-4-99372ec7d0ab">
   <div class="editor-bar">
     <span><i></i> Python 示例 4</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 4 代码" rows="14"
-    spellcheck="false" autocapitalize="off" autocomplete="off">import unittest
+  <textarea aria-label="Python 示例 4 代码" rows="14" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">import unittest
 
 
 def percent(part, total):
@@ -190,9 +197,10 @@ class PercentTests(unittest.TestCase):
 suite = unittest.defaultTestLoader.loadTestsFromTestCase(PercentTests)
 unittest.TextTestRunner().run(suite)</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -201,14 +209,15 @@ unittest.TextTestRunner().run(suite)</textarea>
 <h3>让每个用例得到自己的初始状态</h3>
 <p>测试可以把准备、执行和核对写成三个明确步骤。测试类中的 <code>setUp()</code> 在每个测试方法前执行，适合准备一份新对象。若同一个方法有几组相似输入，可以用 <code>subTest()</code> 标出当前输入，报告中会包含发生偏差的那一组。</p>
 
-<section class="playground" aria-label="Python 示例 5">
+<section class="playground" aria-label="Python 示例 5" data-draft="example-5-e08f178f6c08">
   <div class="editor-bar">
     <span><i></i> Python 示例 5</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 5 代码" rows="14"
-    spellcheck="false" autocapitalize="off" autocomplete="off">import unittest
+  <textarea aria-label="Python 示例 5 代码" rows="14" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">import unittest
 
 
 def reserve(available, requested):
@@ -239,9 +248,10 @@ class ReserveTests(unittest.TestCase):
 suite = unittest.defaultTestLoader.loadTestsFromTestCase(ReserveTests)
 unittest.TextTestRunner(verbosity=2).run(suite)</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -255,14 +265,15 @@ unittest.TextTestRunner(verbosity=2).run(suite)</textarea>
 <h3>沿调用链找最早可解释的偏差</h3>
 <p>例如，汇总函数调用读数转换，转换时收到“待测”。可以先读回溯末尾的异常信息，再向上追踪哪一层传入了这段文字。下面把回溯中的函数名提取出来，在网页里观察调用顺序。</p>
 
-<section class="playground" aria-label="Python 示例 6">
+<section class="playground" aria-label="Python 示例 6" data-draft="example-6-01e3dcef6e74">
   <div class="editor-bar">
     <span><i></i> Python 示例 6</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 6 代码" rows="14"
-    spellcheck="false" autocapitalize="off" autocomplete="off">from traceback import extract_tb
+  <textarea aria-label="Python 示例 6 代码" rows="14" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">from traceback import extract_tb
 
 
 def parse_reading(text):
@@ -281,9 +292,10 @@ except ValueError as error:
     print(&quot;错误说明&quot;, error)
     print(&quot;回溯中的调用&quot;, [frame.name for frame in extract_tb(error.__traceback__)])</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -292,14 +304,15 @@ except ValueError as error:
 <h3>用日志保留有用的运行信息</h3>
 <p>日志用来记录运行中的事件。应用入口可以设置格式和记录级别，各模块用 <code>logging.getLogger(__name__)</code> 取得日志器。<code>DEBUG</code> 用于诊断细节，<code>INFO</code> 记录正常进度，<code>WARNING</code> 提醒值得注意的情况，<code>ERROR</code> 记录无法完成的操作。</p>
 
-<section class="playground" aria-label="Python 示例 7">
+<section class="playground" aria-label="Python 示例 7" data-draft="example-7-eca5b5fd6806">
   <div class="editor-bar">
     <span><i></i> Python 示例 7</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 7 代码" rows="11"
-    spellcheck="false" autocapitalize="off" autocomplete="off">import logging
+  <textarea aria-label="Python 示例 7 代码" rows="11" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">import logging
 
 logging.basicConfig(level=logging.INFO, format=&quot;%(levelname)s %(message)s&quot;)
 logger = logging.getLogger(__name__)
@@ -311,9 +324,10 @@ logger.info(&quot;已汇总 %s 条有效记录&quot;, valid)
 if skipped:
     logger.warning(&quot;跳过 %s 条缺失记录&quot;, skipped)</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -322,16 +336,58 @@ if skipped:
 <p>输出给使用者的回执用于完成任务，诊断日志面向排查程序状态。可以在日志中记录操作、结果和数量。异常处理处需要记录回溯时，<code>logger.exception()</code> 可以附上正在处理的异常。日志可以帮助找到要重现的问题，修复后仍可用测试核对实际行为。</p>
 <h2 id="section-7">7.7 回到案例 为报名规则编写测试</h2>
 <p>把“容量文本能否转换为整数”留给创建活动的入口，把“容量是否非负”留给活动初始化。报名方法在收到有效文本后依次检查空白、重复和满员。每个测试使用独立的活动，验证回执以及报名方法对状态的影响。</p>
-<div class="lesson-table"><table><thead><tr><th scope="col">输入或情形</th><th scope="col">由谁检查</th><th scope="col">预期反馈</th></tr></thead><tbody><tr><td>容量是“一个”或负数</td><td>转换入口和活动初始化</td><td><code>ValueError</code></td></tr><tr><td>容量输入不是文本</td><td>转换入口</td><td><code>TypeError</code></td></tr><tr><td>学号不是字符串</td><td>登记方法</td><td><code>TypeError</code>，名单保持原样</td></tr><tr><td>学号为空白、重复或已满</td><td>登记方法</td><td>对应的业务回执，名单保持原样</td></tr><tr><td>两个活动收到同一学号</td><td>各活动维护自己的名单</td><td>两边可分别通过</td></tr></tbody></table></div>
+<h3>先写出一个能发现偏差的用例</h3>
+<p>下面的登记函数故意把满员检查放在前面。先保留这处问题，在 <code>verify_duplicate_when_full()</code> 里写两条检查。容量为 1、名单已含 S01 时，再提交 S01 应回执「重复」，名单仍应与提交前相同。先运行，看到回执检查失败后再调整判断顺序，重跑两条检查。</p>
 
-<section class="playground" aria-label="Python 示例 8">
+<section class="playground" aria-label="Python 示例 8" data-draft="registration-regression" id="registration-regression">
   <div class="editor-bar">
     <span><i></i> Python 示例 8</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 8 代码" rows="14"
-    spellcheck="false" autocapitalize="off" autocomplete="off">import unittest
+  <textarea aria-label="Python 示例 8 代码" rows="14" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">def register(student_id, roster, capacity):
+    if len(roster) &gt;= capacity:
+        return &quot;满员&quot;
+    if student_id in roster:
+        return &quot;重复&quot;
+    roster[student_id] = &quot;已报名&quot;
+    return &quot;通过&quot;
+
+
+def verify_duplicate_when_full():
+    roster = {&quot;S01&quot;: &quot;已报名&quot;}
+    before = roster.copy()
+    receipt = register(&quot;S01&quot;, roster, capacity=1)
+    # 在这里分别断言回执和名单。
+    raise NotImplementedError(&quot;请先写出两条检查&quot;)
+
+
+verify_duplicate_when_full()
+print(&quot;回执和名单检查通过&quot;)</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<details class='answer'><summary>参考解答</summary><p>可用 <code>assert receipt == &quot;重复&quot;, f&quot;实际回执为 {receipt}&quot;</code> 和 <code>assert roster == before, &quot;名单发生变化&quot;</code> 替换占位语句。第一次运行时，实际回执为“满员”。让重复判断先执行后，两条检查都会通过。</p></details>
+<h3>用多组请求检验完整活动对象</h3>
+<div class="lesson-table"><table><thead><tr><th scope="col">输入或情形</th><th scope="col">由谁检查</th><th scope="col">预期反馈</th></tr></thead><tbody><tr><td>容量是“一个”或负数</td><td>转换入口和活动初始化</td><td><code>ValueError</code></td></tr><tr><td>容量输入不是文本</td><td>转换入口</td><td><code>TypeError</code></td></tr><tr><td>学号不是字符串</td><td>登记方法</td><td><code>TypeError</code>，名单保持原样</td></tr><tr><td>学号为空白、重复或已满</td><td>登记方法</td><td>对应的业务回执，名单保持原样</td></tr><tr><td>两个活动收到同一学号</td><td>各活动维护自己的名单</td><td>两边可分别通过</td></tr></tbody></table></div>
+
+<section class="playground" aria-label="Python 示例 9" data-draft="example-9-dd0c078634f5">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 9</span>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
+  </div>
+  <textarea aria-label="Python 示例 9 代码" rows="14" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">import unittest
 
 
 class Activity:
@@ -414,15 +470,17 @@ class RegistrationTests(unittest.TestCase):
 suite = unittest.defaultTestLoader.loadTestsFromTestCase(RegistrationTests)
 unittest.TextTestRunner(verbosity=2).run(suite)</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
 
 <p>运行结果应显示 5 个测试通过。<code>subTest</code> 标出满员后分别收到的三个输入。读取报告时可以把用例名、输入和失败的断言连起来看。例如次序写错时，<code>test_rejections_leave_full_roster_unchanged</code> 会说明哪条请求的回执不对。</p>
 <p>把名单转成元组后再保存在 <code>before</code> 中，核对的是操作前的状态。如果只是把同一份可变字典绑定给两个名字，之后原地修改时两处都会看到变化，可能掩盖错误。这里用第 2 章的快照办法，让预期值独立于待检验的操作。报名数据要从文件恢复时，同样需要检查读取结果和失败后保留的状态。<a href="chapter-08.html">第 8 章 对象与外部环境的协作</a></p>
+<p>下一章会把“失败后仍能读到原内容”的预期写成检查，验证保存文件的步骤。<a href="chapter-08.html#file-regression">进入文件保存练习</a></p>
 <h2 id="section-8">练习</h2>
 <ul><li>调换 <code>register</code> 中的重复与满员判断，运行测试。找出报告中的输入、预期和实际回执，再恢复顺序。</li><li>在无效容量测试中增加 <code>create_activity(&quot;0&quot;)</code> 的检查。判断构造是否成功，再检查它收到新学号时的回执。</li><li>把 <code>Gauge.update()</code> 中的赋值移到检查之前。预测更新失败后打印的读数，再恢复先检查、后更新的顺序。</li><li>把日志示例的级别改成 <code>DEBUG</code> 和 <code>ERROR</code> 分别运行，比较显示的事件。</li></ul>
 <details class='answer'><summary>参考解答</summary><p>已满活动收到 S01 的子用例会失败，实际为“满员”，预期为“重复”。恢复顺序后，五个测试会重新通过。</p><p>文本 &quot;0&quot; 能转换成整数，非负校验通过，活动创建成功。新学号会得到“满员”，名单仍为空。</p><p>先赋值会使对象在异常后仍持有 130，暴露了部分更新。恢复顺序后，失败会保留 40。</p><p>DEBUG 显示诊断、正常进度和警告三条。ERROR 级别下，这组示例没有达到相应级别的事件。</p></details>

@@ -6,8 +6,8 @@
 <meta name="color-scheme" content="light">
 <meta name="description" content="以对象协作和假设三部曲为主线的 Python 编程教材。">
 <title>综合项目 递归假设驱动的程序构造 · Python 编程</title>
-<link rel="stylesheet" href="assets/style.css?v=c4cfd570a0ea">
-<script src="assets/site.js" defer></script>
+<link rel="stylesheet" href="assets/style.css?v=271b14c33aec">
+<script src="assets/site.js?v=3370553bec6f" defer></script>
 </head>
 <body class="">
 <a class="skip" href="#main">跳到正文</a>
@@ -37,14 +37,15 @@
 <p>假设三部曲中的“建立”要给出一项能力的输入和输出。“使用”要拿到假设承诺的结果，并说明结果推动了哪一步。“兑现”时可以自己实现、由合作者实现，或用现成的库完成。若某个实现又遇到难题，就把它当作子任务，在这个层次再次建立、使用和兑现假设。</p>
 <p>以一份气温摘要为例。先假设有一个读取函数能返回一组可用于计算的温度。摘要函数拿到数据，检查是否为空，再计算并呈现平均温度。早期用一组固定数据兑现读取约定，便可检验摘要。将来可交给另一个函数读取实际数据，并在读取函数中处理文件和校验。</p>
 
-<section class="playground" aria-label="Python 示例 1">
+<section class="playground" aria-label="Python 示例 1" data-draft="example-1-d029a1768f04">
   <div class="editor-bar">
     <span><i></i> Python 示例 1</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 1 代码" rows="14"
-    spellcheck="false" autocapitalize="off" autocomplete="off">def summarize(read_temperatures):
+  <textarea aria-label="Python 示例 1 代码" rows="14" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">def summarize(read_temperatures):
     values = read_temperatures()
     if not values:
         return &quot;没有可用读数&quot;
@@ -59,9 +60,10 @@ def sample_readings():
 print(summarize(sample_readings))
 print(summarize(list))</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -89,14 +91,15 @@ print(summarize(list))</textarea>
 <h3>用一个小实现观察读、改、存的次序</h3>
 <p>以追加一条读数为例。假设读取能力会交出一份独立列表，保存能力能接收更新后的列表。主流程用读到的列表追加读数，保存后再返回新的条数。调用者可以提供一个故意失败的保存函数，观察是否留下了任何更新。</p>
 
-<section class="playground" aria-label="Python 示例 2">
+<section class="playground" aria-label="Python 示例 2" data-draft="example-2-d4178289cb1f">
   <div class="editor-bar">
     <span><i></i> Python 示例 2</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 2 代码" rows="14"
-    spellcheck="false" autocapitalize="off" autocomplete="off">def record_reading(load, save, value):
+  <textarea aria-label="Python 示例 2 代码" rows="14" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">def record_reading(load, save, value):
     readings = load()
     readings.append(value)
     save(readings)
@@ -125,9 +128,10 @@ print(&quot;保存失败后的记录&quot;, current)
 print(&quot;保存成功后的条数&quot;, record_reading(load_snapshot, save_to_memory, 21))
 print(&quot;现在的记录&quot;, current)</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -158,7 +162,7 @@ print(&quot;现在的记录&quot;, current)</textarea>
 <div class="lesson-table"><table><thead><tr><th scope="col">操作</th><th scope="col">给主流程的保证</th><th scope="col">对状态的影响</th></tr></thead><tbody><tr><td><code>load()</code></td><td>取得可修改的独立活动快照</td><td>读取当前保存状态</td></tr><tr><td><code>save(activity)</code></td><td>正常返回表示已保存，失败时抛出异常</td><td>更新保存状态</td></tr><tr><td><code>submit(store, raw_id)</code></td><td>返回规则给出的回执，通过时已完成保存</td><td>只在登记通过时请求写入</td></tr></tbody></table></div>
 <p>如果只有空白、重复或满员回执，主流程直接交回业务结果。第一次收到空白时，存储虽然能交出一份初始活动，主流程仍无需创建文件。快照是否独立可先在内存版本验证，例如读取活动并在副本中登记一人，再次读取时应得到此前保存的名单。</p>
 <h3>用模拟器看清状态变化</h3>
-<p>在模拟器中把五条请求依次填为 <code>S01</code>、空行、<code>S02</code>、<code>S03</code>、<code>S01</code>，然后逐条执行。观察第 4 步和第 5 步的回执，以及它们对名单和余量的影响。</p>
+<p>模拟器已经填好五条请求。点击「执行下一条」，按下表核对回执和余量。第 2 行为空，最后一行再次提交 <code>S01</code>。</p>
 
 <section class="simulator" aria-labelledby="sim-title" hidden>
  <h3 id="sim-title">报名规则模拟器</h3>
@@ -166,10 +170,11 @@ print(&quot;现在的记录&quot;, current)</textarea>
  <form>
   <label>活动容量 <input name="capacity" type="number" value="2" min="0" max="99" required></label>
   <label>报名顺序（每行一个学号，空行视作空学号）
-   <textarea name="requests" rows="4">S01
+   <textarea name="requests" rows="5">S01
+
 S02
-S01
-S03</textarea>
+S03
+S01</textarea>
   </label>
   <div class="sim-actions">
    <button class="primary small" type="submit">执行下一条</button>
@@ -196,17 +201,101 @@ S03</textarea>
 <p>保存的数据只包含标题、容量和学号列表。剩余名额可以从容量和名单算出，读取时根据恢复后的实际记录计算即可。<code>save()</code> 完成后，另一个 <code>JsonStore</code> 指向同一路径，就能读取刚保存的数据。</p>
 <p>保存动作本身若失败，错误从 <code>save()</code> 经过 <code>submit()</code> 到入口。这样用户得到的是保存失败的原因。若输入属于满员或重复，流程连写入临时文件这一步都不会进入。两个结果有清楚的发生位置。</p>
 <h2 id="section-7">9.7 运行项目并对照验收条件</h2>
-<p>先在代码里找到 <code>submit</code>，看它在哪一步使用活动、在哪一步使用存储。点击运行，浏览器先执行演示，再执行项目自测。</p>
-<div class="lesson-table"><table><thead><tr><th scope="col">在代码中查找</th><th scope="col">阅读时验证什么</th></tr></thead><tbody><tr><td><code>Activity.register</code></td><td>检查顺序、更新时机和名单约束</td></tr><tr><td><code>Store</code>、<code>MemoryStore</code></td><td>读取快照和保存后的行为</td></tr><tr><td><code>activity_from_data</code>、<code>JsonStore</code></td><td>外部数据怎样通过校验，写入什么时候生效</td></tr><tr><td><code>submit</code></td><td>回执如何决定是否保存</td></tr><tr><td><code>demo</code>、<code>self_test</code></td><td>演示给人看什么，自测实际核对什么</td></tr><tr><td><code>main</code></td><td>怎样接收操作和报告错误</td></tr></tbody></table></div>
+<h3>独立交付余量查询</h3>
+<p>为报名系统实现 <code>remaining(store)</code>。它应交回一个整数，供显示或其他步骤使用。先根据下表写出函数，再运行验收。遇到困难时，可以先假设 <code>load()</code> 会交回一个活动，用这个对象设计查询。</p>
+<div class="lesson-table"><table><thead><tr><th scope="col">情形</th><th scope="col">预期余量</th><th scope="col">同时检查</th></tr></thead><tbody><tr><td>第一次查询，尚无名单文件</td><td>2</td><td>查询后仍无文件</td></tr><tr><td>登记 S01 后查询</td><td>1</td><td>保存的名单仍只有 S01，文件内容与查询前相同</td></tr><tr><td>再次提交 S01 后查询</td><td>1</td><td>回执为「重复」，名单和文件内容保持原样</td></tr></tbody></table></div>
 
-<section class="playground" aria-label="Python 示例 3">
+<section class="playground" aria-label="Python 示例 3" data-draft="remaining-task" id="remaining-task" data-campus>
   <div class="editor-bar">
     <span><i></i> Python 示例 3</span>
-    <div><a href="campus.py" download>下载 campus.py</a><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 3 代码" rows="18"
-    spellcheck="false" autocapitalize="off" autocomplete="off">&quot;&quot;&quot;校园活动报名项目。执行 python campus.py --help 查看命令。&quot;&quot;&quot;
+  <textarea aria-label="Python 示例 3 代码" rows="14" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">from pathlib import Path
+from tempfile import TemporaryDirectory
+from campus import JsonStore, submit
+
+
+def remaining(store):
+    # 返回当前活动的剩余名额。
+    raise NotImplementedError(&quot;请先实现 remaining()&quot;)
+
+
+with TemporaryDirectory() as folder:
+    path = Path(folder) / &quot;roster.json&quot;
+    store = JsonStore(path)
+    first = remaining(store)
+    assert first == 2, &quot;首次查询应有两个名额&quot;
+    assert not path.exists(), &quot;首次查询不应创建文件&quot;
+
+    assert submit(store, &quot;S01&quot;) == &quot;通过&quot;
+    before = path.read_text(encoding=&quot;utf-8&quot;)
+    after = remaining(store)
+    assert after == 1, &quot;登记后应剩一个名额&quot;
+    assert path.read_text(encoding=&quot;utf-8&quot;) == before, &quot;查询改变了文件内容&quot;
+
+    assert submit(store, &quot;S01&quot;) == &quot;重复&quot;
+    repeated = remaining(store)
+    assert repeated == 1, &quot;重复提交后余量应相同&quot;
+    assert store.load().students == (&quot;S01&quot;,), &quot;名单应只有 S01&quot;
+    assert path.read_text(encoding=&quot;utf-8&quot;) == before, &quot;原文件内容发生变化&quot;
+    print(&quot;初始、登记后、重复后的余量&quot;, first, after, repeated)
+    print(&quot;余量查询验收通过&quot;)</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<details class='answer'><summary>参考解答</summary><p>用 <code>activity = store.load()</code> 取得快照。容量在 <code>activity.capacity</code>，已报名学号在 <code>activity.students</code>。查询只需要读取这些数据。</p></details>
+<details class="answer project-source"><summary>查看完整实现</summary>
+<section class="playground" aria-label="Python 示例 4" data-draft="remaining-reference" id="remaining-reference" data-campus>
+  <div class="editor-bar">
+    <span><i></i> Python 示例 4</span>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
+  </div>
+  <textarea aria-label="Python 示例 4 代码" rows="12" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">from campus import Activity, MemoryStore, submit
+
+
+def remaining(store):
+    activity = store.load()
+    return activity.capacity - len(activity.students)
+
+
+store = MemoryStore(Activity(&quot;博物馆参观&quot;, 2))
+print(&quot;初始余量&quot;, remaining(store))
+print(&quot;报名回执&quot;, submit(store, &quot;S01&quot;))
+print(&quot;报名后余量&quot;, remaining(store))</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+</details>
+<h3>查阅完整的报名项目</h3>
+<p>展开项目源码，再点击运行。浏览器会先执行演示，再执行项目自测。可以从 <code>submit</code> 开始读，找出它在哪一步使用活动、在哪一步使用存储。</p>
+<div class="lesson-table"><table><thead><tr><th scope="col">在代码中查找</th><th scope="col">阅读时验证什么</th></tr></thead><tbody><tr><td><code>Activity.register</code></td><td>检查顺序、更新时机和名单约束</td></tr><tr><td><code>Store</code>、<code>MemoryStore</code></td><td>读取快照和保存后的行为</td></tr><tr><td><code>activity_from_data</code>、<code>JsonStore</code></td><td>外部数据怎样通过校验，写入什么时候生效</td></tr><tr><td><code>submit</code></td><td>回执如何决定是否保存</td></tr><tr><td><code>demo</code>、<code>self_test</code></td><td>演示给人看什么，自测实际核对什么</td></tr><tr><td><code>main</code></td><td>怎样接收操作和报告错误</td></tr></tbody></table></div>
+<details class="answer project-source"><summary>展开完整项目源码</summary>
+<section class="playground" aria-label="Python 示例 5" data-draft="campus-source" id="campus-source">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 5</span>
+    <div><a href="campus.py" download>下载 campus.py</a><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
+  </div>
+  <textarea aria-label="campus.py 代码" rows="18" wrap="off"
+    data-code-file="campus.py" spellcheck="false" autocapitalize="off" autocomplete="off">&quot;&quot;&quot;校园活动报名项目。执行 python campus.py --help 查看命令。&quot;&quot;&quot;
 import argparse
 from copy import deepcopy
 import json
@@ -406,21 +495,22 @@ if __name__ == &quot;__main__&quot;:
     else:
         raise SystemExit(main())</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
-
+</details>
 <p>应看到内存版和文件版给出相同的五条回执。演示重新构造一个 <code>JsonStore</code> 读取同一路径，应读到 <code>(&quot;S01&quot;, &quot;S02&quot;)</code>。自测通过后会显示“项目验收通过”，其中还检查了首次空白请求和读取坏文件的情形。每次点击运行都会创建独立的练习环境，重新打开文件的过程在一次运行内完成。</p>
-<p>入口 <code>main</code> 负责组织 <code>enroll</code> 和 <code>list</code> 两个操作。它把存储异常转换成清楚的错误消息，规则与读写各自由对应的对象完成。接下来若要增加通知，只需沿着入口和回执的边界找到可以接入的地方。</p>
+<p>入口 <code>main</code> 负责组织 <code>enroll</code> 和 <code>list</code> 两个操作。它把存储异常转换成清楚的错误消息，规则与读写各自由对应的对象完成。做完查询功能后，可以继续给回执增加一种通知方式。<a href="chapter-10.html#notifier-task">进入第 10 章的通知练习</a></p>
 <h3>从输出判断是哪一层出了偏差</h3>
 <p>如果内存版和文件版都在第 5 步回执“满员”，先检查活动规则中的判断顺序。如果内存结果正常，重读文件后名单顺序发生变化，重点检查数据转换和存储。如果读到坏数据却生成了空名单，检查 <code>load()</code> 是否把格式错误也当成了首次运行。</p>
 <p>只看“项目验收通过”还可以追问它覆盖了什么。自测包含快照独立、首次空请求、五条回执、重读和坏文件保持原样。若将来增加取消或候补，需要为新操作定义回执、保存条件与旧文件恢复方式，再把新场景加入自测。<a href="chapter-10.html">第 10 章 对象协作系统的复用与演化</a></p>
 <h2 id="section-8">练习</h2>
-<ul><li>在项目自测中，找到用于检查坏文件的 JSON 文本，加入一份标题为空的记录。预测读取失败后自测要核对什么。</li><li>把独立读数示例的 <code>load_snapshot()</code> 改成直接返回 <code>current</code>。预测保存失败后和下一次成功后各有多少条记录。</li><li>在模拟器中把容量改为 1，依次输入 S01、S02、S01。说明两条失败回执为什么不同。</li><li>设想要增加“查看余量”操作。写出它需要从存储拿到什么、怎样得到结果，以及是否需要请求保存。</li></ul>
-<details class='answer'><summary>参考解答</summary><p>可加入 &#x27;{&quot;title&quot;:&quot;&quot;,&quot;capacity&quot;:2,&quot;students&quot;:[]}&#x27;。初始化会报告标题非法。自测应核对读取失败且文件原文没有被覆盖。</p><p>直接返回 current 会让失败前的追加也进入已保存列表。失败后列表有两条记录，第二次又追加 21，保存后共有三条。</p><p>回执是“通过、满员、重复”。第三条的学号已登记，先触发重复规则。</p><p>查看余量时用 load() 取得活动快照，再用容量减去当前人数，交给入口显示。查询只读取状态。</p></details>
+<ul><li>在项目自测中，找到用于检查坏文件的 JSON 文本，加入一份标题为空的记录。预测读取失败后自测要核对什么。</li><li>把独立读数示例的 <code>load_snapshot()</code> 改成直接返回 <code>current</code>。预测保存失败后和下一次成功后各有多少条记录。</li><li>在模拟器中把容量改为 1，依次输入 S01、S02、S01。说明两条失败回执为什么不同。</li><li>扩展余量查询的验收，登记 S02 后再查一次。然后提交 S03，分别核对回执、余量和名单。</li></ul>
+<details class='answer'><summary>参考解答</summary><p>可加入 &#x27;{&quot;title&quot;:&quot;&quot;,&quot;capacity&quot;:2,&quot;students&quot;:[]}&#x27;。初始化会报告标题非法。自测应核对读取失败且文件原文没有被覆盖。</p><p>直接返回 current 会让失败前的追加也进入已保存列表。失败后列表有两条记录，第二次又追加 21，保存后共有三条。</p><p>回执是“通过、满员、重复”。第三条的学号已登记，先触发重复规则。</p><p>S02 登记通过，余量为 0。S03 得到“满员”，余量仍为 0，名单按次序保存 S01、S02。</p></details>
 <h2 id="section-9">本章自测</h2>
 
 <form class="quiz" data-correct="2">

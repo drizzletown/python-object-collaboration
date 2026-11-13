@@ -6,8 +6,8 @@
 <meta name="color-scheme" content="light">
 <meta name="description" content="以对象协作和假设三部曲为主线的 Python 编程教材。">
 <title>多对象协作与程序组织 · Python 编程</title>
-<link rel="stylesheet" href="assets/style.css?v=c4cfd570a0ea">
-<script src="assets/site.js" defer></script>
+<link rel="stylesheet" href="assets/style.css?v=271b14c33aec">
+<script src="assets/site.js?v=3370553bec6f" defer></script>
 </head>
 <body class="">
 <a class="skip" href="#main">跳到正文</a>
@@ -34,14 +34,15 @@
 <h2 id="section-2">6.2 组合对象与约定接口</h2>
 <p>当一个对象持有另一个对象并通过其公开操作完成一部分工作，就形成了对象组合。例如，一个补货检查器接收库存查询对象。它只需知道查询操作的名字、需要提供的参数、会交出的结果。创建检查器时把所需对象传进去，就可以让调用者选择它使用哪一份库存数据。</p>
 
-<section class="playground" aria-label="Python 示例 1">
+<section class="playground" aria-label="Python 示例 1" data-draft="example-1-e96157757584">
   <div class="editor-bar">
     <span><i></i> Python 示例 1</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 1 代码" rows="14"
-    spellcheck="false" autocapitalize="off" autocomplete="off">class Stock:
+  <textarea aria-label="Python 示例 1 代码" rows="14" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">class Stock:
     def __init__(self, quantities: dict[str, int]):
         self._quantities = dict(quantities)
 
@@ -67,9 +68,10 @@ check = ReorderCheck(Stock({&quot;P1&quot;: 0, &quot;P2&quot;: 8}), minimum=3)
 for code in [&quot;P1&quot;, &quot;P2&quot;, &quot;P3&quot;]:
     print(code, check.check(code))</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -82,14 +84,15 @@ for code in [&quot;P1&quot;, &quot;P2&quot;, &quot;P3&quot;]:
 <h3>构造时提供需要的对象</h3>
 <p>下面用很小的数据演示同一个控制器怎样换用不同的计数对象。两个控制器由调用处分别构造，所以可以验证不同初始状态。以后同一个计数器也可以用于其他任务。</p>
 
-<section class="playground" aria-label="Python 示例 2">
+<section class="playground" aria-label="Python 示例 2" data-draft="example-2-e7d49979b89b">
   <div class="editor-bar">
     <span><i></i> Python 示例 2</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 2 代码" rows="14"
-    spellcheck="false" autocapitalize="off" autocomplete="off">class Meter:
+  <textarea aria-label="Python 示例 2 代码" rows="14" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">class Meter:
     def __init__(self, total):
         self.total = total
 
@@ -111,9 +114,10 @@ at_boundary = ThresholdAlert(Meter(5), 5)
 print(&quot;低于阈值&quot;, normal.exceeded())
 print(&quot;刚好到阈值&quot;, at_boundary.exceeded())</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -126,14 +130,15 @@ print(&quot;刚好到阈值&quot;, at_boundary.exceeded())</textarea>
 <h3>标注描述类型，行为还要另外约定</h3>
 <p><code>list[str]</code> 表示列表中的每项应为字符串。<code>tuple[str, ...]</code> 表示长度可变的字符串元组。<code>A | B</code> 表示对象可以属于两种类型之一，常用于表示找到对象或交回 <code>None</code>。如果还要说明状态只能取几个指定文字，可以在文档里列出允许的值，也可以用 <code>typing.Literal</code> 表达给类型检查工具。</p>
 
-<section class="playground" aria-label="Python 示例 3">
+<section class="playground" aria-label="Python 示例 3" data-draft="example-3-ea68eb410dd0">
   <div class="editor-bar">
     <span><i></i> Python 示例 3</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 3 代码" rows="14"
-    spellcheck="false" autocapitalize="off" autocomplete="off">from typing import Literal
+  <textarea aria-label="Python 示例 3 代码" rows="14" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">from typing import Literal
 
 StockState = Literal[&quot;缺失&quot;, &quot;用完&quot;, &quot;可用&quot;]
 
@@ -149,9 +154,10 @@ print(describe(None))
 print(describe(0))
 print(describe(2))</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -160,14 +166,15 @@ print(describe(2))</textarea>
 <h3>把相关参数组成一条记录</h3>
 <p>一组字段经常一起传递时，可以定义记录类。<code>dataclasses.dataclass</code> 根据字段生成初始化、相等比较和便于查看的表示等方法。<code>frozen=True</code> 限制常规的字段重新赋值。例中的字段本身都是不可变对象，构造后可在不同组件间传递。</p>
 
-<section class="playground" aria-label="Python 示例 4">
+<section class="playground" aria-label="Python 示例 4" data-draft="example-4-c6521e4d2566">
   <div class="editor-bar">
     <span><i></i> Python 示例 4</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 4 代码" rows="14"
-    spellcheck="false" autocapitalize="off" autocomplete="off">from dataclasses import dataclass
+  <textarea aria-label="Python 示例 4 代码" rows="14" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">from dataclasses import dataclass
 
 
 @dataclass(frozen=True)
@@ -184,9 +191,10 @@ reading = Measurement(station=&quot;东站&quot;, value=21.5)
 print(display(reading))
 print(reading == Measurement(&quot;东站&quot;, 21.5))</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -195,14 +203,15 @@ print(reading == Measurement(&quot;东站&quot;, 21.5))</textarea>
 <h3>可变字段需要分别初始化</h3>
 <p>记录类还可以维护可变字段。使用 <code>field(default_factory=list)</code> 可以让每个实例在没有收到列表时取得一份新列表，和第 5 章在 <code>__init__</code> 中分别建立状态的原理相同。</p>
 
-<section class="playground" aria-label="Python 示例 5">
+<section class="playground" aria-label="Python 示例 5" data-draft="example-5-4b8d9fce07c6">
   <div class="editor-bar">
     <span><i></i> Python 示例 5</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 5 代码" rows="14"
-    spellcheck="false" autocapitalize="off" autocomplete="off">from dataclasses import dataclass, field
+  <textarea aria-label="Python 示例 5 代码" rows="14" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">from dataclasses import dataclass, field
 
 
 @dataclass
@@ -217,9 +226,10 @@ first.notes.append(&quot;核对温度&quot;)
 print(first)
 print(second)</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -229,22 +239,24 @@ print(second)</textarea>
 <h3>导入能力并管理名字</h3>
 <p>通常一个 <code>.py</code> 文件可以作为模块。每个模块有自己的名字空间，导入可将其中的能力引入当前模块。<code>import math</code> 引入模块名，调用时写 <code>math.sqrt(9)</code>。<code>from statistics import mean</code> 直接引入指定的函数名。</p>
 
-<section class="playground" aria-label="Python 示例 6">
+<section class="playground" aria-label="Python 示例 6" data-draft="example-6-587def10a0f4">
   <div class="editor-bar">
     <span><i></i> Python 示例 6</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 6 代码" rows="5"
-    spellcheck="false" autocapitalize="off" autocomplete="off">import math
+  <textarea aria-label="Python 示例 6 代码" rows="5" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">import math
 from statistics import mean
 
 print(math.sqrt(9))
 print(mean([18, 21, 24]))</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -253,14 +265,15 @@ print(mean([18, 21, 24]))</textarea>
 <h3>每种导入写法在当前模块建立什么名字</h3>
 <div class="lesson-table"><table><thead><tr><th scope="col">写法</th><th scope="col">本模块可用的名字</th><th scope="col">典型用法</th></tr></thead><tbody><tr><td><code>import statistics</code></td><td><code>statistics</code></td><td>用模块名标明能力的来源</td></tr><tr><td><code>import statistics as stats</code></td><td><code>stats</code></td><td>使用更短且明确的模块别名</td></tr><tr><td><code>from statistics import mean</code></td><td><code>mean</code></td><td>直接使用模块中的某个对象</td></tr><tr><td><code>from .readings import Measurement</code></td><td><code>Measurement</code></td><td>在包内从同包模块导入记录类</td></tr></tbody></table></div>
 
-<section class="playground" aria-label="Python 示例 7">
+<section class="playground" aria-label="Python 示例 7" data-draft="example-7-eaf477ceb96a">
   <div class="editor-bar">
     <span><i></i> Python 示例 7</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 7 代码" rows="7"
-    spellcheck="false" autocapitalize="off" autocomplete="off">import statistics
+  <textarea aria-label="Python 示例 7 代码" rows="7" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">import statistics
 import statistics as stats
 from math import sqrt as root
 
@@ -268,9 +281,10 @@ print(&quot;两处引用同一个模块&quot;, statistics is stats)
 print(&quot;模块名&quot;, stats.__name__)
 print(&quot;计算均值和平方根&quot;, stats.mean([3, 6, 9]), root(16))</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -278,14 +292,15 @@ print(&quot;计算均值和平方根&quot;, stats.mean([3, 6, 9]), root(16))</te
 <p>普通的重复导入会使用已加载的模块对象。若模块顶层立刻运行大量工作，第一次导入时就会触发这些行为。把构造、读文件或显示结果放进入口函数，可以先只导入定义来测试。</p>
 <h3>使用入口判断区分两种运行方式</h3>
 
-<section class="playground" aria-label="Python 示例 8">
+<section class="playground" aria-label="Python 示例 8" data-draft="example-8-d66dd2c15cda">
   <div class="editor-bar">
     <span><i></i> Python 示例 8</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 8 代码" rows="10"
-    spellcheck="false" autocapitalize="off" autocomplete="off">def make_message(label):
+  <textarea aria-label="Python 示例 8 代码" rows="10" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">def make_message(label):
     return f&quot;准备处理 {label}&quot;
 
 
@@ -296,9 +311,10 @@ def main():
 if __name__ == &quot;__main__&quot;:
     main()</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -331,22 +347,124 @@ weather/readings.py
 <p>模块的职责和对象的职责是不同层面。一个模块可以包含几个紧密配合的类和函数。先把接口设计清楚，再按照变化原因划分文件。例如调整摘要格式时，主要修改报告模块。增加一种读数来源时，可以在入口换用另一组对象。只要摘要收到的记录仍符合约定，已有的摘要测试仍可复用。</p>
 <h2 id="section-6">6.6 回到案例 组织多活动报名</h2>
 <div class="lesson-table"><table><thead><tr><th scope="col">角色</th><th scope="col">提供的能力</th><th scope="col">被谁使用</th></tr></thead><tbody><tr><td><code>Request</code></td><td>用两个字段记录活动编号与学号</td><td>入口和报名服务</td></tr><tr><td><code>Activity</code></td><td>按自己的规则登记，交出名单快照</td><td>报名服务和查询者</td></tr><tr><td><code>ActivityCatalog</code></td><td>按编号找到活动，缺失时交出 <code>None</code></td><td>报名服务</td></tr><tr><td><code>EnrollmentService</code></td><td>取得活动对象后请求登记，返回回执</td><td>入口和测试</td></tr><tr><td><code>main</code></td><td>构造对象、提交请求和呈现结果</td><td>程序入口</td></tr></tbody></table></div>
-<p>先假设目录会按编号交出活动对象。服务用查找的结果决定下一步，找到时调用活动的方法，未找到时返回相应回执。用字典实现目录后，服务可以直接使用这份实现。以下程序把各部分放在同一个示例中，便于在网页运行。</p>
+<p>先假设目录会按编号交出活动对象。服务用查找的结果决定下一步，找到时调用活动的方法，未找到时返回相应回执。用字典实现目录后，服务可以直接使用这份实现。</p>
 <pre class="listing">任务：受理多场活动的报名
     1. 输入：一条包含活动编号和学号的请求。
     2. 处理：用编号向目录查找活动。
         2.1 找到活动时，把学号交给该对象办理登记。
         2.2 查不到时，生成“活动不存在”的回执。
     3. 输出：交回回执，由入口呈现。</pre>
+<h3>在网页上接好三个模块</h3>
+<p>先打开 <code>enrollment/__main__.py</code> 看入口怎样构造对象。再编辑 <code>catalog.py</code> 的 <code>find()</code>，让它按编号交出活动或 <code>None</code>。最后在 <code>service.py</code> 的 <code>submit()</code> 中使用这个结果。点击「运行项目」会从 <code>__main__.py</code> 启动，并导入你编辑过的文件。</p>
+<p>前两条请求是同一学号分别报名，应各通过一次。接下来应依次得到「满员、活动不存在、重复」。验收会同时检查两份名单。</p>
 
-<section class="playground" aria-label="Python 示例 9">
+<section class="playground" aria-label="Python 示例 9" data-draft="workspace-enrollment" id="workspace-enrollment" data-module="enrollment">
   <div class="editor-bar">
     <span><i></i> Python 示例 9</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置当前文件</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 9 代码" rows="14"
-    spellcheck="false" autocapitalize="off" autocomplete="off">from dataclasses import dataclass
+  <label class="file-picker" hidden>编辑文件 <select data-file><option value="enrollment/__main__.py">enrollment/__main__.py</option><option value="enrollment/catalog.py">enrollment/catalog.py</option><option value="enrollment/service.py">enrollment/service.py</option><option value="enrollment/activity.py">enrollment/activity.py</option><option value="enrollment/__init__.py">enrollment/__init__.py</option></select></label>
+  <textarea aria-label="enrollment/__main__.py 代码" rows="14" wrap="off"
+    data-code-file="enrollment/__main__.py" spellcheck="false" autocapitalize="off" autocomplete="off">from .activity import Activity
+from .catalog import ActivityCatalog
+from .service import EnrollmentService, Request
+
+museum = Activity(&quot;博物馆&quot;, 2)
+lab = Activity(&quot;实验室&quot;, 1)
+catalog = ActivityCatalog({&quot;museum&quot;: museum, &quot;lab&quot;: lab})
+service = EnrollmentService(catalog)
+requests = [
+    Request(&quot;museum&quot;, &quot;S01&quot;),
+    Request(&quot;lab&quot;, &quot;S01&quot;),
+    Request(&quot;lab&quot;, &quot;S02&quot;),
+    Request(&quot;unknown&quot;, &quot;S03&quot;),
+    Request(&quot;lab&quot;, &quot;S01&quot;),
+]
+receipts = [service.submit(request) for request in requests]
+print(&quot;回执&quot;, receipts)
+print(&quot;两场活动的名单&quot;, museum.student_ids(), lab.student_ids())
+assert receipts == [&quot;通过&quot;, &quot;通过&quot;, &quot;满员&quot;, &quot;活动不存在&quot;, &quot;重复&quot;]
+assert museum.student_ids() == lab.student_ids() == (&quot;S01&quot;,)
+print(&quot;模块协作验收通过&quot;)</textarea>
+  <textarea aria-label="enrollment/catalog.py 代码" rows="10" wrap="off"
+    data-code-file="enrollment/catalog.py" spellcheck="false" autocapitalize="off" autocomplete="off">from .activity import Activity
+
+
+class ActivityCatalog:
+    def __init__(self, activities: dict[str, Activity]):
+        self._activities = dict(activities)
+
+    def find(self, activity_id: str) -&gt; Activity | None:
+        # 通过编号查活动。找不到时交出 None。
+        raise NotImplementedError(&quot;请在 catalog.py 中完成 find()&quot;)</textarea>
+  <textarea aria-label="enrollment/service.py 代码" rows="14" wrap="off"
+    data-code-file="enrollment/service.py" spellcheck="false" autocapitalize="off" autocomplete="off">from dataclasses import dataclass
+from .catalog import ActivityCatalog
+
+
+@dataclass(frozen=True)
+class Request:
+    activity_id: str
+    student_id: str
+
+
+class EnrollmentService:
+    def __init__(self, catalog: ActivityCatalog):
+        self._catalog = catalog
+
+    def submit(self, request: Request) -&gt; str:
+        # 向目录查询，再决定是否请活动登记学号。
+        raise NotImplementedError(&quot;请在 service.py 中完成 submit()&quot;)</textarea>
+  <textarea aria-label="enrollment/activity.py 代码" rows="14" wrap="off"
+    data-code-file="enrollment/activity.py" spellcheck="false" autocapitalize="off" autocomplete="off">class Activity:
+    def __init__(self, title: str, capacity: int):
+        if type(capacity) is not int or capacity &lt; 0:
+            raise ValueError(&quot;容量须为非负整数&quot;)
+        self.title = title
+        self._capacity = capacity
+        self._roster = {}
+
+    def register(self, raw_id: str) -&gt; str:
+        student_id = raw_id.strip()
+        if not student_id:
+            return &quot;空学号&quot;
+        if student_id in self._roster:
+            return &quot;重复&quot;
+        if len(self) &gt;= self._capacity:
+            return &quot;满员&quot;
+        self._roster[student_id] = &quot;已报名&quot;
+        return &quot;通过&quot;
+
+    def student_ids(self) -&gt; tuple[str, ...]:
+        return tuple(self._roster)
+
+    def __len__(self) -&gt; int:
+        return len(self._roster)</textarea>
+  <textarea aria-label="enrollment/__init__.py 代码" rows="3" wrap="off"
+    data-code-file="enrollment/__init__.py" spellcheck="false" autocapitalize="off" autocomplete="off"># 这里是 enrollment 包。</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" type="button" data-run>▶ 运行项目</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<details class='answer'><summary>参考解答</summary><p>目录可以用 <code>self._activities.get(activity_id)</code> 返回查找结果。服务先调用 <code>self._catalog.find(request.activity_id)</code>。得到 <code>None</code> 时交出「活动不存在」，否则把 <code>request.student_id</code> 交给活动的 <code>register()</code>，并使用它的回执。</p></details>
+<p>下面把各部分放在一起，便于对照接口和调用顺序。</p>
+<details class="answer project-source"><summary>查看完整实现</summary>
+<section class="playground" aria-label="Python 示例 10" data-draft="multi-activity-reference" id="multi-activity-reference">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 10</span>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
+  </div>
+  <textarea aria-label="Python 示例 10 代码" rows="14" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">from dataclasses import dataclass
 
 
 @dataclass(frozen=True)
@@ -422,13 +540,14 @@ def main() -&gt; None:
 if __name__ == &quot;__main__&quot;:
     main()</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
-
+</details>
 <p>回执依次是“通过、通过、满员、活动不存在、重复”。两场活动最终都只有 <code>S01</code>。目录复制了编号到活动的映射，映射里的值仍引用原来的活动实例，所以入口可以用 <code>museum.student_ids()</code> 看到服务完成的登记。服务用 <code>is None</code> 检查查找是否失败，长度为零的活动也会接收到它的第一条请求。</p>
 <p>程序增长后，可以把 <code>Activity</code> 放在 <code>activity.py</code>，把目录放在 <code>catalog.py</code>，把请求和服务放在 <code>service.py</code>，把构造与显示放在 <code>__main__.py</code>。入口导入前三者，服务导入目录，目录导入活动。沿这条方向，活动类始终可以独立用于另一个程序。</p>
 <h3>跟踪请求并验证职责边界</h3>
@@ -437,6 +556,7 @@ if __name__ == &quot;__main__&quot;:
 <h3>从网页中的单文件拆出包</h3>
 <div class="lesson-table"><table><thead><tr><th scope="col">文件</th><th scope="col">放入的定义</th><th scope="col">需要导入的能力</th></tr></thead><tbody><tr><td><code>activity.py</code></td><td><code>Activity</code></td><td>活动规则在本模块内处理</td></tr><tr><td><code>catalog.py</code></td><td><code>ActivityCatalog</code></td><td><code>from .activity import Activity</code></td></tr><tr><td><code>service.py</code></td><td><code>Request</code>、<code>EnrollmentService</code></td><td><code>dataclass</code> 和同包的 <code>ActivityCatalog</code></td></tr><tr><td><code>__main__.py</code></td><td><code>main</code> 和入口调用</td><td>从前三个模块取得类，构造并连接它们</td></tr></tbody></table></div>
 <p>单文件示例可以先验证角色之间的约定。把类按上表分开时，类内的业务判断可以保持原样，入口仍用同一批请求核对回执和名单。第 7 章会把这些预期写进可重复执行的测试。<a href="chapter-07.html">第 7 章 对象协作的可靠性</a></p>
+<p>完成多文件练习后，试着把 <code>is None</code> 改为 <code>not activity</code>。看第一次请求为什么进不了活动，再恢复判断。第 7 章会用一个更小的例子练习写出这样的检查。<a href="chapter-07.html#registration-regression">进入失败用例练习</a></p>
 <h2 id="section-7">练习</h2>
 <ul><li>把 <code>main</code> 中的目录换成只包含 <code>lab</code> 的目录，保留原请求。预测前两条回执和两场活动的名单。</li><li>将 <code>activity is None</code> 改成 <code>not activity</code>，观察最初的空活动能否接受第一条请求，再恢复原判断。</li><li>为 <code>Draft</code> 创建第三个实例，给它增加一条备注。预测另外两个实例的备注。</li><li>如果要把回执改成另一种显示格式，指出应改动哪个角色。若要按另一套编号查找活动，再指出应改动哪个角色。</li></ul>
 <details class='answer'><summary>参考解答</summary><p>第一条回执变为“活动不存在”。第二条仍然“通过”。博物馆实例仍存在，目录无法按 museum 找到它，因此名单为空。实验室的名单为 (&quot;S01&quot;,)。</p><p><code>not activity</code> 会把长度为零的活动判为假。首次登记无法发生，两场活动都保持为空。</p><p>第三个 Draft 用工厂取得新列表。第一份仍有“核对温度”，第二份仍为空。</p><p>显示格式由入口或专门的显示组件处理。查找规则由目录处理，服务仍通过 find 取得活动。</p></details>

@@ -6,8 +6,8 @@
 <meta name="color-scheme" content="light">
 <meta name="description" content="以对象协作和假设三部曲为主线的 Python 编程教材。">
 <title>对象协作系统的复用与演化 · Python 编程</title>
-<link rel="stylesheet" href="assets/style.css?v=c4cfd570a0ea">
-<script src="assets/site.js" defer></script>
+<link rel="stylesheet" href="assets/style.css?v=271b14c33aec">
+<script src="assets/site.js?v=3370553bec6f" defer></script>
 </head>
 <body class="">
 <a class="skip" href="#main">跳到正文</a>
@@ -35,14 +35,15 @@
 <h3>通过组合选择要使用的对象</h3>
 <p>当一项工作的一部分有多种实现，可以把这个能力交给单独的对象。下面的报告函数只需要一个能够接收字符串的输出端。输出端可以显示文字，也可以保存文字供后续使用。</p>
 
-<section class="playground" aria-label="Python 示例 1">
+<section class="playground" aria-label="Python 示例 1" data-draft="example-1-f90ed8782b00">
   <div class="editor-bar">
     <span><i></i> Python 示例 1</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 1 代码" rows="14"
-    spellcheck="false" autocapitalize="off" autocomplete="off">from typing import Protocol
+  <textarea aria-label="Python 示例 1 代码" rows="14" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">from typing import Protocol
 
 
 class TextSink(Protocol):
@@ -72,9 +73,10 @@ buffer = Buffer()
 report(18.0, buffer)
 print(buffer.lines)</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -87,14 +89,15 @@ print(buffer.lines)</textarea>
 <h3>组合已有能力形成新的行为</h3>
 <p>假设数据显示时需要加一个前缀，核心数据仍应交给原有的输出端。可以用一个对象保存下游的输出能力，在转发前处理文字。调用者仍按相同的 <code>write()</code> 接口工作。</p>
 
-<section class="playground" aria-label="Python 示例 2">
+<section class="playground" aria-label="Python 示例 2" data-draft="example-2-7e9167975d3c">
   <div class="editor-bar">
     <span><i></i> Python 示例 2</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 2 代码" rows="14"
-    spellcheck="false" autocapitalize="off" autocomplete="off">class Buffer:
+  <textarea aria-label="Python 示例 2 代码" rows="14" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">class Buffer:
     def __init__(self):
         self.lines = []
 
@@ -116,9 +119,10 @@ output = PrefixSink(&quot;上午 · &quot;, buffer)
 output.write(&quot;测量完成&quot;)
 print(buffer.lines)</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -128,14 +132,15 @@ print(buffer.lines)</textarea>
 <h3>用继承复用共同的实现</h3>
 <p>子类可以继承基类的方法，也可以重写部分行为。例如，一个标题的标准格式保持一致，某类标题还需要加编号。</p>
 
-<section class="playground" aria-label="Python 示例 3">
+<section class="playground" aria-label="Python 示例 3" data-draft="example-3-d472889a1ee1">
   <div class="editor-bar">
     <span><i></i> Python 示例 3</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 3 代码" rows="14"
-    spellcheck="false" autocapitalize="off" autocomplete="off">class Heading:
+  <textarea aria-label="Python 示例 3 代码" rows="14" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">class Heading:
     def __init__(self, title):
         self.title = title
 
@@ -155,9 +160,10 @@ class NumberedHeading(Heading):
 for heading in [Heading(&quot;目录&quot;), NumberedHeading(&quot;观察结果&quot;, 2)]:
     print(heading.render())</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -169,14 +175,15 @@ for heading in [Heading(&quot;目录&quot;), NumberedHeading(&quot;观察结果&
 <h2 id="section-4">10.4 用装饰器复用函数外围的行为</h2>
 <p>装饰器接收一个函数并交出替代对象。写在定义上方的 <code>@report_call</code>，相当于函数定义后用 <code>report_call</code> 处理它，再把结果绑定回原函数名。记录日志、统计耗时等重复工作可放进包装函数。</p>
 
-<section class="playground" aria-label="Python 示例 4">
+<section class="playground" aria-label="Python 示例 4" data-draft="example-4-6a7c80e80715">
   <div class="editor-bar">
     <span><i></i> Python 示例 4</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 4 代码" rows="14"
-    spellcheck="false" autocapitalize="off" autocomplete="off">from functools import wraps
+  <textarea aria-label="Python 示例 4 代码" rows="14" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">from functools import wraps
 
 
 def report_call(function):
@@ -197,9 +204,10 @@ def rectangle_area(width, height):
 print(rectangle_area(3, height=4))
 print(rectangle_area.__name__)</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -208,14 +216,15 @@ print(rectangle_area.__name__)</textarea>
 <h3>装饰发生在定义时，包装发生在调用时</h3>
 <p>执行函数定义时，Python 会用装饰器处理函数对象。以后调用该名字时，执行的是包装后的函数。需要给包装行为提供额外参数时，可以先创建装饰器，再用它接收函数。</p>
 
-<section class="playground" aria-label="Python 示例 5">
+<section class="playground" aria-label="Python 示例 5" data-draft="example-5-47d039055aed">
   <div class="editor-bar">
     <span><i></i> Python 示例 5</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 5 代码" rows="14"
-    spellcheck="false" autocapitalize="off" autocomplete="off">from functools import wraps
+  <textarea aria-label="Python 示例 5 代码" rows="14" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">from functools import wraps
 
 
 def report_as(label):
@@ -238,9 +247,10 @@ def to_centimeters(meters):
 
 print(&quot;用于后续计算&quot;, to_centimeters(1.25) + 25)</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -249,14 +259,15 @@ print(&quot;用于后续计算&quot;, to_centimeters(1.25) + 25)</textarea>
 <h2 id="section-5">10.5 用迭代协议和泛型复用遍历能力</h2>
 <p>第 3 章已经通过 <code>iter</code> 和 <code>next</code> 观察过迭代。自定义对象可以通过 <code>__iter__</code> 交出迭代器，使 <code>for</code> 和 <code>list()</code> 等通用操作能够使用它。迭代器通过 <code>__next__</code> 取得下一项，耗尽时抛出 <code>StopIteration</code>。</p>
 
-<section class="playground" aria-label="Python 示例 6">
+<section class="playground" aria-label="Python 示例 6" data-draft="example-6-a4961f2a1236">
   <div class="editor-bar">
     <span><i></i> Python 示例 6</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 6 代码" rows="14"
-    spellcheck="false" autocapitalize="off" autocomplete="off">from collections.abc import Iterable
+  <textarea aria-label="Python 示例 6 代码" rows="14" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">from collections.abc import Iterable
 from typing import TypeVar
 
 
@@ -280,9 +291,10 @@ print(first(Readings([18, 20])))
 print(list(Readings([18, 20])))
 print(first([]))</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -291,14 +303,15 @@ print(first([]))</textarea>
 <h3>迭代对象和迭代器可以分工</h3>
 <p>一个可迭代对象可以为每次遍历交出新的迭代器。迭代器自己记住当前的位置，<code>iter(iterator)</code> 返回它自身。下面显式实现读取位置和结束条件，再对同一批数据取得两个迭代器。</p>
 
-<section class="playground" aria-label="Python 示例 7">
+<section class="playground" aria-label="Python 示例 7" data-draft="example-7-3f9d438e2381">
   <div class="editor-bar">
     <span><i></i> Python 示例 7</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 7 代码" rows="14"
-    spellcheck="false" autocapitalize="off" autocomplete="off">class ReadingCursor:
+  <textarea aria-label="Python 示例 7 代码" rows="14" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">class ReadingCursor:
     def __init__(self, values):
         self._values = values
         self._position = 0
@@ -330,9 +343,10 @@ print(&quot;第一个剩下&quot;, list(first))
 print(&quot;第一个耗尽&quot;, list(first))
 print(&quot;再次遍历序列&quot;, list(series))</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -341,14 +355,15 @@ print(&quot;再次遍历序列&quot;, list(series))</textarea>
 <h3>泛型把不同位置的类型关系写出来</h3>
 <p><code>Iterable[T]</code> 表示可逐项取得 <code>T</code> 类型的值。使用同一个 <code>T</code> 可以让函数的返回值和输入建立联系。类也可以用类型变量描述自己保存和交出的值。</p>
 
-<section class="playground" aria-label="Python 示例 8">
+<section class="playground" aria-label="Python 示例 8" data-draft="example-8-6fc7e95bb4b9">
   <div class="editor-bar">
     <span><i></i> Python 示例 8</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 8 代码" rows="14"
-    spellcheck="false" autocapitalize="off" autocomplete="off">from typing import Generic, TypeVar
+  <textarea aria-label="Python 示例 8 代码" rows="14" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">from typing import Generic, TypeVar
 
 
 T = TypeVar(&quot;T&quot;)
@@ -366,9 +381,10 @@ title = Box(&quot;东站&quot;)
 print(&quot;可用于计算&quot;, count.get() + 2)
 print(&quot;可用于拼接&quot;, title.get() + &quot;读数&quot;)</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -379,14 +395,15 @@ print(&quot;可用于拼接&quot;, title.get() + &quot;读数&quot;)</textarea>
 <div class="lesson-table"><table><thead><tr><th scope="col">表达方式</th><th scope="col">执行含义</th></tr></thead><tbody><tr><td>调用异步函数</td><td>创建协程对象，准备工作</td></tr><tr><td><code>await operation()</code></td><td>等待该协程完成后继续本层步骤</td></tr><tr><td>逐个写 <code>await</code></td><td>前一项完成后才开始等待下一项</td></tr><tr><td><code>await asyncio.gather(a(), b())</code></td><td>让事件循环推进多个可并发等待的协程</td></tr></tbody></table></div>
 <p>若后一项依赖前一项的结果，逐项等待能表达这个依赖。若两个结果来自互相独立的来源，可以一起等待。下面观察各自完成的时刻，再观察汇总的结果顺序。</p>
 
-<section class="playground" aria-label="Python 示例 9">
+<section class="playground" aria-label="Python 示例 9" data-draft="example-9-7f2c3b4489e5">
   <div class="editor-bar">
     <span><i></i> Python 示例 9</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 9 代码" rows="14"
-    spellcheck="false" autocapitalize="off" autocomplete="off">import asyncio
+  <textarea aria-label="Python 示例 9 代码" rows="14" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">import asyncio
 import sys
 
 
@@ -409,9 +426,10 @@ if sys.platform == &quot;emscripten&quot;:
 else:
     asyncio.run(main())</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -420,14 +438,15 @@ else:
 <h3>为每个结果保留超时状态</h3>
 <p>多个等待任务中，有的可能按时完成，有的可能超时。可以把超时处理放到单项任务内部，让它交出明确的状态，再将各项结果汇总。这里用 <code>asyncio.wait_for()</code> 为每个模拟读取设置等待期限。</p>
 
-<section class="playground" aria-label="Python 示例 10">
+<section class="playground" aria-label="Python 示例 10" data-draft="example-10-850a946b4a50">
   <div class="editor-bar">
     <span><i></i> Python 示例 10</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 10 代码" rows="14"
-    spellcheck="false" autocapitalize="off" autocomplete="off">import asyncio
+  <textarea aria-label="Python 示例 10 代码" rows="14" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">import asyncio
 import sys
 
 
@@ -458,9 +477,10 @@ if sys.platform == &quot;emscripten&quot;:
 else:
     asyncio.run(main())</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -470,19 +490,119 @@ else:
 <p>第 9 章的 <code>submit</code> 在报名保存成功后返回回执。新增的 <code>submit_and_notify</code> 先取得这一回执，再交给提供 <code>send(message)</code> 的通知对象。存储异常会沿调用链传播。通知对象报告已知的发送故障时，调用者会同时取得报名回执和“通知待处理”。</p>
 <div class="lesson-table"><table><thead><tr><th scope="col">要替换的对象或能力</th><th scope="col">负责的工作</th><th scope="col">核对方式</th></tr></thead><tbody><tr><td>第 9 章的报名能力</td><td>检查规则，必要时完成保存，再交出回执</td><td>用同一批请求核对回执和名单</td></tr><tr><td>终端通知</td><td>把回执写到输出</td><td>查看五条回执</td></tr><tr><td>内存通知</td><td>按次序保留收到的文字</td><td>比较消息列表</td></tr><tr><td>模拟故障的通知</td><td>报告预期的发送异常</td><td>核对报名已经保存，通知待处理</td></tr><tr><td>模拟故障的存储</td><td>报告保存异常</td><td>核对没有生成通知，保存状态未更新</td></tr></tbody></table></div>
 <p>协调函数用 <code>Callable[[str], str]</code> 说明它需要一个接收学号并交出回执的可调用对象。这里用 <code>partial(submit, store)</code> 固定原来函数的存储参数。网页示例加载第 9 章同一份项目代码，报名规则和文件格式由那个项目定义。</p>
+<h3>交付带活动名称的通知</h3>
+<p>实现 <code>PrefixNotifier.send()</code>，给每条回执加上活动名称，再交给已有的通知对象。先写出 <code>S01：通过</code> 应如何显示，再运行。遇到发送异常时，协调函数还要能给出「通知待处理」，并保留已登记的学号。</p>
+<div class="lesson-table"><table><thead><tr><th scope="col">验收情形</th><th scope="col">预期结果</th></tr></thead><tbody><tr><td>同一批五条请求</td><td>回执和名单与第 9 章相同，每条通知都带活动名称</td></tr><tr><td>通知对象报告发送故障</td><td>报名通过，通知待处理，名单仍有 S01</td></tr><tr><td>存储对象报告保存故障</td><td>失败交给调用者，名单为空，通知列表为空</td></tr></tbody></table></div>
 
-<section class="playground" aria-label="Python 示例 11">
+<section class="playground" aria-label="Python 示例 11" data-draft="notifier-task" id="notifier-task" data-campus>
   <div class="editor-bar">
     <span><i></i> Python 示例 11</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 11 代码" rows="14"
-    spellcheck="false" autocapitalize="off" autocomplete="off">import asyncio
+  <textarea aria-label="Python 示例 11 代码" rows="14" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">from campus import Activity, MemoryStore, submit
+
+
+class NoticeError(Exception):
+    pass
+
+
+class RecordingNotifier:
+    def __init__(self):
+        self.messages = []
+
+    def send(self, message):
+        self.messages.append(message)
+
+
+class PrefixNotifier:
+    def __init__(self, title, target):
+        self.title = title
+        self.target = target
+
+    def send(self, message):
+        # 加上活动名称和空格，再转交通知。
+        raise NotImplementedError(&quot;请先完成 PrefixNotifier.send()&quot;)
+
+
+def submit_and_notify(store, raw_id, notifier):
+    receipt = submit(store, raw_id)
+    student = raw_id.strip() or &quot;（空白）&quot;
+    try:
+        notifier.send(f&quot;{student}：{receipt}&quot;)
+    except NoticeError:
+        return receipt, &quot;通知待处理&quot;
+    return receipt, &quot;已通知&quot;
+
+
+requests = [&quot;S01&quot;, &quot; &quot;, &quot;S02&quot;, &quot;S03&quot;, &quot;S01&quot;]
+receipts = [&quot;通过&quot;, &quot;空学号&quot;, &quot;通过&quot;, &quot;满员&quot;, &quot;重复&quot;]
+store = MemoryStore(Activity(&quot;博物馆&quot;, 2))
+recording = RecordingNotifier()
+notifier = PrefixNotifier(&quot;博物馆&quot;, recording)
+outcomes = [submit_and_notify(store, raw, notifier) for raw in requests]
+assert outcomes == [(receipt, &quot;已通知&quot;) for receipt in receipts]
+assert store.load().students == (&quot;S01&quot;, &quot;S02&quot;)
+assert recording.messages == [
+    &quot;博物馆 S01：通过&quot;, &quot;博物馆 （空白）：空学号&quot;, &quot;博物馆 S02：通过&quot;,
+    &quot;博物馆 S03：满员&quot;, &quot;博物馆 S01：重复&quot;,
+]
+print(&quot;带活动名的通知&quot;, recording.messages)
+
+
+class FailingNotifier:
+    def send(self, message):
+        raise NoticeError(&quot;通知暂时不可用&quot;)
+
+
+store = MemoryStore(Activity(&quot;博物馆&quot;, 2))
+notifier = PrefixNotifier(&quot;博物馆&quot;, FailingNotifier())
+assert submit_and_notify(store, &quot;S01&quot;, notifier) == (&quot;通过&quot;, &quot;通知待处理&quot;)
+assert store.load().students == (&quot;S01&quot;,)
+print(&quot;通知故障时保留已保存名单&quot;)
+
+
+class ReadOnlyStore(MemoryStore):
+    def save(self, activity):
+        raise OSError(&quot;存储不可写&quot;)
+
+
+store = ReadOnlyStore(Activity(&quot;博物馆&quot;, 2))
+recording = RecordingNotifier()
+try:
+    submit_and_notify(store, &quot;S01&quot;, PrefixNotifier(&quot;博物馆&quot;, recording))
+except OSError:
+    assert store.load().students == ()
+    assert recording.messages == []
+else:
+    raise AssertionError(&quot;应报告保存失败&quot;)
+print(&quot;保存故障时未发送通知&quot;)
+print(&quot;通知扩展验收通过&quot;)</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<details class='answer'><summary>参考解答</summary><p>在 <code>send()</code> 中生成带活动名的文字，再调用 <code>self.target.send(...)</code>。目标对象报告发送故障时，异常会传到上层的 <code>submit_and_notify()</code>，由它交出两个状态。</p></details>
+<h3>对照协议和完整实现</h3>
+<details class="answer project-source"><summary>查看完整实现</summary>
+<section class="playground" aria-label="Python 示例 12" data-draft="notifier-reference" id="notifier-reference" data-campus>
+  <div class="editor-bar">
+    <span><i></i> Python 示例 12</span>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
+  </div>
+  <textarea aria-label="Python 示例 12 代码" rows="14" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">from campus import Activity, MemoryStore, submit
 from collections.abc import Callable
 from functools import partial
-from pathlib import Path
-import sys
 from typing import Protocol
 
 
@@ -508,6 +628,15 @@ class RecordingNotifier:
         self.messages.append(message)
 
 
+class PrefixNotifier:
+    def __init__(self, title: str, target: Notifier):
+        self.title = title
+        self.target = target
+
+    def send(self, message: str) -&gt; None:
+        self.target.send(f&quot;{self.title} {message}&quot;)
+
+
 class FailingNotifier:
     def send(self, message: str) -&gt; None:
         raise NoticeError(&quot;通知暂时不可用&quot;)
@@ -526,8 +655,6 @@ def submit_and_notify(
 
 
 def verify() -&gt; None:
-    from campus import Activity, MemoryStore, submit
-
     requests = [&quot; S01 &quot;, &quot; &quot;, &quot;S02&quot;, &quot;S03&quot;, &quot;S01&quot;]
     expected = [&quot;通过&quot;, &quot;空学号&quot;, &quot;通过&quot;, &quot;满员&quot;, &quot;重复&quot;]
 
@@ -540,9 +667,10 @@ def verify() -&gt; None:
 
     verify_channel(ConsoleNotifier())
     recording = RecordingNotifier()
-    verify_channel(recording)
+    verify_channel(PrefixNotifier(&quot;博物馆&quot;, recording))
     assert recording.messages == [
-        &quot;S01：通过&quot;, &quot;（空白）：空学号&quot;, &quot;S02：通过&quot;, &quot;S03：满员&quot;, &quot;S01：重复&quot;
+        &quot;博物馆 S01：通过&quot;, &quot;博物馆 （空白）：空学号&quot;, &quot;博物馆 S02：通过&quot;,
+        &quot;博物馆 S03：满员&quot;, &quot;博物馆 S01：重复&quot;,
     ]
     print(&quot;内存通知&quot;, recording.messages)
 
@@ -569,36 +697,23 @@ def verify() -&gt; None:
     print(&quot;扩展验收通过&quot;)
 
 
-async def run_on_web() -&gt; None:
-    # 网页从教材网站加载第 9 章的项目文件。
-    from pyodide.http import pyfetch
-
-    response = await pyfetch(&quot;../campus.py&quot;)
-    response.raise_for_status()
-    Path(&quot;campus.py&quot;).write_bytes(await response.bytes())
-    sys.path.insert(0, str(Path.cwd()))
-    verify()
-
-
-if sys.platform == &quot;emscripten&quot;:
-    __lesson_task__ = asyncio.ensure_future(run_on_web())
-else:
-    verify()</textarea>
+verify()</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
-
+</details>
 <h3>沿完成状态决定下一步</h3>
-<p>运行时会看到终端和内存两种通知收到相同的五条回执。两次的最终名单都为 <code>(&quot;S01&quot;, &quot;S02&quot;)</code>。模拟通知故障时，名单中已包含 S01，应该按原回执补发通知。模拟保存故障时，存储里还没有这次报名，也没有形成可以发送的回执，应先处理存储错误。</p>
+<p>终端和内存两种通知收到相同顺序的回执。内存通知额外记录活动名称，两次的最终名单都为 <code>(&quot;S01&quot;, &quot;S02&quot;)</code>。模拟通知故障时，名单中已包含 S01，可以按原回执补发。模拟保存故障时，应先处理存储错误。</p>
 <div class="lesson-table"><table><thead><tr><th scope="col">观察到的情况</th><th scope="col">已完成的状态</th><th scope="col">之后可以做什么</th></tr></thead><tbody><tr><td>报名通过，已通知</td><td>报名已保存，通知完成</td><td>正常查阅回执</td></tr><tr><td>报名通过，通知待处理</td><td>报名已保存</td><td>以原回执补发</td></tr><tr><td>保存失败</td><td>未提交新的报名状态</td><td>存储恢复后再提交报名</td></tr></tbody></table></div>
 <p>把原有用例保留到扩展之后，能检查代码是否仍按约定给出回执和状态。如果以后要引入多个可并发的通知渠道，可以在取得同一条回执之后组织它们，各自记录结果。这样每项通知的失败都有对应的处理位置。</p>
 <h2 id="section-8">练习</h2>
-<ul><li>定义 <code>PrefixNotifier</code>，接收活动名称和另一个通知对象。将它与 <code>RecordingNotifier</code> 组合后用于 <code>verify_channel</code>，核对消息前缀以及原来的报名检查。</li><li>修改 <code>ReadingCursor</code> 的示例，在消耗完第一个游标后再读取第二个游标，预测第二个剩下几项。</li><li>调整超时示例，让西站也立即给出读数，核对两个任务的状态以及结果顺序。</li><li>模拟通知失败后，将本次生成的“S01：通过”交给新的通知对象。说明为什么重复提交报名会得到不同的回执。</li></ul>
-<details class='answer'><summary>参考解答</summary><p>在初始化时保存 prefix 与 downstream，在 send 中调用 self.downstream.send(f&quot;{self.prefix} {message}&quot;)。把 PrefixNotifier(&quot;博物馆&quot;, recording) 交给 verify_channel，并在消息的预期值中加上前缀。第一条通知应是“博物馆 S01：通过”，回执与名单检查仍使用原来的预期值。</p><p>第二个游标只取走了第一项，仍能交出 20 和 22。</p><p>西站延迟为 0 时，两项均完成。gather 仍按传入的次序交出东站、西站。</p><p>补发时可以调用 recording.send(&quot;S01：通过&quot;)。重新提交 S01 会读取已保存名单，从而返回“重复”。</p></details>
+<ul><li>把通知的活动名改成「实验室」，先写出应收到的新文案。更新文案验收，再核对原来的回执和名单。</li><li>修改 <code>ReadingCursor</code> 的示例，在消耗完第一个游标后再读取第二个游标，预测第二个剩下几项。</li><li>调整超时示例，让西站也立即给出读数，核对两个任务的状态以及结果顺序。</li><li>模拟通知失败后，将本次生成的“S01：通过”交给新的通知对象。说明为什么重复提交报名会得到不同的回执。</li></ul>
+<details class='answer'><summary>参考解答</summary><p>用 <code>PrefixNotifier(&quot;实验室&quot;, recording)</code>，把预期文案的活动名前缀换成“实验室”。第一条通知应是“实验室 S01：通过”。再运行验收，确认登记和失败处理仍符合预期。</p><p>第二个游标只取走了第一项，仍能交出 20 和 22。</p><p>西站延迟为 0 时，两项均完成。gather 仍按传入的次序交出东站、西站。</p><p>补发时可以调用 recording.send(&quot;S01：通过&quot;)。重新提交 S01 会读取已保存名单，从而返回“重复”。</p></details>
 <h2 id="section-9">本章自测</h2>
 
 <form class="quiz" data-correct="2">

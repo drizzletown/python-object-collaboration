@@ -1,5 +1,7 @@
 const storageKey = "python-textbook-progress-v1";
 const resumeKey = "python-textbook-resume-v1";
+const draftPrefix = "python-textbook-draft-v1:";
+const scriptVersion = new URL(document.currentScript.src).search;
 
 function saved(key, fallback) {
   try {
@@ -12,12 +14,23 @@ function saved(key, fallback) {
 function remember(key, value) {
   try {
     localStorage.setItem(key, JSON.stringify(value));
+    return true;
   } catch {
-    // Progress remains available during this visit if storage is disabled.
+    return false;
+  }
+}
+
+function forget(key) {
+  try {
+    localStorage.removeItem(key);
+    return true;
+  } catch {
+    return false;
   }
 }
 
 const chapterIds = Array.from({ length: 10 }, (_, i) => String(i + 1).padStart(2, "0"));
+const pageId = location.pathname.split("/").pop();
 const previousProgress = saved(storageKey, []);
 const complete = new Set(chapterIds.filter(id => Array.isArray(previousProgress) && previousProgress.includes(id)));
 const mark = document.querySelector("[data-mark]");
@@ -45,7 +58,6 @@ function updateProgress() {
 
 if (mark) {
   mark.hidden = false;
-  remember(resumeKey, mark.dataset.mark);
   mark.addEventListener("click", () => {
     const id = mark.dataset.mark;
     if (complete.has(id)) complete.delete(id);
@@ -53,18 +65,85 @@ if (mark) {
     remember(storageKey, [...complete]);
     updateProgress();
   });
+  trackReading(mark.dataset.mark);
 }
 if (resume) {
-  const last = saved(resumeKey, null);
-  if (chapterIds.includes(last)) {
-    resume.href = "chapter-" + last + ".html";
-    resume.firstChild.textContent = "继续第 " + Number(last) + " 章 ";
-  }
+  showResume();
+  window.addEventListener("pageshow", showResume);
 }
 updateProgress();
 
+function trackReading(chapter) {
+  const headings = [...document.querySelectorAll(".lesson article > h2[id]")];
+  const topbar = document.querySelector(".topbar");
+  const contents = document.querySelector(".lesson-contents");
+  let lastRecord;
+  let framePending = false;
+
+  function record() {
+    framePending = false;
+    if (document.visibilityState === "hidden") return;
+    const cutoff = Math.max(
+      topbar.getBoundingClientRect().bottom + contents.offsetHeight + 24,
+      innerHeight * 0.2
+    );
+    const destination = location.hash.slice(1);
+    let heading;
+    for (const item of headings) {
+      const top = item.getBoundingClientRect().top;
+      if (top <= cutoff) heading = item;
+      if (top > cutoff && top < innerHeight && item.id === destination && item.id === lastRecord) {
+        // Focusing the sticky navigation can shift a recently selected heading down.
+        heading = item;
+      }
+      if (top >= innerHeight) break;
+    }
+    const section = heading?.id ?? "";
+    const previous = saved(resumeKey, null);
+    if (section === lastRecord && previous?.chapter === chapter && previous.section === section) return;
+    lastRecord = section;
+    remember(resumeKey, { chapter, section });
+  }
+
+  function schedule() {
+    if (framePending) return;
+    framePending = true;
+    requestAnimationFrame(record);
+  }
+
+  window.addEventListener("scroll", schedule, { passive: true });
+  window.addEventListener("hashchange", schedule);
+  window.addEventListener("pageshow", schedule);
+  document.addEventListener("visibilitychange", schedule);
+  schedule();
+}
+
+function showResume() {
+  const last = saved(resumeKey, null);
+  const chapter = typeof last === "string" ? last : last?.chapter;
+  if (!chapterIds.includes(chapter)) return;
+  const section = typeof last?.section === "string" && /^section-\d+$/.test(last.section) ? last.section : "";
+  resume.href = "chapter-" + chapter + ".html" + (section ? "#" + section : "");
+  resume.firstChild.textContent = "继续第 " + Number(chapter) + " 章 ";
+}
+
 const mobile = document.querySelector(".mobile-nav");
 if (mobile && matchMedia("(max-width: 760px)").matches) mobile.open = false;
+
+const lessonContents = document.querySelector(".lesson-contents");
+if (lessonContents) {
+  const summary = lessonContents.querySelector("summary");
+  lessonContents.addEventListener("click", event => {
+    if (!event.target.closest("nav a")) return;
+    lessonContents.open = false;
+  });
+  lessonContents.addEventListener("keydown", event => {
+    if (event.key === "Escape" && lessonContents.open) {
+      lessonContents.open = false;
+      summary.focus();
+    }
+  });
+}
 
 const search = document.querySelector(".search");
 if (search) {
@@ -156,19 +235,80 @@ if (sim) {
 
 let stopActiveRun;
 for (const playground of document.querySelectorAll(".playground")) {
-  const editor = playground.querySelector("textarea");
-  const original = editor.value;
+  const editors = [...playground.querySelectorAll("[data-code-file]")];
+  const picker = playground.querySelector("[data-file]");
+  const module = playground.dataset.module;
+  const firstFile = editors[0];
+  let editor = firstFile;
   const run = playground.querySelector("[data-run]");
   const stop = playground.querySelector("[data-stop]");
   const output = playground.querySelector(".output");
   const copy = playground.querySelector("[data-copy]");
   const reset = playground.querySelector("[data-reset]");
+  const wrap = playground.querySelector("[data-wrap]");
+  const status = playground.querySelector("[data-draft-status]");
+  let wrapped = matchMedia("(max-width: 760px)").matches;
   copy.hidden = false;
   reset.hidden = false;
+  wrap.hidden = false;
   playground.querySelector(".runner-bar").hidden = false;
 
+  function draftKey(file) {
+    return draftPrefix + pageId + ":" + playground.dataset.draft + ":" + file.dataset.codeFile;
+  }
+
+  function showDraftStatus() {
+    const draft = saved(draftKey(editor), null);
+    status.textContent = typeof draft === "string" && draft !== editor.defaultValue ? "草稿已保存在此浏览器" : "";
+  }
+
+  function applyWrap() {
+    for (const file of editors) file.wrap = wrapped ? "soft" : "off";
+    wrap.setAttribute("aria-pressed", String(wrapped));
+  }
+
+  for (const file of editors) {
+    const draft = saved(draftKey(file), null);
+    if (typeof draft === "string") file.value = draft;
+    file.addEventListener("input", () => {
+      const key = draftKey(file);
+      const stored = file.value === file.defaultValue ? forget(key) : remember(key, file.value);
+      if (stored) showDraftStatus();
+      else status.textContent = "无法保存草稿，可先复制代码";
+    });
+    file.addEventListener("keydown", event => {
+      if ((event.ctrlKey || event.metaKey) && event.key === "Enter") {
+        event.preventDefault();
+        if (!run.disabled) execute();
+      }
+    });
+  }
+
+  if (picker) {
+    picker.closest("label").hidden = false;
+    function selectFile() {
+      editor = editors.find(file => file.dataset.codeFile === picker.value) ?? firstFile;
+      for (const file of editors) file.hidden = file !== editor;
+      showDraftStatus();
+    }
+    picker.addEventListener("change", selectFile);
+    selectFile();
+  } else {
+    showDraftStatus();
+  }
+  applyWrap();
+  wrap.addEventListener("click", () => {
+    wrapped = !wrapped;
+    applyWrap();
+  });
+
   reset.addEventListener("click", () => {
+    const original = editor.defaultValue;
+    if (editor.value !== original && !window.confirm("清除当前草稿并恢复示例代码？")) return;
     editor.value = original;
+    const removed = forget(draftKey(editor));
+    status.textContent = removed ? "" : "无法清除已保存的草稿";
+    output.hidden = true;
     editor.focus();
   });
   copy.addEventListener("click", async () => {
@@ -188,7 +328,7 @@ for (const playground of document.querySelectorAll(".playground")) {
     output.textContent = "正在加载浏览器中的 Python…";
     let worker;
     try {
-      worker = new Worker("assets/python-worker.js", { type: "module" });
+      worker = new Worker("assets/python-worker.js" + scriptVersion, { type: "module" });
     } catch {
       output.textContent = "请通过 GitHub Pages 或本地 HTTP 服务打开教材，以运行 Python 示例。";
       return;
@@ -223,14 +363,14 @@ for (const playground of document.querySelectorAll(".playground")) {
         finish();
       }
     });
-    worker.postMessage(editor.value);
+    worker.postMessage({
+      source: module ? "" : editor.value,
+      filename: editor.dataset.codeFile,
+      files: module ? editors.map(file => [file.dataset.codeFile, file.value]) : [],
+      module,
+      campus: playground.hasAttribute("data-campus"),
+    });
   }
 
   run.addEventListener("click", execute);
-  editor.addEventListener("keydown", event => {
-    if ((event.ctrlKey || event.metaKey) && event.key === "Enter") {
-      event.preventDefault();
-      if (!run.disabled) execute();
-    }
-  });
 }

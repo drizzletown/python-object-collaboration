@@ -6,8 +6,8 @@
 <meta name="color-scheme" content="light">
 <meta name="description" content="以对象协作和假设三部曲为主线的 Python 编程教材。">
 <title>第三视角 函数与协作封装 · Python 编程</title>
-<link rel="stylesheet" href="assets/style.css?v=c4cfd570a0ea">
-<script src="assets/site.js" defer></script>
+<link rel="stylesheet" href="assets/style.css?v=271b14c33aec">
+<script src="assets/site.js?v=3370553bec6f" defer></script>
 </head>
 <body class="">
 <a class="skip" href="#main">跳到正文</a>
@@ -34,14 +34,15 @@
 <h3>形参、实参与返回值</h3>
 <p><code>def</code> 创建函数对象，并把函数名绑定到它。调用时，实参是调用者提供的对象，形参是函数内接收这些对象的名字。函数执行到 <code>return</code> 时结束这次调用，把指定对象交给调用者。写空的 <code>return</code> 或执行到末尾，结果都是 <code>None</code>。</p>
 
-<section class="playground" aria-label="Python 示例 1">
+<section class="playground" aria-label="Python 示例 1" data-draft="example-1-f4c561b1a3fd">
   <div class="editor-bar">
     <span><i></i> Python 示例 1</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 1 代码" rows="10"
-    spellcheck="false" autocapitalize="off" autocomplete="off">def split_seconds(total):
+  <textarea aria-label="Python 示例 1 代码" rows="10" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">def split_seconds(total):
     minutes = total // 60
     seconds = total % 60
     return minutes, seconds
@@ -52,9 +53,10 @@ minutes, seconds = result
 print(result)
 print(f&quot;{minutes} 分 {seconds} 秒&quot;)</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -65,14 +67,15 @@ print(f&quot;{minutes} 分 {seconds} 秒&quot;)</textarea>
 <div class="lesson-table"><table><thead><tr><th scope="col">形式</th><th scope="col">例子</th><th scope="col">调用方式</th></tr></thead><tbody><tr><td>位置或关键字参数</td><td><code>value</code></td><td>按位置提供，或写成 <code>value=20</code></td></tr><tr><td>带默认值的参数</td><td><code>unit=&quot;米&quot;</code></td><td>省略时使用定义时的默认值</td></tr><tr><td>仅关键字参数</td><td><code>*, digits=1</code></td><td>提供时写成 <code>digits=2</code></td></tr><tr><td>仅位置参数</td><td><code>value, /</code></td><td>调用时通过位置提供 <code>value</code></td></tr><tr><td>接收额外位置实参</td><td><code>*values</code></td><td>额外的位置实参收成元组</td></tr><tr><td>接收额外关键字实参</td><td><code>**options</code></td><td>额外的关键字实参收成字典</td></tr></tbody></table></div>
 <p>单独的 <code>*</code> 标记后面的形参只接收关键字，<code>/</code> 标记前面的形参只接收位置实参。编写普通函数时，可以先用固定参数表达契约，再根据调用场景决定是否需要其余形式。</p>
 
-<section class="playground" aria-label="Python 示例 2">
+<section class="playground" aria-label="Python 示例 2" data-draft="example-2-bf890600f046">
   <div class="editor-bar">
     <span><i></i> Python 示例 2</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 2 代码" rows="8"
-    spellcheck="false" autocapitalize="off" autocomplete="off">def format_measurement(value, unit=&quot;米&quot;, *, digits=1):
+  <textarea aria-label="Python 示例 2 代码" rows="8" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">def format_measurement(value, unit=&quot;米&quot;, *, digits=1):
     rounded = f&quot;{value:.{digits}f}&quot;
     return f&quot;{rounded} {unit}&quot;
 
@@ -81,9 +84,10 @@ print(format_measurement(2.345))
 print(format_measurement(2.345, &quot;千米&quot;, digits=2))
 print(format_measurement(value=2.345, unit=&quot;秒&quot;, digits=0))</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -95,14 +99,15 @@ print(format_measurement(value=2.345, unit=&quot;秒&quot;, digits=0))</textarea
 <p>参数默认值在执行函数定义时求值。如果用空列表作为默认值，每次省略该参数时会得到同一个列表。若每次调用都应获得新列表，可以让参数默认值为 <code>None</code>，在函数内部用 <code>is None</code> 检查并创建列表。<a href="https://docs.python.org/3.12/tutorial/controlflow.html#defining-functions">Python 官方教程的函数定义与参数</a></p>
 <h3>用两个调用观察默认对象</h3>
 
-<section class="playground" aria-label="Python 示例 3">
+<section class="playground" aria-label="Python 示例 3" data-draft="example-3-4a37930acf9e">
   <div class="editor-bar">
     <span><i></i> Python 示例 3</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 3 代码" rows="14"
-    spellcheck="false" autocapitalize="off" autocomplete="off">def collect_shared(value, values=[]):
+  <textarea aria-label="Python 示例 3 代码" rows="14" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">def collect_shared(value, values=[]):
     values.append(value)
     return values
 
@@ -122,9 +127,10 @@ left = collect_separately(&quot;甲&quot;)
 right = collect_separately(&quot;乙&quot;)
 print(&quot;分别创建列表&quot;, left, right, left is right)</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -133,14 +139,15 @@ print(&quot;分别创建列表&quot;, left, right, left is right)</textarea>
 <h3>用星号把多个对象收集起来或展开</h3>
 <p>在定义中，<code>*counts</code> 收集多余的位置实参，<code>**details</code> 收集多余的关键字实参。在调用中，<code>*values</code> 把一组数据展开成位置实参，<code>**options</code> 则用字典中的键名提供关键字实参。可以用同一组值对比直接传入与展开传入的效果。</p>
 
-<section class="playground" aria-label="Python 示例 4">
+<section class="playground" aria-label="Python 示例 4" data-draft="example-4-20f1c043ff19">
   <div class="editor-bar">
     <span><i></i> Python 示例 4</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 4 代码" rows="10"
-    spellcheck="false" autocapitalize="off" autocomplete="off">def format_counts(title, /, *counts, unit=&quot;项&quot;, **details):
+  <textarea aria-label="Python 示例 4 代码" rows="10" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">def format_counts(title, /, *counts, unit=&quot;项&quot;, **details):
     number = sum(counts)
     source = details.get(&quot;source&quot;, &quot;未标明来源&quot;)
     return f&quot;{title}共 {number} {unit}（{source}）&quot;
@@ -151,9 +158,10 @@ options = {&quot;unit&quot;: &quot;份&quot;, &quot;source&quot;: &quot;登记�
 print(format_counts(&quot;资料&quot;, 3, 4, unit=&quot;份&quot;, source=&quot;登记表&quot;))
 print(format_counts(&quot;资料&quot;, *values, **options))</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -165,14 +173,15 @@ print(format_counts(&quot;资料&quot;, *values, **options))</textarea>
 <div class="lesson-table"><table><thead><tr><th scope="col">位置</th><th scope="col">例子</th><th scope="col">在哪里可访问</th></tr></thead><tbody><tr><td>局部</td><td>函数参数、函数内部赋值的名字</td><td>当前这次调用中</td></tr><tr><td>外层函数</td><td>包含当前函数的那次调用中的名字</td><td>内部函数可读取它</td></tr><tr><td>模块</td><td>在文件顶层绑定的名字</td><td>同一模块的函数可以访问</td></tr><tr><td>内置</td><td><code>len</code>、<code>print</code></td><td>没有被更近的同名绑定覆盖时可访问</td></tr></tbody></table></div>
 <p>在函数体里给名字赋值，通常使它成为局部名字。因此，同一个函数中若先读某个尚未赋值的局部名字，之后才给它赋值，可能看到 <code>UnboundLocalError</code>。下例用不同的参数显式给计算提供所需数据。</p>
 
-<section class="playground" aria-label="Python 示例 5">
+<section class="playground" aria-label="Python 示例 5" data-draft="example-5-c8b60c71ecdf">
   <div class="editor-bar">
     <span><i></i> Python 示例 5</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 5 代码" rows="10"
-    spellcheck="false" autocapitalize="off" autocomplete="off">tax_rate = 0.05
+  <textarea aria-label="Python 示例 5 代码" rows="10" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">tax_rate = 0.05
 
 def total_with_tax(price, rate):
     extra = price * rate
@@ -183,9 +192,10 @@ print(&quot;采用模块提供的费率&quot;, total_with_tax(100, tax_rate))
 print(&quot;采用指定费率&quot;, total_with_tax(100, 0.08))
 print(&quot;模块中的费率&quot;, tax_rate)</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -194,14 +204,15 @@ print(&quot;模块中的费率&quot;, tax_rate)</textarea>
 <h3>改名字与改对象的影响范围</h3>
 <p>形参与实参可以引用同一个对象。修改可变对象的内容，调用者可以看到变化。把形参改绑到新对象，外面的名字仍引用原来的对象。</p>
 
-<section class="playground" aria-label="Python 示例 6">
+<section class="playground" aria-label="Python 示例 6" data-draft="example-6-0651227fe296">
   <div class="editor-bar">
     <span><i></i> Python 示例 6</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 6 代码" rows="14"
-    spellcheck="false" autocapitalize="off" autocomplete="off">def add_sample(values, reading):
+  <textarea aria-label="Python 示例 6 代码" rows="14" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">def add_sample(values, reading):
     values.append(reading)
 
 
@@ -216,9 +227,10 @@ empty = start_over(samples)
 print(samples)
 print(empty)</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -227,14 +239,15 @@ print(empty)</textarea>
 <h2 id="section-5">4.5 用接口说明结果与影响</h2>
 <p>同一个功能可以用打印提示或返回数据来实现，两种做法给后续步骤的能力不同。调用者需要继续计算时，应取得可使用的值。显示用的函数可以单独接收结果，决定显示成什么格式。</p>
 
-<section class="playground" aria-label="Python 示例 7">
+<section class="playground" aria-label="Python 示例 7" data-draft="example-7-1fa0c33321d6">
   <div class="editor-bar">
     <span><i></i> Python 示例 7</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 7 代码" rows="12"
-    spellcheck="false" autocapitalize="off" autocomplete="off">def calculate_area(width, height):
+  <textarea aria-label="Python 示例 7 代码" rows="12" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">def calculate_area(width, height):
     return width * height
 
 
@@ -247,9 +260,10 @@ print(&quot;两块相同区域的总面积&quot;, area * 2)
 printed = display_area(area)
 print(&quot;显示函数的返回值&quot;, printed)</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -259,14 +273,15 @@ print(&quot;显示函数的返回值&quot;, printed)</textarea>
 <h2 id="section-6">4.6 函数也能作为参数或结果</h2>
 <p>一个函数可以交给另一个函数调用。传递 <code>abs</code> 是交出函数对象，写 <code>abs(-4)</code> 则立即调用并取得结果。接受函数作为参数，可以让调用者选择规则，组织步骤的函数只负责在合适时机使用它。</p>
 
-<section class="playground" aria-label="Python 示例 8">
+<section class="playground" aria-label="Python 示例 8" data-draft="example-8-90a795fc6719">
   <div class="editor-bar">
     <span><i></i> Python 示例 8</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 8 代码" rows="14"
-    spellcheck="false" autocapitalize="off" autocomplete="off">def convert_all(values, convert):
+  <textarea aria-label="Python 示例 8 代码" rows="14" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">def convert_all(values, convert):
     return [convert(value) for value in values]
 
 
@@ -283,9 +298,10 @@ double = make_multiplier(2)
 print(convert_all(readings, double))
 print(sorted([&quot;铅笔&quot;, &quot;三角板&quot;, &quot;尺&quot;], key=lambda text: len(text)))</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -294,14 +310,15 @@ print(sorted([&quot;铅笔&quot;, &quot;三角板&quot;, &quot;尺&quot;], key=l
 <h3>闭包也可以保存一份会变化的状态</h3>
 <p>内部函数读取外层名字时使用的是绑定。若要重新绑定外层函数里的名字，可以声明 <code>nonlocal</code>。下面每次调用 <code>make_counter</code> 都创建自己的起始值，返回的函数以后还能读取并增加这份计数。</p>
 
-<section class="playground" aria-label="Python 示例 9">
+<section class="playground" aria-label="Python 示例 9" data-draft="example-9-1a16163c2a16">
   <div class="editor-bar">
     <span><i></i> Python 示例 9</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 9 代码" rows="14"
-    spellcheck="false" autocapitalize="off" autocomplete="off">def make_counter(start):
+  <textarea aria-label="Python 示例 9 代码" rows="14" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">def make_counter(start):
     value = start
 
     def count():
@@ -317,9 +334,10 @@ count_b = make_counter(10)
 print(count_a(), count_a())
 print(count_b(), count_a())</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -328,14 +346,15 @@ print(count_b(), count_a())</textarea>
 <h2 id="section-7">4.7 用递归函数处理嵌套结构</h2>
 <p>递归函数直接或间接调用自己。先确定可以直接回答的情形，再确保每次调用解决更小的问题。例如，统计一份零件清单时，遇到名称就计一个，遇到分组就分别统计组内各项。</p>
 
-<section class="playground" aria-label="Python 示例 10">
+<section class="playground" aria-label="Python 示例 10" data-draft="example-10-ff44e8b34ab7">
   <div class="editor-bar">
     <span><i></i> Python 示例 10</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 10 代码" rows="12"
-    spellcheck="false" autocapitalize="off" autocomplete="off">def count_parts(group):
+  <textarea aria-label="Python 示例 10 代码" rows="12" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">def count_parts(group):
     if isinstance(group, str):
         return 1
 
@@ -348,9 +367,10 @@ print(count_b(), count_a())</textarea>
 parts = [&quot;电池&quot;, [&quot;螺钉&quot;, &quot;垫片&quot;], &quot;外壳&quot;]
 print(count_parts(parts))</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -362,14 +382,15 @@ print(count_parts(parts))</textarea>
 <h2 id="section-8">4.8 用生成器按需产生结果</h2>
 <p>含有 <code>yield</code> 的函数被调用时会返回生成器。每次取下一项才推进函数体，执行到 <code>yield</code> 就交出一个值并暂停。调用者可以先消费一部分结果，其余结果留到需要时再产生。</p>
 
-<section class="playground" aria-label="Python 示例 11">
+<section class="playground" aria-label="Python 示例 11" data-draft="example-11-bd8cbb92c134">
   <div class="editor-bar">
     <span><i></i> Python 示例 11</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 11 代码" rows="11"
-    spellcheck="false" autocapitalize="off" autocomplete="off">def nonempty_lines(lines):
+  <textarea aria-label="Python 示例 11 代码" rows="11" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">def nonempty_lines(lines):
     for line in lines:
         text = line.strip()
         if text:
@@ -381,9 +402,10 @@ print(next(lines))
 print(list(lines))
 print(list(lines))</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -391,14 +413,15 @@ print(list(lines))</textarea>
 <p>第一次 <code>next</code> 得到“第一行”。第一次转为列表会取得余下的“第二行”，第二次转为列表时生成器已耗尽。一次性需要全部结果时，返回列表便于重复访问。按需处理很多数据时，可用生成器减少一次性保存的结果。<a href="https://docs.python.org/3.12/tutorial/classes.html#generators">Python 官方教程的生成器</a></p>
 <h3>观察暂停的位置和剩余结果</h3>
 
-<section class="playground" aria-label="Python 示例 12">
+<section class="playground" aria-label="Python 示例 12" data-draft="example-12-8b4c2268e3b0">
   <div class="editor-bar">
     <span><i></i> Python 示例 12</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 12 代码" rows="10"
-    spellcheck="false" autocapitalize="off" autocomplete="off">def convert_readings(values):
+  <textarea aria-label="Python 示例 12 代码" rows="10" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">def convert_readings(values):
     for value in values:
         print(&quot;正在转换&quot;, value)
         yield value * 100
@@ -409,9 +432,10 @@ print(&quot;已取得生成器&quot;)
 print(&quot;先要一项&quot;, next(converted))
 print(&quot;继续取得剩余项&quot;, list(converted))</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -427,15 +451,65 @@ print(&quot;继续取得剩余项&quot;, list(converted))</textarea>
         2.2 回执为“通过”时，单次登记更新名单。
         2.3 批量处理取得整理后的学号和回执，将它们加入结果。
     3. 输出：交出整批结果，由调用处负责呈现。</pre>
+<h3>先自己写资格检查</h3>
+<p>接着第 3 章的五条请求来做。<code>check_eligibility()</code> 接收已整理的学号、现有名单和容量，交出「空学号」「重复」「满员」或「通过」。调用者根据回执决定是否写入。先补这个函数，再运行整批核对。</p>
 
-<section class="playground" aria-label="Python 示例 13">
+<section class="playground" aria-label="Python 示例 13" data-draft="eligibility-task" id="eligibility-task">
   <div class="editor-bar">
     <span><i></i> Python 示例 13</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 13 代码" rows="14"
-    spellcheck="false" autocapitalize="off" autocomplete="off">def check_eligibility(student_id, roster, *, capacity):
+  <textarea aria-label="Python 示例 13 代码" rows="14" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">def check_eligibility(student_id, roster, *, capacity):
+    # 写出资格判断，返回回执。
+    raise NotImplementedError(&quot;请先完成资格检查&quot;)
+
+
+def register(raw_id, roster, *, capacity):
+    student_id = raw_id.strip()
+    status = check_eligibility(student_id, roster, capacity=capacity)
+    if status == &quot;通过&quot;:
+        roster[student_id] = &quot;已报名&quot;
+    return status
+
+
+roster = {}
+assert check_eligibility(&quot;S01&quot;, roster, capacity=2) == &quot;通过&quot;
+assert roster == {}, &quot;资格检查应当保留原名单&quot;
+
+requests = [&quot;S01&quot;, &quot; &quot;, &quot; S02 &quot;, &quot;S03&quot;, &quot;S01&quot;]
+receipts = []
+for raw_id in requests:
+    receipts.append(register(raw_id, roster, capacity=2))
+
+print(receipts)
+print(&quot;最终名单&quot;, list(roster))
+assert receipts == [&quot;通过&quot;, &quot;空学号&quot;, &quot;通过&quot;, &quot;满员&quot;, &quot;重复&quot;]
+assert list(roster) == [&quot;S01&quot;, &quot;S02&quot;]
+print(&quot;资格检查验收通过&quot;)</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<details class='answer'><summary>参考解答</summary><p>先检查空学号，再检查该学号是否在名单中，最后检查人数是否已达容量。三项都允许通过时，返回“通过”。完整写法见下方。</p></details>
+<h3>对照三个函数怎样衔接</h3>
+
+<section class="playground" aria-label="Python 示例 14" data-draft="example-14-d9d8a56c92d3">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 14</span>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
+  </div>
+  <textarea aria-label="Python 示例 14 代码" rows="14" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">def check_eligibility(student_id, roster, *, capacity):
     &quot;&quot;&quot;接收已去掉首尾空白的学号，返回回执。&quot;&quot;&quot;
     if not student_id:
         return &quot;空学号&quot;
@@ -471,9 +545,10 @@ for student_id, status in process([&quot; &quot;, &quot; S02 &quot;, &quot;S03&q
     print(student_id or &quot;（空白）&quot;, status)
 print(&quot;最终名单&quot;, list(roster))</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>

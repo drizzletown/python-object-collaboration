@@ -6,8 +6,8 @@
 <meta name="color-scheme" content="light">
 <meta name="description" content="以对象协作和假设三部曲为主线的 Python 编程教材。">
 <title>容器对象与数据组织 · Python 编程</title>
-<link rel="stylesheet" href="assets/style.css?v=c4cfd570a0ea">
-<script src="assets/site.js" defer></script>
+<link rel="stylesheet" href="assets/style.css?v=271b14c33aec">
+<script src="assets/site.js?v=3370553bec6f" defer></script>
 </head>
 <body class="">
 <a class="skip" href="#main">跳到正文</a>
@@ -49,14 +49,15 @@
 <h3>四种容器的共同操作</h3>
 <div class="lesson-table"><table><thead><tr><th scope="col">操作</th><th scope="col">怎样理解</th></tr></thead><tbody><tr><td><code>len(obj)</code></td><td>统计容器中的项。对字典是键值对的数量。</td></tr><tr><td><code>x in obj</code>、<code>x not in obj</code></td><td>检查某项是否存在。对字典检查的是键。</td></tr><tr><td><code>bool(obj)</code></td><td>空容器为假，非空容器为真。</td></tr><tr><td><code>a == b</code></td><td>比较内容。两个列表或两个元组须等长且各位置的值相等。字典比较键值对，集合比较成员。</td></tr><tr><td><code>a is b</code></td><td>检查两个引用是否指向同一个对象。</td></tr></tbody></table></div>
 
-<section class="playground" aria-label="Python 示例 1">
+<section class="playground" aria-label="Python 示例 1" data-draft="example-1-ffa73f14d75f">
   <div class="editor-bar">
     <span><i></i> Python 示例 1</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 1 代码" rows="10"
-    spellcheck="false" autocapitalize="off" autocomplete="off">colors = [&quot;蓝&quot;, &quot;绿&quot;, &quot;蓝&quot;]
+  <textarea aria-label="Python 示例 1 代码" rows="10" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">colors = [&quot;蓝&quot;, &quot;绿&quot;, &quot;蓝&quot;]
 by_code = {0: &quot;绿&quot;, 1: &quot;蓝&quot;}
 unique_colors = {&quot;蓝&quot;, &quot;绿&quot;}
 
@@ -67,9 +68,10 @@ print(&quot;字典里查值&quot;, &quot;蓝&quot; in by_code.values())
 print(&quot;项数&quot;, len(colors), len(by_code), len(unique_colors))
 print(&quot;空容器的真值&quot;, bool([]), bool(()), bool({}), bool(set()))</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -84,14 +86,15 @@ print(&quot;空容器的真值&quot;, bool([]), bool(()), bool({}), bool(set()))
 <h3>查询、连接和重复</h3>
 <p><code>count(x)</code> 统计值 <code>x</code> 出现了几次，找不到时返回 0。<code>index(x)</code> 返回首次出现的位置，找不到时产生 <code>ValueError</code>。对同类型的列表或元组，<code>+</code> 把两个序列连接，<code>*</code> 按次数重复其中的元素引用。含有可变元素时，重复引用可能造成几处同时变化，稍后会做实验。</p>
 
-<section class="playground" aria-label="Python 示例 2">
+<section class="playground" aria-label="Python 示例 2" data-draft="example-2-7ea86d1900e0">
   <div class="editor-bar">
     <span><i></i> Python 示例 2</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 2 代码" rows="8"
-    spellcheck="false" autocapitalize="off" autocomplete="off">values = [12, 7, 18, 7, 10]
+  <textarea aria-label="Python 示例 2 代码" rows="8" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">values = [12, 7, 18, 7, 10]
 print(&quot;一项与一段&quot;, values[1], values[1:2])
 print(&quot;正向和反向切片&quot;, values[1:4], values[::-1])
 print(&quot;出现次数与首个位置&quot;, values.count(7), values.index(7))
@@ -100,9 +103,10 @@ print(&quot;重复&quot;, (&quot;上&quot;, &quot;下&quot;) * 2)
 print(&quot;汇总&quot;, min(values), max(values), sum(values))
 print(&quot;原列表&quot;, values)</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -113,14 +117,23 @@ print(&quot;原列表&quot;, values)</textarea>
 <p>用 <code>[]</code> 创建空列表，用 <code>[12, 7]</code> 创建带初始元素的列表。<code>list(...)</code> 可以把能逐项取值的对象转换为列表，例如 <code>list(&quot;ABC&quot;)</code> 得到三个字符组成的列表。一个列表可以存放不同类型的对象。后续需要对每项执行同类计算时，宜让元素具有相同用途并符合运算要求。</p>
 <div class="lesson-table"><table><thead><tr><th scope="col">操作</th><th scope="col">对列表的影响</th></tr></thead><tbody><tr><td><code>items.append(x)</code></td><td>把 <code>x</code> 作为一个元素加在末尾</td></tr><tr><td><code>items.extend(values)</code></td><td>逐项取出 <code>values</code> 中的值并追加</td></tr><tr><td><code>items.insert(i, x)</code></td><td>在指定位置之前插入一项</td></tr><tr><td><code>items[i] = x</code></td><td>替换指定位置的引用</td></tr><tr><td><code>items[i:j] = values</code></td><td>用一组元素替换一段，替换前后的长度可以不同</td></tr></tbody></table></div>
 
-<section class="playground" aria-label="Python 示例 3">
+<form class="quiz" data-correct="1">
+ <fieldset><legend>两份列表起初都是 <code>[&quot;蓝&quot;]</code>。一份用 <code>append([&quot;绿&quot;, &quot;黄&quot;])</code>，另一份用 <code>extend([&quot;绿&quot;, &quot;黄&quot;])</code>。刚完成这一步时，两份列表的长度分别是多少？</legend><label><input type="radio" name="choice" value="1" required> 2 和 3</label><label><input type="radio" name="choice" value="2" required> 3 和 2</label><label><input type="radio" name="choice" value="3" required> 都是 3</label></fieldset>
+ <button class="primary small" type="submit" disabled>检查答案</button>
+ <p class="feedback" aria-live="polite"></p>
+ <details><summary>查看解析</summary><p><code>append()</code> 把整个列表当作一项加入。<code>extend()</code> 会逐项加入两个字符串。再运行下面的示例，看看第二份列表随后怎样变化。</p></details>
+</form>
+
+
+<section class="playground" aria-label="Python 示例 3" data-draft="example-3-b8dd881b3215">
   <div class="editor-bar">
     <span><i></i> Python 示例 3</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 3 代码" rows="9"
-    spellcheck="false" autocapitalize="off" autocomplete="off">with_group = [&quot;蓝&quot;]
+  <textarea aria-label="Python 示例 3 代码" rows="9" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">with_group = [&quot;蓝&quot;]
 with_group.append([&quot;绿&quot;, &quot;黄&quot;])
 print(&quot;把一组当作一项&quot;, with_group, len(with_group))
 
@@ -130,9 +143,10 @@ flat.insert(1, &quot;白&quot;)
 flat[1:3] = [&quot;紫&quot;]
 print(&quot;逐项加入后修改&quot;, flat, len(flat))</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -142,14 +156,15 @@ print(&quot;逐项加入后修改&quot;, flat, len(flat))</textarea>
 <div class="lesson-table"><table><thead><tr><th scope="col">操作</th><th scope="col">删除依据</th><th scope="col">结果</th></tr></thead><tbody><tr><td><code>items.pop(i)</code></td><td>下标。省略时取最后一项。</td><td>返回被删除的元素</td></tr><tr><td><code>items.remove(x)</code></td><td>值。删除第一项等于 <code>x</code> 的元素。</td><td>返回 <code>None</code></td></tr><tr><td><code>del items[i]</code>、<code>del items[i:j]</code></td><td>下标或切片</td><td><code>del</code> 语句不返回值</td></tr><tr><td><code>items.clear()</code></td><td>清空全部元素</td><td>返回 <code>None</code></td></tr></tbody></table></div>
 <p><code>pop()</code> 在没有对应位置时产生 <code>IndexError</code>，例如对空列表取最后一项。<code>remove(x)</code> 在找不到该值时产生 <code>ValueError</code>。下例有两个相同的读数，可以观察按值删除时留下哪一个。</p>
 
-<section class="playground" aria-label="Python 示例 4">
+<section class="playground" aria-label="Python 示例 4" data-draft="example-4-1a4443fbd7a3">
   <div class="editor-bar">
     <span><i></i> Python 示例 4</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 4 代码" rows="7"
-    spellcheck="false" autocapitalize="off" autocomplete="off">readings = [18, 21, 18, 24, 26]
+  <textarea aria-label="Python 示例 4 代码" rows="7" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">readings = [18, 21, 18, 24, 26]
 readings.remove(18)
 print(&quot;删除第一个 18 后&quot;, readings)
 last = readings.pop()
@@ -157,9 +172,10 @@ print(&quot;取走的末项&quot;, last)
 del readings[1:3]
 print(&quot;删除一段后&quot;, readings)</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -167,14 +183,15 @@ print(&quot;删除一段后&quot;, readings)</textarea>
 <h3>原地排序与新排序结果</h3>
 <p><code>items.sort()</code> 在原列表上调整顺序，返回 <code>None</code>。<code>sorted(items)</code> 交出排好序的新列表，也可以接受元组、集合等可迭代对象。二者都能用 <code>reverse=True</code> 改为降序，用 <code>key</code> 指定比较依据。例如 <code>key=len</code> 把求长度的能力交给排序。键相同时，原来靠前的元素仍靠前。</p>
 
-<section class="playground" aria-label="Python 示例 5">
+<section class="playground" aria-label="Python 示例 5" data-draft="example-5-63d98ea8bd42">
   <div class="editor-bar">
     <span><i></i> Python 示例 5</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 5 代码" rows="8"
-    spellcheck="false" autocapitalize="off" autocomplete="off">words = [&quot;铅笔&quot;, &quot;尺&quot;, &quot;三角板&quot;, &quot;橡皮&quot;]
+  <textarea aria-label="Python 示例 5 代码" rows="8" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">words = [&quot;铅笔&quot;, &quot;尺&quot;, &quot;三角板&quot;, &quot;橡皮&quot;]
 ordered = sorted(words, key=len)
 print(&quot;按长度排出的新列表&quot;, ordered)
 print(&quot;排序前的列表&quot;, words)
@@ -183,9 +200,10 @@ returned = words.sort(key=len, reverse=True)
 print(&quot;原地降序&quot;, words)
 print(&quot;sort 的返回值&quot;, returned)</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -195,14 +213,15 @@ print(&quot;sort 的返回值&quot;, returned)</textarea>
 <p>把新元素放到列表末尾，再用 <code>pop()</code> 取末尾，可以实现后进先出的栈。它适合保存还可以撤回的操作。最近放入的操作最先取出。</p>
 <p>按到达顺序处理任务时，需要先进先出的队列。列表可以用 <code>append()</code> 和 <code>pop(0)</code> 表达这一规则。每次从列表开头取走一项，后面的元素位置都会移动。频繁从两端操作时，标准库的 <code>collections.deque</code> 更适合。它提供 <code>append()</code>、<code>appendleft()</code>、<code>pop()</code> 和 <code>popleft()</code>。</p>
 
-<section class="playground" aria-label="Python 示例 6">
+<section class="playground" aria-label="Python 示例 6" data-draft="example-6-d17c83d23211">
   <div class="editor-bar">
     <span><i></i> Python 示例 6</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 6 代码" rows="11"
-    spellcheck="false" autocapitalize="off" autocomplete="off">from collections import deque
+  <textarea aria-label="Python 示例 6 代码" rows="11" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">from collections import deque
 
 history = [&quot;打开文档&quot;, &quot;输入标题&quot;]
 history.append(&quot;修改标题&quot;)
@@ -214,9 +233,10 @@ queue.append(&quot;第三个请求&quot;)
 print(&quot;最先处理&quot;, queue.popleft())
 print(&quot;还有哪些请求&quot;, list(queue))</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -226,14 +246,15 @@ print(&quot;还有哪些请求&quot;, list(queue))</textarea>
 <h3>创建、取值和解包</h3>
 <p>用 <code>()</code> 创建空元组，用 <code>(3, 4)</code> 表示一对坐标。只有一项时要保留逗号，<code>(3,)</code> 是元组，<code>(3)</code> 仍是整数。也可以用 <code>tuple([3, 4])</code> 创建元组。元组和列表一样支持下标、切片、<code>in</code>、<code>count()</code> 和 <code>index()</code>。</p>
 
-<section class="playground" aria-label="Python 示例 7">
+<section class="playground" aria-label="Python 示例 7" data-draft="example-7-bb79e3fae84c">
   <div class="editor-bar">
     <span><i></i> Python 示例 7</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 7 代码" rows="9"
-    spellcheck="false" autocapitalize="off" autocomplete="off">point = (3, 4)
+  <textarea aria-label="Python 示例 7 代码" rows="9" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">point = (3, 4)
 x, y = point
 print(&quot;横纵坐标&quot;, x, y)
 print(&quot;一项的类型&quot;, type((3,)).__name__, type((3)).__name__)
@@ -243,9 +264,10 @@ first, *middle, last = stations
 print(&quot;首尾&quot;, first, last)
 print(&quot;中间的站点&quot;, middle)</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -254,14 +276,15 @@ print(&quot;中间的站点&quot;, middle)</textarea>
 <h3>固定的是外层位置</h3>
 <p>元组创建后，位置数量及各位置引用的对象都固定。可以把一个坐标重新绑定到另一个元组。若元组中的一项是列表，还可以通过该位置取得列表，并修改列表内部的内容。</p>
 
-<section class="playground" aria-label="Python 示例 8">
+<section class="playground" aria-label="Python 示例 8" data-draft="example-8-3ff63f68379c">
   <div class="editor-bar">
     <span><i></i> Python 示例 8</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 8 代码" rows="10"
-    spellcheck="false" autocapitalize="off" autocomplete="off">point = (3, 4)
+  <textarea aria-label="Python 示例 8 代码" rows="10" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">point = (3, 4)
 previous = point
 point = (5, 4)
 print(&quot;新旧坐标&quot;, point, previous)
@@ -272,9 +295,10 @@ readings.append(21)
 print(&quot;元组内的列表&quot;, sample)
 print(&quot;引用仍指向同一个列表&quot;, sample[1] is readings)</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -285,14 +309,15 @@ print(&quot;引用仍指向同一个列表&quot;, sample[1] is readings)</textar
 <p>字典的每一项由键和值组成。用 <code>{}</code> 或 <code>dict()</code> 创建空字典，用 <code>{&quot;x&quot;: 3, &quot;y&quot;: 4}</code> 写出已有的键值对。<code>dict([(&quot;x&quot;, 3), (&quot;y&quot;, 4)])</code> 可以把一组二元记录转换成字典。每个键只对应一个当前值，向已有的键赋值时会替换它关联的对象。</p>
 <div class="lesson-table"><table><thead><tr><th scope="col">操作</th><th scope="col">结果</th><th scope="col">对字典的影响</th></tr></thead><tbody><tr><td><code>d[key]</code></td><td>返回指定键的值，缺键时产生 <code>KeyError</code></td><td>读取</td></tr><tr><td><code>key in d</code></td><td>判断键是否存在</td><td>读取</td></tr><tr><td><code>d.get(key, default)</code></td><td>有键时返回对应值，缺键时返回默认值。省略默认值时用 <code>None</code>。</td><td>读取</td></tr><tr><td><code>d[key] = value</code></td><td>为键建立或更新对应关系</td><td>新增或替换一项</td></tr><tr><td><code>d.setdefault(key, default)</code></td><td>有键时返回对应值，缺键时插入并返回默认值</td><td>可能新增一项</td></tr></tbody></table></div>
 
-<section class="playground" aria-label="Python 示例 9">
+<section class="playground" aria-label="Python 示例 9" data-draft="example-9-06a49ce08893">
   <div class="editor-bar">
     <span><i></i> Python 示例 9</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 9 代码" rows="12"
-    spellcheck="false" autocapitalize="off" autocomplete="off">stock = {&quot;铅笔&quot;: 0, &quot;尺&quot;: None}
+  <textarea aria-label="Python 示例 9 代码" rows="12" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">stock = {&quot;铅笔&quot;: 0, &quot;尺&quot;: None}
 
 print(&quot;已有且为零&quot;, stock.get(&quot;铅笔&quot;, 99))
 print(&quot;查尺和纸&quot;, stock.get(&quot;尺&quot;), stock.get(&quot;纸&quot;))
@@ -305,9 +330,10 @@ print(&quot;再次尝试设置&quot;, stock.setdefault(&quot;纸&quot;, 10))
 print(&quot;已有的 None 也保留&quot;, stock.setdefault(&quot;尺&quot;, 10))
 print(&quot;当前字典&quot;, stock)</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -316,14 +342,15 @@ print(&quot;当前字典&quot;, stock)</textarea>
 <h3>用字典累计数量或聚合记录</h3>
 <p>某个键出现时，常要更新它对应的数据。计算每个词出现几次时，可以先用 <code>get(key, 0)</code> 取得已有次数，缺键时以 0 开始，再将加一后的结果写回。若想保留每项读数，就让每个站名对应一个列表，首次遇到时建立列表，后续把读数追加进去。</p>
 
-<section class="playground" aria-label="Python 示例 10">
+<section class="playground" aria-label="Python 示例 10" data-draft="example-10-4e74a442a269">
   <div class="editor-bar">
     <span><i></i> Python 示例 10</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 10 代码" rows="12"
-    spellcheck="false" autocapitalize="off" autocomplete="off">counts = {}
+  <textarea aria-label="Python 示例 10 代码" rows="12" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">counts = {}
 counts[&quot;红&quot;] = counts.get(&quot;红&quot;, 0) + 1
 counts[&quot;蓝&quot;] = counts.get(&quot;蓝&quot;, 0) + 1
 counts[&quot;红&quot;] = counts.get(&quot;红&quot;, 0) + 1
@@ -336,9 +363,10 @@ readings.setdefault(&quot;东站&quot;, []).append(21)
 print(&quot;按站点保存读数&quot;, readings)
 print(&quot;两个站点的列表是同一个对象&quot;, readings[&quot;东站&quot;] is readings[&quot;西站&quot;])</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -348,14 +376,15 @@ print(&quot;两个站点的列表是同一个对象&quot;, readings[&quot;东站
 <div class="lesson-table"><table><thead><tr><th scope="col">操作</th><th scope="col">用途</th></tr></thead><tbody><tr><td><code>d.update(other)</code></td><td>把另一组键值对写入原字典，已有键采用新值</td></tr><tr><td><code>d | other</code></td><td>合并两个字典，得到新字典。两边都有的键取右侧的值。</td></tr><tr><td><code>del d[key]</code></td><td>删除指定键值对。缺键时产生 <code>KeyError</code>。</td></tr><tr><td><code>d.pop(key, default)</code></td><td>删除指定键并交出原值。缺键时交出默认值，省略默认值则产生 <code>KeyError</code>。</td></tr><tr><td><code>d.popitem()</code></td><td>移除最后插入的一对键和值，并把它们作为元组交出。空字典会产生 <code>KeyError</code>。</td></tr><tr><td><code>d.clear()</code></td><td>清空原字典</td></tr><tr><td><code>d.copy()</code></td><td>新建一个含有相同键值引用的外层字典</td></tr><tr><td><code>dict.fromkeys(keys, value)</code></td><td>创建新字典，让这些键初始关联到同一个值。省略值时使用 <code>None</code>。</td></tr></tbody></table></div>
 <p><code>keys()</code>、<code>values()</code>、<code>items()</code> 分别提供键、值、键值对的视图。视图会反映原字典的变化。<code>list(d)</code> 和 <code>list(d.keys())</code> 可以记录取得列表时有哪些键。<code>list(d.items())</code> 会把当前的键值对装入列表，值若引用可变对象，内层内容仍可能共享。</p>
 
-<section class="playground" aria-label="Python 示例 11">
+<section class="playground" aria-label="Python 示例 11" data-draft="example-11-f37a24841d73">
   <div class="editor-bar">
     <span><i></i> Python 示例 11</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 11 代码" rows="14"
-    spellcheck="false" autocapitalize="off" autocomplete="off">defaults = {&quot;颜色&quot;: &quot;白&quot;, &quot;高度&quot;: 10}
+  <textarea aria-label="Python 示例 11 代码" rows="14" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">defaults = {&quot;颜色&quot;: &quot;白&quot;, &quot;高度&quot;: 10}
 changes = {&quot;高度&quot;: 12, &quot;宽度&quot;: 20}
 
 key_view = defaults.keys()
@@ -373,9 +402,10 @@ removed = defaults.pop(&quot;宽度&quot;)
 print(&quot;删去的值&quot;, removed)
 print(&quot;再次查看键视图&quot;, list(key_view))</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -385,14 +415,15 @@ print(&quot;再次查看键视图&quot;, list(key_view))</textarea>
 <p>字典用键的散列值辅助定位，再用相等关系区分键。可哈希对象的散列值在其存续期间保持稳定。两个可哈希对象如果相等，它们的散列值也相同。散列值相同的两个对象仍可能有不同的值。集合对元素有同样的要求。</p>
 <div class="lesson-table"><table><thead><tr><th scope="col">对象</th><th scope="col">能否用作键或集合成员</th></tr></thead><tbody><tr><td>整数、布尔值、字符串</td><td>可以</td></tr><tr><td><code>(3, 4)</code></td><td>可以，各项均可哈希</td></tr><tr><td><code>(3, [4])</code></td><td>不可以，里面有列表</td></tr><tr><td><code>list</code>、<code>dict</code>、<code>set</code> 的实例</td><td>不可以，这几类内置容器不可哈希</td></tr><tr><td><code>frozenset</code> 的实例</td><td>可以，成员关系固定</td></tr></tbody></table></div>
 
-<section class="playground" aria-label="Python 示例 12">
+<section class="playground" aria-label="Python 示例 12" data-draft="example-12-b1a7e33b3c76">
   <div class="editor-bar">
     <span><i></i> Python 示例 12</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 12 代码" rows="8"
-    spellcheck="false" autocapitalize="off" autocomplete="off">grid = {(1, 2): &quot;入口&quot;, (3, 4): &quot;出口&quot;}
+  <textarea aria-label="Python 示例 12 代码" rows="8" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">grid = {(1, 2): &quot;入口&quot;, (3, 4): &quot;出口&quot;}
 print(&quot;按两个坐标查找&quot;, grid[(3, 4)])
 
 labels = {1: &quot;整数&quot;}
@@ -401,9 +432,10 @@ print(&quot;整数 1、浮点数 1.0 和 True&quot;, 1 == 1.0 == True)
 print(&quot;键的个数&quot;, len(labels))
 print(&quot;用 1.0 查值&quot;, labels[1.0])</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -414,14 +446,15 @@ print(&quot;用 1.0 查值&quot;, labels[1.0])</textarea>
 <p>用 <code>{&quot;蓝&quot;, &quot;绿&quot;}</code> 写出有成员的集合。空集合用 <code>set()</code> 创建，<code>{}</code> 创建的是空字典。<code>set(values)</code> 接收可迭代对象，把其中相等的成员合并成一项。集合支持 <code>in</code> 和 <code>len()</code>，取成员时可以遍历或排序后显示。</p>
 <div class="lesson-table"><table><thead><tr><th scope="col">操作</th><th scope="col">怎样改变集合</th></tr></thead><tbody><tr><td><code>s.add(x)</code></td><td>加入一个成员，已存在时保持原样</td></tr><tr><td><code>s.update(values)</code></td><td>逐项加入多个成员</td></tr><tr><td><code>s.discard(x)</code></td><td>删除指定成员，已缺失时可以继续执行</td></tr><tr><td><code>s.remove(x)</code></td><td>删除指定成员，缺失时产生 <code>KeyError</code></td></tr><tr><td><code>s.pop()</code></td><td>删除并交出一个任意成员，空集合会产生 <code>KeyError</code></td></tr><tr><td><code>s.clear()</code></td><td>清空集合</td></tr></tbody></table></div>
 
-<section class="playground" aria-label="Python 示例 13">
+<section class="playground" aria-label="Python 示例 13" data-draft="example-13-dd1b185ae850">
   <div class="editor-bar">
     <span><i></i> Python 示例 13</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 13 代码" rows="8"
-    spellcheck="false" autocapitalize="off" autocomplete="off">colors = set([&quot;蓝&quot;, &quot;绿&quot;, &quot;蓝&quot;])
+  <textarea aria-label="Python 示例 13 代码" rows="8" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">colors = set([&quot;蓝&quot;, &quot;绿&quot;, &quot;蓝&quot;])
 print(&quot;初始成员&quot;, sorted(colors))
 colors.add(&quot;蓝&quot;)
 colors.update([&quot;白&quot;, &quot;黄&quot;])
@@ -430,9 +463,10 @@ colors.remove(&quot;绿&quot;)
 print(&quot;更新后的成员&quot;, sorted(colors))
 print(&quot;包含白色&quot;, &quot;白&quot; in colors)</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -442,14 +476,15 @@ print(&quot;包含白色&quot;, &quot;白&quot; in colors)</textarea>
 <div class="lesson-table"><table><thead><tr><th scope="col">关系</th><th scope="col">运算符和方法</th><th scope="col">得到的成员</th></tr></thead><tbody><tr><td>交集</td><td><code>a &amp; b</code>、<code>a.intersection(b)</code></td><td>两边都有</td></tr><tr><td>并集</td><td><code>a | b</code>、<code>a.union(b)</code></td><td>至少一边有</td></tr><tr><td>差集</td><td><code>a - b</code>、<code>a.difference(b)</code></td><td>左边有，右边没有</td></tr><tr><td>对称差</td><td><code>a ^ b</code>、<code>a.symmetric_difference(b)</code></td><td>恰好一边有</td></tr></tbody></table></div>
 <p>这些写法会交出新的集合结果。想在原集合上保留交集，可以用 <code>a.intersection_update(b)</code> 或 <code>a &amp;= b</code>。两个集合可以直接用运算符求交集。如果另一组数据是列表，可以先转成集合，也可以直接交给方法，例如 <code>a.intersection([&quot;蓝&quot;, &quot;黄&quot;])</code>。</p>
 
-<section class="playground" aria-label="Python 示例 14">
+<section class="playground" aria-label="Python 示例 14" data-draft="example-14-e4189dc6477a">
   <div class="editor-bar">
     <span><i></i> Python 示例 14</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 14 代码" rows="12"
-    spellcheck="false" autocapitalize="off" autocomplete="off">left = {&quot;蓝&quot;, &quot;绿&quot;, &quot;白&quot;}
+  <textarea aria-label="Python 示例 14 代码" rows="12" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">left = {&quot;蓝&quot;, &quot;绿&quot;, &quot;白&quot;}
 right = {&quot;绿&quot;, &quot;黄&quot;}
 
 print(&quot;交集&quot;, sorted(left &amp; right))
@@ -462,9 +497,10 @@ print(&quot;子集&quot;, {&quot;绿&quot;} &lt;= left)
 print(&quot;自己是否为自己的子集和真子集&quot;, left &lt;= left, left &lt; left)
 print(&quot;两边是否没有共同成员&quot;, left.isdisjoint(right))</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -473,20 +509,22 @@ print(&quot;两边是否没有共同成员&quot;, left.isdisjoint(right))</texta
 <h3>用不可变集合表示固定的成员组合</h3>
 <p><code>frozenset()</code> 创建不可变集合，可以做成员判断和集合运算，也可以作为字典的键。下面用颜色的成员组合查找配色方案。两次创建时给出的顺序不同，组成的集合仍相等。</p>
 
-<section class="playground" aria-label="Python 示例 15">
+<section class="playground" aria-label="Python 示例 15" data-draft="example-15-afa6edaae929">
   <div class="editor-bar">
     <span><i></i> Python 示例 15</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 15 代码" rows="5"
-    spellcheck="false" autocapitalize="off" autocomplete="off">palettes = {frozenset([&quot;蓝&quot;, &quot;绿&quot;]): &quot;方案一&quot;}
+  <textarea aria-label="Python 示例 15 代码" rows="3" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">palettes = {frozenset([&quot;蓝&quot;, &quot;绿&quot;]): &quot;方案一&quot;}
 selected = frozenset([&quot;绿&quot;, &quot;蓝&quot;])
 print(&quot;选中的配色&quot;, palettes[selected])</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -496,14 +534,15 @@ print(&quot;选中的配色&quot;, palettes[selected])</textarea>
 <h3>每一层保存一种关系</h3>
 <p>同一份数据常需要同时使用多种容器。例如用站名查站点，用一对坐标表示位置，用列表保留读数的先后。读取嵌套数据时，可以把每一步的结果先绑定给一个有含义的名字，再继续查询下一层。</p>
 
-<section class="playground" aria-label="Python 示例 16">
+<section class="playground" aria-label="Python 示例 16" data-draft="example-16-a82b06cd7da5">
   <div class="editor-bar">
     <span><i></i> Python 示例 16</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 16 代码" rows="12"
-    spellcheck="false" autocapitalize="off" autocomplete="off">stations = {
+  <textarea aria-label="Python 示例 16 代码" rows="12" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">stations = {
     &quot;东站&quot;: {&quot;position&quot;: (3, 4), &quot;readings&quot;: [18, 21]},
     &quot;西站&quot;: {&quot;position&quot;: (7, 2), &quot;readings&quot;: [19]},
 }
@@ -516,9 +555,10 @@ print(&quot;东站最近一次读数&quot;, readings[-1])
 print(&quot;东站读数条数&quot;, len(readings))
 print(&quot;站点数量&quot;, len(stations))</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -527,14 +567,15 @@ print(&quot;站点数量&quot;, len(stations))</textarea>
 <h3>转换时明确保留哪些信息</h3>
 <div class="lesson-table"><table><thead><tr><th scope="col">转换</th><th scope="col">保留的信息</th></tr></thead><tbody><tr><td><code>list(seq)</code>、<code>tuple(seq)</code></td><td>元素及原来的先后顺序</td></tr><tr><td><code>set(seq)</code></td><td>唯一成员。原顺序和重复次数不再保存。</td></tr><tr><td><code>list(d)</code> 或 <code>set(d)</code></td><td>字典的键。列表保留键的插入顺序，集合用于成员运算。</td></tr><tr><td><code>list(d.items())</code></td><td>一组键值对，每一对是一个二元组</td></tr><tr><td><code>dict(pairs)</code></td><td>二元记录中的键值关系。键重复时采用后来读到的值。</td></tr><tr><td><code>list(dict.fromkeys(seq))</code></td><td>去掉重复值，按第一次出现的顺序保留各项。元素须可哈希。</td></tr></tbody></table></div>
 
-<section class="playground" aria-label="Python 示例 17">
+<section class="playground" aria-label="Python 示例 17" data-draft="example-17-88a8ce7e987b">
   <div class="editor-bar">
     <span><i></i> Python 示例 17</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 17 代码" rows="9"
-    spellcheck="false" autocapitalize="off" autocomplete="off">codes = [&quot;B&quot;, &quot;A&quot;, &quot;B&quot;, &quot;C&quot;]
+  <textarea aria-label="Python 示例 17 代码" rows="9" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">codes = [&quot;B&quot;, &quot;A&quot;, &quot;B&quot;, &quot;C&quot;]
 print(&quot;固定一组值&quot;, tuple(codes))
 print(&quot;只看成员&quot;, sorted(set(codes)))
 print(&quot;按首次出现顺序去重&quot;, list(dict.fromkeys(codes)))
@@ -544,9 +585,10 @@ by_station = dict(pairs)
 print(&quot;按站点查最新值&quot;, by_station[&quot;东&quot;])
 print(&quot;键值对&quot;, list(by_station.items()))</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -556,14 +598,15 @@ print(&quot;键值对&quot;, list(by_station.items()))</textarea>
 <h3>判断派生结果要保存到什么时候</h3>
 <p>从原始记录可以计算出多种结果。例如原始读数有先后顺序，排序后的列表用于查阅，去重后的集合用于检查出现过哪些值。每种结果的用途不同。若原始记录后来增加一项，可以重新得到当前的排序和集合。若要比较“更新前后”，则应在更新前保留相应结果。</p>
 
-<section class="playground" aria-label="Python 示例 18">
+<section class="playground" aria-label="Python 示例 18" data-draft="example-18-d947ae097443">
   <div class="editor-bar">
     <span><i></i> Python 示例 18</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 18 代码" rows="8"
-    spellcheck="false" autocapitalize="off" autocomplete="off">measurements = [21, 18, 21]
+  <textarea aria-label="Python 示例 18 代码" rows="8" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">measurements = [21, 18, 21]
 ordered_before = sorted(measurements)
 unique_before = set(measurements)
 
@@ -572,9 +615,10 @@ print(&quot;更新前的排序结果&quot;, ordered_before)
 print(&quot;当前的排序结果&quot;, sorted(measurements))
 print(&quot;新增的取值&quot;, sorted(set(measurements) - unique_before))</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -584,14 +628,15 @@ print(&quot;新增的取值&quot;, sorted(set(measurements) - unique_before))</t
 <h3>区分重新绑定与原地修改</h3>
 <p><code>alias = original</code> 让两个名字指向同一个对象。执行 <code>original.append(x)</code> 会修改这个列表，经由 <code>alias</code> 也能看到新元素。执行 <code>original = original + [x]</code> 则先生成一个新列表，再让 <code>original</code> 指向它。<code>alias</code> 仍指向原先的列表。</p>
 
-<section class="playground" aria-label="Python 示例 19">
+<section class="playground" aria-label="Python 示例 19" data-draft="example-19-0aaa0412876e">
   <div class="editor-bar">
     <span><i></i> Python 示例 19</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 19 代码" rows="8"
-    spellcheck="false" autocapitalize="off" autocomplete="off">numbers = [10]
+  <textarea aria-label="Python 示例 19 代码" rows="8" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">numbers = [10]
 alias = numbers
 
 numbers += [20]
@@ -600,9 +645,10 @@ print(&quot;原地追加后&quot;, numbers, alias, numbers is alias)
 numbers = numbers + [30]
 print(&quot;重新绑定后&quot;, numbers, alias, numbers is alias)</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -612,14 +658,23 @@ print(&quot;重新绑定后&quot;, numbers, alias, numbers is alias)</textarea>
 <div class="lesson-table"><table><thead><tr><th scope="col">写法</th><th scope="col">外层容器</th><th scope="col">与原容器的内层关系</th></tr></thead><tbody><tr><td><code>alias = original</code></td><td>同一个外层对象</td><td>仍通过同一对象访问成员</td></tr><tr><td><code>shallow = original.copy()</code></td><td>新的外层对象</td><td>保留对原成员的引用</td></tr><tr><td><code>saved = deepcopy(original)</code></td><td>对本例会创建新的外层对象</td><td>嵌套的可变容器也会复制</td></tr></tbody></table></div>
 <p>列表、字典和集合的 <code>copy()</code> 都做浅复制。列表也可以用 <code>original[:]</code> 浅复制。标准库 <code>copy</code> 模块提供 <code>copy()</code> 和 <code>deepcopy()</code>。深复制会递归处理嵌套对象，例如为下面的字典创建副本。不可变的字符串和整数可以继续共享。</p>
 
-<section class="playground" aria-label="Python 示例 20">
+<form class="quiz" data-correct="2">
+ <fieldset><legend>对 <code>[{&quot;value&quot;: 1}]</code> 做浅复制和深复制，再把原列表第一项字典里的 <code>value</code> 改成 9。两个副本中的 <code>value</code> 分别是多少？</legend><label><input type="radio" name="choice" value="1" required> 都为 9</label><label><input type="radio" name="choice" value="2" required> 浅副本为 9，深副本为 1</label><label><input type="radio" name="choice" value="3" required> 浅副本为 1，深副本为 9</label></fieldset>
+ <button class="primary small" type="submit" disabled>检查答案</button>
+ <p class="feedback" aria-live="polite"></p>
+ <details><summary>查看解析</summary><p>浅副本的外层列表是新的，内层字典仍然共享。深副本中的字典独立保留原值。用下面的代码再核对。</p></details>
+</form>
+
+
+<section class="playground" aria-label="Python 示例 20" data-draft="example-20-e6129746ae3d">
   <div class="editor-bar">
     <span><i></i> Python 示例 20</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 20 代码" rows="14"
-    spellcheck="false" autocapitalize="off" autocomplete="off">from copy import deepcopy
+  <textarea aria-label="Python 示例 20 代码" rows="14" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">from copy import deepcopy
 
 original = [{&quot;value&quot;: 1}]
 alias = original
@@ -636,9 +691,10 @@ original[0][&quot;value&quot;] = 9
 print(&quot;三处列表的长度&quot;, len(alias), len(shallow), len(saved))
 print(&quot;三处第一项的值&quot;, alias[0][&quot;value&quot;], shallow[0][&quot;value&quot;], saved[0][&quot;value&quot;])</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -648,14 +704,15 @@ print(&quot;三处第一项的值&quot;, alias[0][&quot;value&quot;], shallow[0]
 <h3>同一对象可能出现在多个位置</h3>
 <p><code>[[0, 0]] * 2</code> 重复的是对同一个列表的引用。修改一行，就会在两个位置看到同一份内容。要让每行可以单独修改，可以分别创建行列表。<code>dict.fromkeys(keys, [])</code> 同样会让多个键引用同一个列表，分别写出每个键的初始列表即可避免这种共享。</p>
 
-<section class="playground" aria-label="Python 示例 21">
+<section class="playground" aria-label="Python 示例 21" data-draft="example-21-ac7d46fd07eb">
   <div class="editor-bar">
     <span><i></i> Python 示例 21</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 21 代码" rows="14"
-    spellcheck="false" autocapitalize="off" autocomplete="off">shared_rows = [[0, 0]] * 2
+  <textarea aria-label="Python 示例 21 代码" rows="14" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">shared_rows = [[0, 0]] * 2
 shared_rows[0][1] = 9
 print(&quot;重复引用的两行&quot;, shared_rows)
 
@@ -671,9 +728,10 @@ groups = {&quot;甲&quot;: [], &quot;乙&quot;: []}
 groups[&quot;甲&quot;].append(&quot;读数 1&quot;)
 print(&quot;每个键有自己的列表&quot;, groups)</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -682,14 +740,15 @@ print(&quot;每个键有自己的列表&quot;, groups)</textarea>
 <h3>只复制将要编辑的层</h3>
 <p>如果程序只要编辑一组测量记录中的“东站”，可以复制外层字典和东站的列表。西站的数据在两份结构中仍由同一个列表表示。这样能明确说明哪些状态由新结构独立维护。</p>
 
-<section class="playground" aria-label="Python 示例 22">
+<section class="playground" aria-label="Python 示例 22" data-draft="example-22-cf677dde5f6c">
   <div class="editor-bar">
     <span><i></i> Python 示例 22</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 22 代码" rows="9"
-    spellcheck="false" autocapitalize="off" autocomplete="off">original = {&quot;东站&quot;: [18, 20], &quot;西站&quot;: [22]}
+  <textarea aria-label="Python 示例 22 代码" rows="9" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">original = {&quot;东站&quot;: [18, 20], &quot;西站&quot;: [22]}
 revised = original.copy()
 revised[&quot;东站&quot;] = original[&quot;东站&quot;].copy()
 
@@ -699,9 +758,10 @@ print(&quot;更新后的东站读数&quot;, revised[&quot;东站&quot;])
 print(&quot;东站列表共享&quot;, original[&quot;东站&quot;] is revised[&quot;东站&quot;])
 print(&quot;西站列表共享&quot;, original[&quot;西站&quot;] is revised[&quot;西站&quot;])</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -712,14 +772,15 @@ print(&quot;西站列表共享&quot;, original[&quot;西站&quot;] is revised[&q
 <div class="lesson-table"><table><thead><tr><th scope="col">要做的事</th><th scope="col">选择</th><th scope="col">保留的数据关系</th></tr></thead><tbody><tr><td>读取活动名称、容量和路线</td><td>配置字典</td><td>根据字段名取值</td></tr><tr><td>识别出发地与目的地</td><td>路线元组</td><td>两个位置分别表示起点、终点</td></tr><tr><td>按学号查姓名和班级</td><td>报名字典，值也是字典</td><td>由学号找到记录，再按字段名查找</td></tr><tr><td>回看签到原始记录</td><td>签到列表</td><td>保留先后与重复</td></tr><tr><td>核对成员</td><td>从名单和签到记录取得集合</td><td>通过交集和差集确定到场、缺席和未报名的学号</td></tr></tbody></table></div>
 <p>报名人数从报名记录的数量计算。签到记录只要有更新，就能从原始列表再次计算出现过的学号。两项统计分别以自己的原始记录为依据。</p>
 
-<section class="playground" aria-label="Python 示例 23">
+<section class="playground" aria-label="Python 示例 23" data-draft="example-23-0a4b841d26a5">
   <div class="editor-bar">
     <span><i></i> Python 示例 23</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 23 代码" rows="14"
-    spellcheck="false" autocapitalize="off" autocomplete="off">activity = {
+  <textarea aria-label="Python 示例 23 代码" rows="14" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">activity = {
     &quot;name&quot;: &quot;博物馆参观&quot;,
     &quot;capacity&quot;: 30,
     &quot;route&quot;: (&quot;教学楼&quot;, &quot;博物馆&quot;),
@@ -747,9 +808,10 @@ print(&quot;已到的报名者&quot;, sorted(present))
 print(&quot;未签到的报名者&quot;, sorted(missing))
 print(&quot;签到但未报名&quot;, sorted(unregistered))</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -758,14 +820,15 @@ print(&quot;签到但未报名&quot;, sorted(unregistered))</textarea>
 <h3>验证配置和名单的复制范围</h3>
 <p>活动配置的容量是整数，路线是由字符串组成的元组。浅复制可以保留调整容量前的配置。报名记录有两层字典。新增学号改变外层，编辑班级改变内层，因此要分别观察共享引用、浅副本和深副本。</p>
 
-<section class="playground" aria-label="Python 示例 24">
+<section class="playground" aria-label="Python 示例 24" data-draft="example-24-da2a5be4732a">
   <div class="editor-bar">
     <span><i></i> Python 示例 24</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 24 代码" rows="14"
-    spellcheck="false" autocapitalize="off" autocomplete="off">from copy import deepcopy
+  <textarea aria-label="Python 示例 24 代码" rows="14" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">from copy import deepcopy
 
 activity = {&quot;name&quot;: &quot;博物馆参观&quot;, &quot;capacity&quot;: 30, &quot;route&quot;: (&quot;教学楼&quot;, &quot;博物馆&quot;)}
 old_config = activity.copy()
@@ -787,9 +850,10 @@ registrations[&quot;S01&quot;][&quot;group&quot;] = &quot;二班&quot;
 print(&quot;共享、浅复制、深复制的人数&quot;, len(shared), len(shallow), len(saved))
 print(&quot;S01 的班级&quot;, shared[&quot;S01&quot;][&quot;group&quot;], shallow[&quot;S01&quot;][&quot;group&quot;], saved[&quot;S01&quot;][&quot;group&quot;])</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>

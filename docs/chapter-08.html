@@ -6,8 +6,8 @@
 <meta name="color-scheme" content="light">
 <meta name="description" content="以对象协作和假设三部曲为主线的 Python 编程教材。">
 <title>对象与外部环境的协作 · Python 编程</title>
-<link rel="stylesheet" href="assets/style.css?v=c4cfd570a0ea">
-<script src="assets/site.js" defer></script>
+<link rel="stylesheet" href="assets/style.css?v=271b14c33aec">
+<script src="assets/site.js?v=3370553bec6f" defer></script>
 </head>
 <body class="">
 <a class="skip" href="#main">跳到正文</a>
@@ -36,14 +36,15 @@
 <h3>先构造路径，再使用路径</h3>
 <p>路径对象可以描述一个尚未创建的文件。<code>path.name</code> 取得最后一段文件名，<code>path.suffix</code> 取得扩展名，<code>path.stem</code> 取得去掉最后一个扩展名的名称。拼接路径只是计算位置，创建目录、打开文件是另外的操作。</p>
 
-<section class="playground" aria-label="Python 示例 1">
+<section class="playground" aria-label="Python 示例 1" data-draft="example-1-6b4aa392b9ac">
   <div class="editor-bar">
     <span><i></i> Python 示例 1</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 1 代码" rows="7"
-    spellcheck="false" autocapitalize="off" autocomplete="off">from pathlib import Path
+  <textarea aria-label="Python 示例 1 代码" rows="7" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">from pathlib import Path
 
 path = Path(&quot;records&quot;) / &quot;morning.csv&quot;
 print(&quot;父目录&quot;, path.parent)
@@ -51,9 +52,10 @@ print(&quot;文件名&quot;, path.name)
 print(&quot;主文件名与扩展名&quot;, path.stem, path.suffix)
 print(&quot;是否为绝对路径&quot;, path.is_absolute())</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -64,14 +66,15 @@ print(&quot;是否为绝对路径&quot;, path.is_absolute())</textarea>
 <div class="lesson-table"><table><thead><tr><th scope="col">模式</th><th scope="col">用途</th><th scope="col">对已有文件的影响</th></tr></thead><tbody><tr><td><code>&quot;r&quot;</code></td><td>读取，默认模式</td><td>保留内容，文件必须存在</td></tr><tr><td><code>&quot;w&quot;</code></td><td>写入，可创建新文件</td><td>打开时截断已有内容</td></tr><tr><td><code>&quot;a&quot;</code></td><td>追加，可创建新文件</td><td>将新内容加到末尾</td></tr><tr><td><code>&quot;x&quot;</code></td><td>创建新文件并写入</td><td>已存在时报告错误</td></tr><tr><td><code>&quot;rb&quot;</code> 或 <code>&quot;wb&quot;</code></td><td>按字节读写</td><td>读写规则沿用对应的 <code>r</code> 或 <code>w</code></td></tr></tbody></table></div>
 <p>文本模式负责在字符与字节之间转换，打开文本文件时可以指定 <code>encoding=&quot;utf-8&quot;</code>。二进制模式直接读写字节。文件对象持有打开的资源，使用 <code>with</code> 可以在离开代码块时自动关闭文件，包括块内发生异常的情况。</p>
 
-<section class="playground" aria-label="Python 示例 2">
+<section class="playground" aria-label="Python 示例 2" data-draft="example-2-82c144fcec75">
   <div class="editor-bar">
     <span><i></i> Python 示例 2</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 2 代码" rows="14"
-    spellcheck="false" autocapitalize="off" autocomplete="off">from pathlib import Path
+  <textarea aria-label="Python 示例 2 代码" rows="14" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">from pathlib import Path
 from tempfile import TemporaryDirectory
 
 with TemporaryDirectory() as folder:
@@ -87,9 +90,10 @@ with TemporaryDirectory() as folder:
 
     print(path.read_text(encoding=&quot;utf-8&quot;).splitlines())</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -98,14 +102,15 @@ with TemporaryDirectory() as folder:
 <h3>一次读完与逐行处理</h3>
 <p><code>read_text()</code> 一次读出完整文本，适合内容较小、后续要整体处理的文件。逐行处理时可以一边读一边累计结果。下面用一条内存文本流演示同样的迭代写法，每轮得到一行带换行符的文字。</p>
 
-<section class="playground" aria-label="Python 示例 3">
+<section class="playground" aria-label="Python 示例 3" data-draft="example-3-83fac196dad6">
   <div class="editor-bar">
     <span><i></i> Python 示例 3</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 3 代码" rows="14"
-    spellcheck="false" autocapitalize="off" autocomplete="off">from io import StringIO
+  <textarea aria-label="Python 示例 3 代码" rows="14" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">from io import StringIO
 
 total = 0
 count = 0
@@ -121,9 +126,10 @@ with StringIO(&quot;18\n\n21\n20\n&quot;) as stream:
 
 print(&quot;读数的条数和总和&quot;, count, total)</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -132,14 +138,15 @@ print(&quot;读数的条数和总和&quot;, count, total)</textarea>
 <h3>with 在正常结束和异常时都执行退出动作</h3>
 <p><code>with</code> 通过资源对象的进入与退出约定管理资源。文件对象退出时关闭，临时目录退出时清理。嵌套使用时，先离开内层文件块，再离开外层目录块。下面让一个错误发生在读取之后，检查离开代码块时文本流的状态。</p>
 
-<section class="playground" aria-label="Python 示例 4">
+<section class="playground" aria-label="Python 示例 4" data-draft="example-4-91ecaefa3eb2">
   <div class="editor-bar">
     <span><i></i> Python 示例 4</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 4 代码" rows="8"
-    spellcheck="false" autocapitalize="off" autocomplete="off">from io import StringIO
+  <textarea aria-label="Python 示例 4 代码" rows="8" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">from io import StringIO
 
 try:
     with StringIO(&quot;无读数&quot;) as stream:
@@ -148,9 +155,10 @@ except ValueError as error:
     print(&quot;转换失败&quot;, type(error).__name__)
     print(&quot;流是否已经关闭&quot;, stream.closed)</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -159,14 +167,15 @@ except ValueError as error:
 <h2 id="section-4">8.4 理解字符、字节和编码</h2>
 <p>文件中保存的是字节。按文本打开时，Python 依据指定的编码在字符和字节之间转换。用 <code>encoding=&quot;utf-8&quot;</code> 明确约定，可以让写入和读取使用同一种编码。按二进制打开时，<code>read()</code> 得到字节序列，解释这些字节的工作交给后续步骤。</p>
 
-<section class="playground" aria-label="Python 示例 5">
+<section class="playground" aria-label="Python 示例 5" data-draft="example-5-930d874d1138">
   <div class="editor-bar">
     <span><i></i> Python 示例 5</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 5 代码" rows="13"
-    spellcheck="false" autocapitalize="off" autocomplete="off">from pathlib import Path
+  <textarea aria-label="Python 示例 5 代码" rows="13" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">from pathlib import Path
 from tempfile import TemporaryDirectory
 
 with TemporaryDirectory() as folder:
@@ -180,9 +189,10 @@ with TemporaryDirectory() as folder:
     except UnicodeDecodeError:
         print(&quot;ASCII 无法解释这些字节&quot;)</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -192,14 +202,15 @@ with TemporaryDirectory() as folder:
 <p>JSON 把结构化数据写成文本。Python 的字典、列表、字符串、数字、布尔值和 <code>None</code> 可转换为对应的 JSON 对象、数组、字符串、数值、真假和 <code>null</code>。交换数据时宜使用字符串作为字典键，并事先约定必需字段与类型。</p>
 <div class="lesson-table"><table><thead><tr><th scope="col">JSON 中的数据</th><th scope="col">读取为 Python 对象</th><th scope="col">保存时常用的 Python 对象</th></tr></thead><tbody><tr><td>对象</td><td><code>dict</code></td><td>用字符串字段名组织的字典</td></tr><tr><td>数组</td><td><code>list</code></td><td>列表，或可以转成数组的元组</td></tr><tr><td>字符串</td><td><code>str</code></td><td>字符串</td></tr><tr><td>数字</td><td><code>int</code> 或 <code>float</code></td><td>整数、有限的浮点数</td></tr><tr><td><code>true</code>、<code>false</code></td><td><code>True</code>、<code>False</code></td><td>布尔值</td></tr><tr><td><code>null</code></td><td><code>None</code></td><td>缺失值</td></tr></tbody></table></div>
 
-<section class="playground" aria-label="Python 示例 6">
+<section class="playground" aria-label="Python 示例 6" data-draft="example-6-1f41f6b4bf67">
   <div class="editor-bar">
     <span><i></i> Python 示例 6</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 6 代码" rows="8"
-    spellcheck="false" autocapitalize="off" autocomplete="off">import json
+  <textarea aria-label="Python 示例 6 代码" rows="8" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">import json
 
 reading = {&quot;地点&quot;: &quot;东站&quot;, &quot;温度&quot;: [18, 20], &quot;已复核&quot;: True, &quot;备注&quot;: None}
 text = json.dumps(reading, ensure_ascii=False, indent=2)
@@ -208,9 +219,10 @@ print(text)
 restored = json.loads(text)
 print(restored[&quot;温度&quot;][0], restored[&quot;已复核&quot;])</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -219,14 +231,15 @@ print(restored[&quot;温度&quot;][0], restored[&quot;已复核&quot;])</textare
 <h3>约定能保存什么，以及怎样恢复</h3>
 <p>JSON 主要保存数据关系。用元组表示的位置在 JSON 里会成为数组，读取后得到列表。如果应用还要求位置固定为两个数，就应校验长度，再按需要恢复成元组。对象的方法和内部状态的更新规则由 Python 中的定义提供。</p>
 
-<section class="playground" aria-label="Python 示例 7">
+<section class="playground" aria-label="Python 示例 7" data-draft="example-7-7cf576b7447d">
   <div class="editor-bar">
     <span><i></i> Python 示例 7</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 7 代码" rows="10"
-    spellcheck="false" autocapitalize="off" autocomplete="off">import json
+  <textarea aria-label="Python 示例 7 代码" rows="10" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">import json
 
 original = {&quot;position&quot;: (3, 4), &quot;visible&quot;: True, &quot;note&quot;: None}
 wire = json.dumps(original, ensure_ascii=False)
@@ -237,9 +250,10 @@ print(&quot;位置字段读为&quot;, type(restored[&quot;position&quot;]).__nam
 position = tuple(restored[&quot;position&quot;])
 print(&quot;应用需要的坐标&quot;, position)</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -248,14 +262,15 @@ print(&quot;应用需要的坐标&quot;, position)</textarea>
 <h2 id="section-6">8.6 用 CSV 交换表格数据</h2>
 <p>CSV 以记录表示行，以字段表示列。可以用 <code>csv.writer</code> 和 <code>csv.reader</code> 逐行处理，也可以用 <code>DictWriter</code> 和 <code>DictReader</code> 按列名组织数据。字段内有逗号、引号或换行时，模块会按规则处理转义和引用。</p>
 
-<section class="playground" aria-label="Python 示例 8">
+<section class="playground" aria-label="Python 示例 8" data-draft="example-8-2ce79eb7fbbc">
   <div class="editor-bar">
     <span><i></i> Python 示例 8</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 8 代码" rows="12"
-    spellcheck="false" autocapitalize="off" autocomplete="off">import csv
+  <textarea aria-label="Python 示例 8 代码" rows="12" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">import csv
 from io import StringIO
 
 stream = StringIO(newline=&quot;&quot;)
@@ -268,9 +283,10 @@ stream.seek(0)
 row = next(csv.DictReader(stream))
 print(row[&quot;地点&quot;], int(row[&quot;读数&quot;]) + 1)</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -279,14 +295,15 @@ print(row[&quot;地点&quot;], int(row[&quot;读数&quot;]) + 1)</textarea>
 <h3>表头、字段文字和类型转换</h3>
 <p>使用 <code>csv.DictReader</code> 时，第一行通常是表头，之后每一行按照列名交出字段。字段值默认是文字。数量要转换成数字，带前导零的编号则应保留原样。</p>
 
-<section class="playground" aria-label="Python 示例 9">
+<section class="playground" aria-label="Python 示例 9" data-draft="example-9-88d0974f7396">
   <div class="editor-bar">
     <span><i></i> Python 示例 9</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 9 代码" rows="13"
-    spellcheck="false" autocapitalize="off" autocomplete="off">import csv
+  <textarea aria-label="Python 示例 9 代码" rows="13" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">import csv
 from io import StringIO
 
 source = StringIO(&quot;编号,件数\n0007,2\n0009,0\n&quot;, newline=&quot;&quot;)
@@ -300,9 +317,10 @@ for row in reader:
 
 print(&quot;总件数&quot;, total)</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -314,14 +332,15 @@ print(&quot;总件数&quot;, total)</textarea>
 <h3>只有确实缺失时才启用初始数据</h3>
 <p>首次启动和已有数据损坏是两种不同的情况。可以在读文件这一小段操作上捕获 <code>FileNotFoundError</code>，用默认状态继续。成功取得文字后，再解析内容。格式错误应交给调用者报告。</p>
 
-<section class="playground" aria-label="Python 示例 10">
+<section class="playground" aria-label="Python 示例 10" data-draft="example-10-0c3f1ff9af69">
   <div class="editor-bar">
     <span><i></i> Python 示例 10</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 10 代码" rows="14"
-    spellcheck="false" autocapitalize="off" autocomplete="off">import json
+  <textarea aria-label="Python 示例 10 代码" rows="14" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">import json
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
@@ -344,9 +363,10 @@ with TemporaryDirectory() as folder:
     except json.JSONDecodeError:
         print(&quot;原文件需要检查&quot;, path.read_text(encoding=&quot;utf-8&quot;))</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -356,14 +376,15 @@ with TemporaryDirectory() as folder:
 <h3>把写完和替换分成两个步骤</h3>
 <p>打开已有文件时选择 <code>&quot;w&quot;</code> 会立即截断文件。如果新内容写到一半出现异常，旧内容可能已经丢失。更新正式数据时，可以在同一个目录先写临时文件，完成序列化并关闭后再替换目标。失败时清理临时文件，把原来的错误交给调用者。</p>
 
-<section class="playground" aria-label="Python 示例 11">
+<section class="playground" aria-label="Python 示例 11" data-draft="example-11-4a7ddde4314e">
   <div class="editor-bar">
     <span><i></i> Python 示例 11</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 11 代码" rows="14"
-    spellcheck="false" autocapitalize="off" autocomplete="off">import json
+  <textarea aria-label="Python 示例 11 代码" rows="14" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">import json
 from pathlib import Path
 from tempfile import NamedTemporaryFile, TemporaryDirectory
 
@@ -393,14 +414,65 @@ with TemporaryDirectory() as folder:
     write_snapshot(path, {&quot;values&quot;: [18, 20]})
     print(&quot;完成后的内容&quot;, json.loads(path.read_text(encoding=&quot;utf-8&quot;)))</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
 
 <p>集合没有默认的 JSON 表示，第二次保存会在替换前失败。第三次改用列表，写完后才替换正式文件。这种写法把“构造完整新文件”和“把新文件作为当前数据”分开。第 9 章会将它用于保存活动状态。<a href="https://docs.python.org/3.12/library/tempfile.html#tempfile.NamedTemporaryFile">Python 官方文档的 tempfile</a></p>
+<h3>先验证失败后的文件，再改写保存步骤</h3>
+<p>下面的起点直接打开旧文件写入。请在失败时检查文件内容是否与 <code>before</code> 一样。运行看到检查失败后，再用上一段的临时文件办法改写 <code>save()</code>。重跑时，集合仍会被拒绝，旧内容应能读回，最后一次合法保存也应生效。</p>
+
+<section class="playground" aria-label="Python 示例 12" data-draft="file-regression" id="file-regression">
+  <div class="editor-bar">
+    <span><i></i> Python 示例 12</span>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
+  </div>
+  <textarea aria-label="Python 示例 12 代码" rows="14" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">import json
+from pathlib import Path
+from tempfile import NamedTemporaryFile, TemporaryDirectory
+
+
+def save(path, data):
+    with path.open(&quot;w&quot;, encoding=&quot;utf-8&quot;) as stream:
+        json.dump(data, stream, ensure_ascii=False)
+
+
+def verify_failed_save(path):
+    before = path.read_text(encoding=&quot;utf-8&quot;)
+    try:
+        save(path, {&quot;values&quot;: {18, 20}})
+    except TypeError:
+        # 比较失败后的文件内容与 before。
+        raise NotImplementedError(&quot;请先写出旧内容检查&quot;)
+    else:
+        raise AssertionError(&quot;应拒绝无法序列化的集合&quot;)
+
+
+with TemporaryDirectory() as folder:
+    path = Path(folder) / &quot;readings.json&quot;
+    save(path, {&quot;values&quot;: [18]})
+    verify_failed_save(path)
+    print(&quot;失败后原文件仍可读取&quot;)
+    save(path, {&quot;values&quot;: [18, 20]})
+    assert json.loads(path.read_text(encoding=&quot;utf-8&quot;)) == {&quot;values&quot;: [18, 20]}
+    print(&quot;文件保存验收通过&quot;)</textarea>
+  <div class="runner-bar" hidden>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
+  </div>
+  <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
+</section>
+
+<details class='answer'><summary>参考解答</summary><p>可写 <code>assert path.read_text(encoding=&quot;utf-8&quot;) == before, &quot;旧文件内容发生变化&quot;</code>。直接打开旧文件时，写入模式已经截断内容。参考上一段的 <code>write_snapshot()</code>，让 <code>save()</code> 先写完同目录的临时文件，再替换目标，并在退出时清理临时文件。</p></details>
 <h3>其他外部接口也需要说明交付条件</h3>
 <p>同样的协作思路也适用于其他外部接口。先约定如何取得资源、结果是什么格式，再判断结果能否进入业务流程。例如，调用网络服务读取数据时，调用方需要处理超时，并校验响应所带的字段。</p>
 <div class="lesson-table"><table><thead><tr><th scope="col">协作步骤</th><th scope="col">读取文件</th><th scope="col">向服务请求数据</th></tr></thead><tbody><tr><td>指定资源</td><td>文件路径</td><td>地址与查询条件</td></tr><tr><td>取得内容</td><td>文本或字节</td><td>响应状态和内容</td></tr><tr><td>解释数据</td><td>解码、解析 JSON 或 CSV</td><td>根据约定的格式解析响应</td></tr><tr><td>检查与使用</td><td>校验字段后恢复状态</td><td>校验字段后继续业务步骤</td></tr><tr><td>处理失败</td><td>区分缺失、权限和坏数据</td><td>区分超时、失败状态和坏数据</td></tr></tbody></table></div>
@@ -410,14 +482,15 @@ with TemporaryDirectory() as folder:
 <div class="lesson-table"><table><thead><tr><th scope="col">处理步骤</th><th scope="col">接收的内容</th><th scope="col">交给下一步的结果</th></tr></thead><tbody><tr><td>保存</td><td>已校验的活动记录</td><td>一份 JSON 文件</td></tr><tr><td>恢复</td><td>JSON 文本</td><td>符合规则的活动数据</td></tr><tr><td>导出</td><td>恢复后的报名顺序</td><td>一份有表头的 CSV</td></tr><tr><td>核对</td><td>CSV 字段</td><td>与恢复名单相同的学号顺序</td></tr></tbody></table></div>
 <p>校验函数供写入和恢复两条路径使用。写入新文件前先验证原始数据，恢复时先解析再验证，避免把不合规则的内容交给导出功能。</p>
 
-<section class="playground" aria-label="Python 示例 12">
+<section class="playground" aria-label="Python 示例 13" data-draft="example-13-67a88f5b45fd">
   <div class="editor-bar">
-    <span><i></i> Python 示例 12</span>
-    <div><button class="quiet" data-reset hidden>重置</button>
-    <button class="quiet" data-copy hidden>复制</button></div>
+    <span><i></i> Python 示例 13</span>
+    <div><button class="quiet" type="button" data-reset hidden>重置</button>
+    <button class="quiet" type="button" data-copy hidden>复制</button>
+    <button class="quiet" type="button" data-wrap aria-pressed="false" hidden>自动换行</button></div>
   </div>
-  <textarea aria-label="Python 示例 12 代码" rows="14"
-    spellcheck="false" autocapitalize="off" autocomplete="off">import csv
+  <textarea aria-label="Python 示例 13 代码" rows="14" wrap="off"
+    data-code-file="" spellcheck="false" autocapitalize="off" autocomplete="off">import csv
 import json
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -489,9 +562,10 @@ with TemporaryDirectory() as folder:
     except ValueError as error:
         print(&quot;拒绝非法名单&quot;, error)</textarea>
   <div class="runner-bar" hidden>
-    <button class="primary small" data-run>▶ 运行代码</button>
-    <button class="quiet" data-stop hidden>停止</button>
-    <span>Ctrl + Enter</span>
+    <button class="primary small" type="button" data-run>▶ 运行代码</button>
+    <button class="quiet" type="button" data-stop hidden>停止</button>
+    <span class="draft-status" data-draft-status role="status"></span>
+    <span class="run-shortcut">Ctrl + Enter</span>
   </div>
   <pre class="output" aria-live="polite" aria-label="运行输出" hidden></pre>
 </section>
@@ -500,6 +574,7 @@ with TemporaryDirectory() as folder:
 <h3>按约定核对读回的数据</h3>
 <p>CSV 文件中的表头和两行记录能供人查阅。程序还重新读出“学号”列，与 JSON 恢复的顺序比较。修改报名顺序时，两份输出都应反映同一份名单。若把容量改成 1，应在打开新文件前就发现两人超出名额。</p>
 <p>下一章会让活动对象维护规则，让不同的存储实现接管读取和保存。程序既可以先用内存验证流程，也可以换成文件实现来验证关闭后再打开的效果。<a href="chapter-09.html">第 9 章 综合项目 递归假设驱动的程序构造</a></p>
+<p>完成失败后的文件检查后，用同样的方法验收第 9 章的查询功能。除了核对余量，也要确认查询前后的文件内容一致。<a href="chapter-09.html#remaining-task">进入独立交付练习</a></p>
 <h2 id="section-10">练习</h2>
 <ul><li>给 CSV 增加“签到”列，默认填“未签到”。在临时目录块内用 <code>csv.DictReader</code> 读取第一条记录，检查两列的值。</li><li>把示例活动的容量改为 1，指出程序在哪一步拒绝写入。</li><li>把 <code>load_readings()</code> 示例写入的损坏文字换成合法的 <code>{&quot;values&quot;: &quot;18&quot;}</code>。预测能否解析，说明还缺哪项检查。</li><li>在临时文件替换示例中，改为让第二次写入也使用列表。预测最终文件与最初保存的内容是否相同。</li></ul>
 <details class='answer'><summary>参考解答</summary><p>表头追加“签到”，数据行追加“未签到”。打开 CSV 时指定 encoding=&quot;utf-8&quot; 和 newline=&quot;&quot;，取 next(csv.DictReader(stream))，结果的“学号”是 S01，“签到”是未签到。</p><p>容量为 1 时，validate_event 会报告报名人数超过容量。此时程序尚未打开文件，JSON 文件还没有创建。</p><p>JSON 可以解析出字典，但 values 对应的是字符串。需要检查字段是否为列表，再检查其中的每个读数。</p><p>第二次写入使用列表时可以完成序列化和替换。若继续运行第三次写入，最终文件仍保存 [18, 20]，与最初的 [18] 不同。</p></details>

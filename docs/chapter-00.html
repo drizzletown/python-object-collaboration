@@ -6,8 +6,8 @@
 <meta name="color-scheme" content="light">
 <meta name="description" content="以对象协作和假设三部曲为主线的 Python 编程教材。">
 <title>导论 从解决问题到程序设计 · Python 编程</title>
-<link rel="stylesheet" href="assets/style.css?v=c4cfd570a0ea">
-<script src="assets/site.js" defer></script>
+<link rel="stylesheet" href="assets/style.css?v=271b14c33aec">
+<script src="assets/site.js?v=3370553bec6f" defer></script>
 </head>
 <body class="">
 <a class="skip" href="#main">跳到正文</a>
@@ -129,6 +129,8 @@
 <h2 id="section-6">0.6 怎样沿着这条线索学习</h2>
 <p>每章先提出一项实际任务，尝试用已有知识处理，找出还缺少的描述能力，再学习相应的 Python 功能，最后实现并检验结果。已有条件足以解决时，可以直接做。遇到暂时无法实现的能力，从第 1 章起就可以用假设三部曲推进。</p>
 <p>校园活动报名是全书的贯穿案例。成绩统计、文本处理和费用结算等短案例帮助读者把同一种方法用到其他问题。阅读时，可以先用自然语言说出有哪些对象、各自负责什么、怎样传递信息，再看 Python 如何表达这些步骤。</p>
+<h3>沿同一份任务练到独立交付</h3>
+<div class="lesson-table"><table><thead><tr><th scope="col">学习阶段</th><th scope="col">动手完成的事</th><th scope="col">怎样确认自己学会了</th></tr></thead><tbody><tr><td>第 1–2 章</td><td>改一行报名人数，再试着选择和修改容器</td><td>能先预测输出，并解释改动影响了哪份数据</td></tr><tr><td>第 3–4 章</td><td>跟踪一批请求，再把资格判断写成函数</td><td>回执顺序与最终名单都符合预期</td></tr><tr><td>第 5–6 章</td><td>让活动各自维护名单，再接好目录和报名服务</td><td>同一个学号可在两场活动分别登记，查询失败时有明确回执</td></tr><tr><td>第 7–8 章</td><td>让测试先暴露问题，再修复判断或保存流程</td><td>除了回执，还能核对失败前后的名单或文件</td></tr><tr><td>第 9–10 章</td><td>自己实现余量查询和一种通知方式</td><td>按验收条件检查新功能、原报名规则与失败后的状态</td></tr></tbody></table></div>
 <h3>用一组结果检验自己的理解</h3>
 <p>先读案例里的任务和预期结果。中段讲到一个机制时，可以在独立例子里先预测输出，再在网页上运行。试着每次只改一个输入，观察是对象、状态、还是执行路径发生了变化。最后回到案例，解释为什么选用了这些对象和操作。</p>
 <p>例如，学习“名额检查”时，可以分别想象只剩一个名额、没有名额和同一人再次报名。先写出预期回执和名单，再与示例结果核对。以后遇到借阅或预约任务，也可以照这个方式列出几种情形，看看已有的解法哪些能够直接使用。</p>
